@@ -86,8 +86,8 @@ public class PrimaryView extends JPanel {
 	private VolatileImage[] terrainImages, unitImages;
 	private VolatileImage informationPanel, clockImage, portrait;
 	private GraphicsConfiguration gC;
-	private int visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
-		iPaneWidth, iPaneHeight, resKey, clockWidth, clockHeight, portraitWidth, portraitHeight, focusC, focusR, focusRad, clockFace;
+	private int unitLength, visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
+		iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitWidth, portraitHeight, focusC, focusR, focusRad, clockFace;
 	private boolean focusing;
 	private String focusName;
 
@@ -108,57 +108,78 @@ public class PrimaryView extends JPanel {
 
 	public void loadInitialViewState(GraphicsConfiguration gC, int units) {
 		this.gC = gC;
-		pixelLength = 64 * units;
 		screenWidth = gC.getBounds().width;
 		screenHeight = gC.getBounds().height;
-		boundX = this.pixelLength - screenWidth;
-		boundY = this.pixelLength - screenHeight + 219;
 		visX = 0;
 		visY = 0;
 
-		terrainImages = new VolatileImage[90];
-
-		for (int i = 0; i < terrainImages.length; i++) {
-			terrainImages[i] = gC.createCompatibleVolatileImage(64, 64);
-		}
-
-		unitImages = new VolatileImage[1];
-
-		for (int i = 0; i < unitImages.length; i++) {
-			unitImages[i] = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
-		}
-		
 		if (screenWidth >= 2560 && screenHeight >= 1440) {
 			xOffset = (screenWidth - 2560) / 2;
 			yOffset = (screenHeight - 1440) / 2;
 			iPaneWidth = 2560;
 			iPaneHeight = 288;
+			unitLength = 128;
+			clockLength = 170;
+			clockOffset = 14;
+			portraitWidth = 170;
+			portraitHeight = 208;
 			resKey = 0;
 		} else if (screenWidth >= 1920 && screenHeight >= 1080) {
 			xOffset = (screenWidth - 1920) / 2;
 			yOffset = (screenHeight - 1080) / 2;
 			iPaneWidth = 1920;
 			iPaneHeight = 216;
+			unitLength = 96;
+			clockLength = 128;
+			clockOffset = 10;
+			portraitWidth = 128;
+			portraitHeight = 156;
 			resKey = 1;
 		} else if (screenWidth >= 1600  && screenHeight >= 900) {
 			xOffset = (screenWidth - 1600) / 2;
 			yOffset = (screenHeight - 900) / 2;
 			iPaneWidth = 1600;
 			iPaneHeight = 180;
+			unitLength = 80;
+			clockLength = 105;
+			clockOffset = 9;
+			portraitWidth = 105;
+			portraitHeight = 130;
 			resKey = 2;
 		} else if (screenWidth >= 1280  && screenHeight >= 720) {
 			xOffset = (screenWidth - 1280) / 2;
 			yOffset = (screenHeight - 720) / 2;
 			iPaneWidth = 1280;
 			iPaneHeight = 144;
+			unitLength = 64;
+			clockLength = 85;
+			clockOffset = 7;
+			portraitWidth = 85;
+			portraitHeight = 105;
 			resKey = 3;
 		} else {
 			System.exit(0);
 		}
-				
+		
+		pixelLength = unitLength * units;
+		boundX = this.pixelLength - screenWidth;
+		boundY = this.pixelLength - screenHeight + iPaneHeight;
+		
+		terrainImages = new VolatileImage[90];
+
+		for (int i = 0; i < terrainImages.length; i++) {
+			terrainImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength);
+		}
+
+		unitImages = new VolatileImage[1];
+
+		for (int i = 0; i < unitImages.length; i++) {
+			unitImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+		}
+		
 		informationPanel = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
-		clockImage = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
-		portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
+		clockImage = gC.createCompatibleVolatileImage(clockLength, clockLength, VolatileImage.TRANSLUCENT);
+		portrait = gC.createCompatibleVolatileImage(portraitWidth, portraitHeight, VolatileImage.TRANSLUCENT);
 	}
 
 	/**
@@ -181,10 +202,10 @@ public class PrimaryView extends JPanel {
 
 	public void render(Graphics g, int[][] gameState) {
 		// Calculate drawn squares
-		int cStart = visX / 64 + gameState.length;
-		int rStart = visY / 64;
-		int cEnd = cStart + screenWidth / 64 + 1;
-		int rEnd = rStart + screenHeight / 64 + 1;
+		int cStart = visX / unitLength + gameState.length;
+		int rStart = visY / unitLength;
+		int cEnd = cStart + screenWidth / unitLength + 1;
+		int rEnd = rStart + screenHeight / unitLength + 1;
 
 		// Traversing the 2D gameState array to draw 
 		// terrain tiles. The do while ensures the images
@@ -201,10 +222,10 @@ public class PrimaryView extends JPanel {
 					if (valCode == VolatileImage.IMAGE_RESTORED) {
 						restoreTerrainTile(i);
 					} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-						terrainImages[i] = gC.createCompatibleVolatileImage(64, 64);
+						terrainImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength);
 					} else if (valCode == VolatileImage.IMAGE_OK) {
-						g.drawImage(terrainImages[i], ((c - gameState.length) * 64) - visX,
-								(r * 64) - visY, null);
+						g.drawImage(terrainImages[i], ((c - gameState.length) * unitLength) - visX,
+								(r * unitLength) - visY, null);
 					}
 				} while (terrainImages[i].contentsLost());
 			}
@@ -222,10 +243,10 @@ public class PrimaryView extends JPanel {
 					if (valCode == VolatileImage.IMAGE_RESTORED) {
 						restoreUnitTile(i);
 					} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-						unitImages[0] = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
+						unitImages[0] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
 					} else if (valCode == VolatileImage.IMAGE_OK && gameState[r][c] > 0) {
-						g.drawImage(unitImages[0], (c * 64) - visX,
-								(r * 64) - visY, null);
+						g.drawImage(unitImages[0], (c * unitLength) - visX,
+								(r * unitLength) - visY, null);
 					}
 				} while (unitImages[0].contentsLost());
 			}
@@ -237,9 +258,9 @@ public class PrimaryView extends JPanel {
 			g.setColor(Color.GREEN);
 			for (int r = focusR - focusRad; r < focusR + focusRad + 1; r++)
 				for (int c = focusC - focusRad; c < focusC + focusRad + 1; c++) {
-					g.drawRect(c * 64 - visX, r * 64 - visY, 64, 64);
-					g.drawRect(c * 64 - 1  - visX, r * 64 - 1 - visY, 66, 66);
-					g.drawRect(c * 64 + 1  - visX, r * 64 + 1 - visY, 62, 62);
+					g.drawRect(c * unitLength - visX, r * unitLength - visY, unitLength, unitLength);
+//					g.drawRect(c * unitLength - 1  - visX, r * unitLength - 1 - visY, 66, 66);
+//					g.drawRect(c * unitLength + 1  - visX, r * unitLength + 1 - visY, 62, 62);
 				}
 		}
 
@@ -265,40 +286,40 @@ public class PrimaryView extends JPanel {
 			if (valCode == VolatileImage.IMAGE_RESTORED) {
 				restoreClockImage();
 			} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-				clockImage = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
+				clockImage = gC.createCompatibleVolatileImage(clockLength, clockLength, VolatileImage.TRANSLUCENT);
 			} else if (valCode == VolatileImage.IMAGE_OK) {
-				g.drawImage(clockImage, 10, 874, null);
+				g.drawImage(clockImage, xOffset + clockOffset, screenHeight - yOffset - iPaneHeight + clockOffset, null);
 			}
 		} while (clockImage.contentsLost());
 
 		if (focusing) {
-			do {
-				int i = gameState[focusR][focusC];
-
-				int valCode = unitImages[0].validate(gC);
-
-				if (valCode == VolatileImage.IMAGE_RESTORED) {
-					restoreUnitTile(i);
-				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-					unitImages[0] = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
-				} else if (valCode == VolatileImage.IMAGE_OK) {
-					g.drawImage(unitImages[0], 170, 886, null);
-					g.setColor(Color.WHITE);
-					g.drawString(focusName, 1162, 1061);
-				}
-			} while (unitImages[0].contentsLost());
-
-			do {
-				int valCode = portrait.validate(gC);
-
-				if (valCode == VolatileImage.IMAGE_RESTORED) {
-					restorePortrait();
-				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-					portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
-				} else if (valCode == VolatileImage.IMAGE_OK) {
-					g.drawImage(portrait, 1148, 874, null);
-				}
-			} while (portrait.contentsLost());
+//			do {
+//				int i = gameState[focusR][focusC];
+//
+//				int valCode = unitImages[0].validate(gC);
+//
+//				if (valCode == VolatileImage.IMAGE_RESTORED) {
+//					restoreUnitTile(i);
+//				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+//					unitImages[0] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+//				} else if (valCode == VolatileImage.IMAGE_OK) {
+//					g.drawImage(unitImages[0], 170, 886, null);
+//					g.setColor(Color.WHITE);
+//					g.drawString(focusName, 1162, 1061);
+//				}
+//			} while (unitImages[0].contentsLost());
+//
+//			do {
+//				int valCode = portrait.validate(gC);
+//
+//				if (valCode == VolatileImage.IMAGE_RESTORED) {
+//					restorePortrait();
+//				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+//					portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
+//				} else if (valCode == VolatileImage.IMAGE_OK) {
+//					g.drawImage(portrait, 1148, 874, null);
+//				}
+//			} while (portrait.contentsLost());
 		}	
 	}
 
@@ -319,14 +340,14 @@ public class PrimaryView extends JPanel {
 		do {
 
 			if (portrait.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
+				portrait = gC.createCompatibleVolatileImage(portraitWidth, portraitHeight, VolatileImage.TRANSLUCENT);
 			}
 
 			try {
 				g = portrait.createGraphics();
 				g.setComposite(AlphaComposite.Src);
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Units/portrait.jpg"))).getImage(), 0,
+						.getResource("images/Portraits/" + resKey + "/P_0.jpg"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
@@ -351,14 +372,14 @@ public class PrimaryView extends JPanel {
 		do {
 
 			if (clockImage.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				clockImage = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
+				clockImage = gC.createCompatibleVolatileImage(clockLength, clockLength, VolatileImage.TRANSLUCENT);
 			}
 
 			try {
 				g = clockImage.createGraphics();
 				g.setComposite(AlphaComposite.Src);
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Clock/C_" + clockFace + "_0.png"))).getImage(), 0,
+						.getResource("images/Clock/" + resKey + "/C_" + clockFace + ".png"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
@@ -383,14 +404,14 @@ public class PrimaryView extends JPanel {
 		do {
 
 			if (unitImages[0].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				unitImages[0] = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
+				unitImages[0] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
 			}
 
 			try {
 				g = unitImages[0].createGraphics();
 				g.setComposite(AlphaComposite.Src);
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Units/AedainianSeekerPlayer1.png"))).getImage(), 0,
+						.getResource("images/Units/" + resKey + "/" + 0 + "/U_" + i + ".png"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
@@ -422,7 +443,7 @@ public class PrimaryView extends JPanel {
 				g = informationPanel.createGraphics();
 
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Information Panel/I_0_" + resKey + ".jpg"))).getImage(), 0,
+						.getResource("images/Information Panel/" + resKey + "/I_0.jpg"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
@@ -447,14 +468,14 @@ public class PrimaryView extends JPanel {
 		do {
 
 			if (terrainImages[i].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				terrainImages[i] = gC.createCompatibleVolatileImage(64, 64);
+				terrainImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength);
 			}
 
 			try {
 				g = terrainImages[i].createGraphics();
 
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Terrain/T_" + i + ".jpg"))).getImage(), 0,
+						.getResource("images/Terrain/" + resKey + "/T_" + i + ".jpg"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
