@@ -10,7 +10,6 @@ public class AppMain {
 				PrimaryController p = new PrimaryController();
 				p.loadInitialGameState();
 				p.startGame();
-				System.out.println("Hello World");
 			}
 		});
 	}

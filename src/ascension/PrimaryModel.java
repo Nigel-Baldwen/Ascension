@@ -67,23 +67,32 @@ public class PrimaryModel {
 		visualModel = new int[size][size * 2];
 		
 		// Initialize up to four players on the map
+		// For testing purposes, all four players are grouped in upper left corner
 		units[0][0] = new RaeclarianManus(1, 0);
 		units[0][0].setVisible(true);
 		units[0][0].setActive(true);
 		visualModel[0][0] = units[0][0].toInt();
 		
-		units[size - 1][size - 1] = new RaeclarianManus(2, ((size - 1) * size) + (size - 1)); // Converting row and column to an int
-		visualModel[size - 1][size - 1] = units[size - 1][size - 1].toInt();
+		// units[size - 1][size - 1] = new RaeclarianManus(2, ((size - 1) * size) + (size - 1)); // Converting row and column to an int
+		// visualModel[size - 1][size - 1] = units[size - 1][size - 1].toInt();
 		
+		units[0][1] = new RaeclarianManus(2, 1); // Converting row and column to an int
+		visualModel[0][1] = units[0][1].toInt();
 		
 		if (playerCount > 2) {
-			units[size - 1][0] = new RaeclarianManus(3, ((size - 1) * size));
-			visualModel[size - 1][0] = units[size - 1][0].toInt();
+			// units[size - 1][0] = new RaeclarianManus(3, ((size - 1) * size));
+			// visualModel[size - 1][0] = units[size - 1][0].toInt();
+			
+			units[1][0] = new RaeclarianManus(3, size);
+			visualModel[1][0] = units[1][0].toInt();
 		}
 		
 		if (playerCount > 3) {
-			units[0][size - 1] = new RaeclarianManus(4, (size - 1));
-			visualModel[0][size - 1] = units[0][size - 1].toInt();
+			// units[0][size - 1] = new RaeclarianManus(4, (size - 1));
+			// visualModel[0][size - 1] = units[0][size - 1].toInt();
+			
+			units[1][1] = new RaeclarianManus(4, size + 1);
+			visualModel[1][1] = units[1][1].toInt();
 		}
 		
 		for (int r = 0; r < size; r++) {

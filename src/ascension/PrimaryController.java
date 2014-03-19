@@ -180,13 +180,16 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		int x = arg0.getLocationOnScreen().x, y = arg0.getLocationOnScreen().y;
-		if (y < 864) {
+		if (y < - 864) {
 			int c = gameView.getVisX(), r = gameView.getVisY(),
 					idTag = gameModel.getVisualModel()[((r + y) / 64)][((c + x) / 64)];
-			if (idTag != 0) {
+			if (idTag > 0) {
 				unitIsSelected = true;
 				gameView.setFocusTarget(((c + x) / 64), ((r + y) / 64), InformationIndex.getMovementRadius(idTag), InformationIndex.getName(idTag));
 			}
+		}
+		else {
+			System.out.println("You clicked: " + x + ", " + y);
 		}
 	}
 
