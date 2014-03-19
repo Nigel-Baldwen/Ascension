@@ -25,7 +25,7 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	private GraphicsEnvironment gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	private GraphicsDevice primaryGDev = gEnv.getDefaultScreenDevice();
 	private boolean isFSSupported = primaryGDev.isFullScreenSupported();
-	private PrimaryModel gameModel = new PrimaryModel();
+	private PrimaryModel visualModel = new PrimaryModel();
 	private PrimaryView gameView = new PrimaryView();
 	private Container contentPane;
 	private Timer viewUpdateController;
@@ -45,7 +45,7 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	}
 
 	public void loadInitialGameState() {
-		gameModel.loadInitialModelState(50, 4);
+		visualModel.loadInitialModelState(50, 4);
 		gameView.loadInitialViewState(getGraphicsConfiguration(), 50);
 		boundX = getGraphicsConfiguration().getBounds().width;
 		boundY = getGraphicsConfiguration().getBounds().height;
@@ -71,7 +71,7 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
             	// Updates. For example, rendering the graphics.
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					gameView.updateClock(gameModel.getClockFace());
+					gameView.updateClock(visualModel.getClockFace());
 					render(graphicsPlaceHolder);
 					
 					int x = MouseInfo.getPointerInfo().getLocation().x, y = MouseInfo
@@ -128,7 +128,7 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 		try {
             g = bufferStrategy.getDrawGraphics();
             // Calling Primary View render(Graphics g, int[][] gameState)
-            gameView.render(g, gameModel.getVisualModel());
+            gameView.render(g, visualModel.getVisualModel());
         } finally {
         	// Prudent to free system resources when finished.
             g.dispose();
@@ -180,16 +180,13 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		int x = arg0.getLocationOnScreen().x, y = arg0.getLocationOnScreen().y;
-		if (y < - 864) {
+		if (y < 864) {
 			int c = gameView.getVisX(), r = gameView.getVisY(),
-					idTag = gameModel.getVisualModel()[((r + y) / 64)][((c + x) / 64)];
+					idTag = visualModel.getVisualModel()[((r + y) / 64)][((c + x) / 64)];
 			if (idTag > 0) {
 				unitIsSelected = true;
 				gameView.setFocusTarget(((c + x) / 64), ((r + y) / 64), InformationIndex.getMovementRadius(idTag), InformationIndex.getName(idTag));
 			}
-		}
-		else {
-			System.out.println("You clicked: " + x + ", " + y);
 		}
 	}
 
@@ -200,13 +197,13 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 		if (unitIsSelected) {
 			if (y < 864) {
 				int c = gameView.getVisX(), r = gameView.getVisY(),
-						idTag = gameModel.getVisualModel()[((r + y) / 64)][((c + x) / 64)];
+						idTag = visualModel.getVisualModel()[((r + y) / 64)][((c + x) / 64)];
 				unitIsSelected = false;
 				
 				if (idTag == 0) {
 					Point p = gameView.getFocusTarget();
 					gameView.clearFocusTarget();
-					gameModel.transferUnit(p.x, p.y, ((r + y) / 64), ((c + x) / 64));
+					visualModel.transferUnit(p.x, p.y, ((r + y) / 64), ((c + x) / 64));
 				}
 			}
 		}

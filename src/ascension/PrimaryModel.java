@@ -10,17 +10,22 @@ public class PrimaryModel {
 
 	// @formatter:off
 	/* The game state model is comprised of the integration
-	 * of two separate 2D arrays, one for units and one for terrain,
-	 * into a third 2D array of ints which abstracts the minute
-	 * detail of the former two arrays into a collection of readily
-	 * processed numbers corresponding to various image
-	 * representations. e.g. health bars, unit portraits,
-	 * and transparent unit portraits.
+	 * of up to eight 2D arrays, 4 for units and 4 for terrain,
+	 * (one per player) into four 2D arrays of ints which
+	 * abstract the details of the former eight arrays into a 
+	 * collection of readily processed numbers corresponding to 
+	 * various image representations. e.g. health bars, 
+	 * unit portraits, and transparent unit portraits.
+	 * 
+	 * *A separate triple of arrays in necessary for each player
+	 * in order to reflect the various vision and control rules.
+	 * 
+	 * *Requirement applies to off-line/single-machine variant.
 	 */
 	// @formatter:on
 	
-	private AbstractUnit[][] units;
-	private int[][] terrain, visualModel;
+	private AbstractUnit[][] unitsP1, unitsP2, unitsP3, unitsP4;
+	private int[][] terrainP1, terrainP2, terrainP3, terrainP4, visualModelP1, visualModelP2, visualModelP3, visualModelP4;
 	private int turnLength, percent, currentTurn, playerCount;
 	private ActivityQueue actvivityQueue;
 	private Timer turnTimer = new Timer(0, new ActionListener() {
@@ -55,44 +60,57 @@ public class PrimaryModel {
 		
 		// Creates 2d arrays for terrain, units, and model.
 		// Initializes them.
-		terrain = new int[size][size];
+		terrainP1 = new int[size][size];
+		terrainP2 = new int[size][size];
+		terrainP3 = new int[size][size];
+		terrainP4 = new int[size][size];
 		
 		for (int r = 0; r < size; r++) {
 			for (int c = 0; c < size; c++) {
-				terrain[r][c] = (int) (45 * Math.random() + 45);
+				int tileID = (int) (45 * Math.random() + 45);
+				terrainP1[r][c] = tileID;
+				terrainP2[r][c] = tileID;
+				terrainP3[r][c] = tileID;
+				terrainP4[r][c] = tileID;
 			}
 		}
 		
-		units  = new AbstractUnit[size][size];
-		visualModel = new int[size][size * 2];
+		unitsP1  = new AbstractUnit[size][size];
+		unitsP2  = new AbstractUnit[size][size];
+		unitsP3  = new AbstractUnit[size][size];
+		unitsP4  = new AbstractUnit[size][size];
+		visualModelP1 = new int[size][size * 2];
+		visualModelP2 = new int[size][size * 2];
+		visualModelP3 = new int[size][size * 2];
+		visualModelP4 = new int[size][size * 2];
 		
 		// Initialize up to four players on the map
 		// For testing purposes, all four players are grouped in upper left corner
-		units[0][0] = new RaeclarianManus(1, 0);
-		units[0][0].setVisible(true);
-		units[0][0].setActive(true);
-		visualModel[0][0] = units[0][0].toInt();
+		unitsP1[0][0] = new RaeclarianManus(1, 0);
+		unitsP1[0][0].setVisible(true);
+		unitsP1[0][0].setActive(true);
+		visualModelP1[0][0] = unitsP1[0][0].toInt();
 		
 		// units[size - 1][size - 1] = new RaeclarianManus(2, ((size - 1) * size) + (size - 1)); // Converting row and column to an int
 		// visualModel[size - 1][size - 1] = units[size - 1][size - 1].toInt();
 		
-		units[0][1] = new RaeclarianManus(2, 1); // Converting row and column to an int
-		visualModel[0][1] = units[0][1].toInt();
+		unitsP2[0][1] = new RaeclarianManus(2, 1); // Converting row and column to an int
+		visualModelP2[0][1] = unitsP2[0][1].toInt();
 		
 		if (playerCount > 2) {
 			// units[size - 1][0] = new RaeclarianManus(3, ((size - 1) * size));
 			// visualModel[size - 1][0] = units[size - 1][0].toInt();
 			
-			units[1][0] = new RaeclarianManus(3, size);
-			visualModel[1][0] = units[1][0].toInt();
+			unitsP3[1][0] = new RaeclarianManus(3, size);
+			visualModelP3[1][0] = unitsP3[1][0].toInt();
 		}
 		
 		if (playerCount > 3) {
 			// units[0][size - 1] = new RaeclarianManus(4, (size - 1));
 			// visualModel[0][size - 1] = units[0][size - 1].toInt();
 			
-			units[1][1] = new RaeclarianManus(4, size + 1);
-			visualModel[1][1] = units[1][1].toInt();
+			unitsP4[1][1] = new RaeclarianManus(4, size + 1);
+			visualModelP4[1][1] = unitsP4[1][1].toInt();
 		}
 		
 		for (int r = 0; r < size; r++) {

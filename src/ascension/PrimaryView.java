@@ -329,7 +329,7 @@ public class PrimaryView extends JPanel {
 			} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
 				informationPanel = createVolatileImage();
 			} else if (valCode == VolatileImage.IMAGE_OK) {
-				g.drawImage(informationPanel, 0, 870, null);
+				g.drawImage(informationPanel, 0, 864, null);
 			}
 		} while (informationPanel.contentsLost());
 		
