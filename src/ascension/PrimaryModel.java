@@ -64,6 +64,14 @@ public class PrimaryModel {
 		terrainP2 = new int[size][size];
 		terrainP3 = new int[size][size];
 		terrainP4 = new int[size][size];
+		unitsP1  = new AbstractUnit[size][size];
+		unitsP2  = new AbstractUnit[size][size];
+		unitsP3  = new AbstractUnit[size][size];
+		unitsP4  = new AbstractUnit[size][size];
+		visualModelP1 = new int[size][size * 2];
+		visualModelP2 = new int[size][size * 2];
+		visualModelP3 = new int[size][size * 2];
+		visualModelP4 = new int[size][size * 2];
 		
 		for (int r = 0; r < size; r++) {
 			for (int c = 0; c < size; c++) {
@@ -75,54 +83,51 @@ public class PrimaryModel {
 			}
 		}
 		
-		unitsP1  = new AbstractUnit[size][size];
-		unitsP2  = new AbstractUnit[size][size];
-		unitsP3  = new AbstractUnit[size][size];
-		unitsP4  = new AbstractUnit[size][size];
-		visualModelP1 = new int[size][size * 2];
-		visualModelP2 = new int[size][size * 2];
-		visualModelP3 = new int[size][size * 2];
-		visualModelP4 = new int[size][size * 2];
+		for (int r = 0; r < size; r++) {
+			for (int c = size; c < size * 2; c++) {
+				visualModelP1[r][c] = terrainP1[r][c - size];
+				visualModelP1[r][c] = terrainP1[r][c - size];
+				visualModelP1[r][c] = terrainP1[r][c - size];
+				visualModelP1[r][c] = terrainP1[r][c - size];
+			}
+		}
 		
 		// Initialize up to four players on the map
-		// For testing purposes, all four players are grouped in upper left corner
 		unitsP1[0][0] = new RaeclarianManus(1, 0);
 		unitsP1[0][0].setVisible(true);
 		unitsP1[0][0].setActive(true);
 		visualModelP1[0][0] = unitsP1[0][0].toInt();
 		
-		// units[size - 1][size - 1] = new RaeclarianManus(2, ((size - 1) * size) + (size - 1)); // Converting row and column to an int
-		// visualModel[size - 1][size - 1] = units[size - 1][size - 1].toInt();
-		
-		unitsP2[0][1] = new RaeclarianManus(2, 1); // Converting row and column to an int
-		visualModelP2[0][1] = unitsP2[0][1].toInt();
+		unitsP2[size - 1][size - 1] = new RaeclarianManus(2, ((size - 1) * size) + (size - 1)); // Converting row and column to an int
+		unitsP2[size - 1][size - 1].setVisible(true);
+		unitsP2[size - 1][size - 1].setActive(true);
+		visualModelP2[size - 1][size - 1] = unitsP2[size - 1][size - 1].toInt();
 		
 		if (playerCount > 2) {
-			// units[size - 1][0] = new RaeclarianManus(3, ((size - 1) * size));
-			// visualModel[size - 1][0] = units[size - 1][0].toInt();
-			
-			unitsP3[1][0] = new RaeclarianManus(3, size);
-			visualModelP3[1][0] = unitsP3[1][0].toInt();
+			unitsP3[size - 1][0] = new RaeclarianManus(3, ((size - 1) * size));
+			unitsP3[size - 1][0].setVisible(true);
+			unitsP3[size - 1][0].setActive(true);
+			visualModelP3[size - 1][0] = unitsP3[size - 1][0].toInt();
 		}
 		
 		if (playerCount > 3) {
-			// units[0][size - 1] = new RaeclarianManus(4, (size - 1));
-			// visualModel[0][size - 1] = units[0][size - 1].toInt();
-			
-			unitsP4[1][1] = new RaeclarianManus(4, size + 1);
-			visualModelP4[1][1] = unitsP4[1][1].toInt();
-		}
-		
-		for (int r = 0; r < size; r++) {
-			for (int c = size; c < size * 2; c++) {
-				visualModel[r][c] = terrain[r][c - size];
-			}
+			unitsP4[0][size - 1] = new RaeclarianManus(4, (size - 1));
+			unitsP4[0][size - 1].setVisible(true);
+			unitsP4[0][size - 1].setActive(true);
+			visualModelP4[0][size - 1] = unitsP4[0][size - 1].toInt();
 		}
 	}
 
 	protected void rotateTurn() {
 		if (currentTurn < playerCount) {
-			currentTurn += 1;
+			switch (key) {
+			case value:
+				
+				break;
+
+			default:
+				break;
+			}
 			
 			for (int r = 0; r < units.length; r++) {
 				for (int c = 0; c < units.length; c++) {
@@ -150,6 +155,8 @@ public class PrimaryModel {
 					}
 				}
 			}
+			
+			currentTurn += 1;
 			turnTimer.setRepeats(true);
 			turnTimer.start();
 		}
@@ -159,7 +166,19 @@ public class PrimaryModel {
 	}
 
 	public int[][] getVisualModel() {
-		return visualModel;
+		switch (currentTurn) {
+		case 1:
+			return visualModelP1;
+		
+		case 2:
+			return visualModelP2;
+			
+		case 3:
+			return visualModelP3;
+			
+		default:
+			return visualModelP4;
+		}
 	}
 
 	public int getClockFace() {
@@ -167,10 +186,40 @@ public class PrimaryModel {
 	}
 
 	public void transferUnit(int srcR, int srcC, int destR, int destC) {
-		AbstractUnit temp = units[srcR][srcC];
-		units[srcR][srcC] = units[destR][destC];
-		units[destR][destC] = temp;
-		visualModel[srcR][srcC] = 0;
-		visualModel[destR][destC] = units[destR][destC].toInt();
+		AbstractUnit temp;
+		
+		switch (currentTurn) {
+		case 1:
+			temp = unitsP1[srcR][srcC];
+			unitsP1[srcR][srcC] = unitsP1[destR][destC];
+			unitsP1[destR][destC] = temp;
+			visualModelP1[srcR][srcC] = 0;
+			visualModelP1[destR][destC] = unitsP1[destR][destC].toInt();
+			break;
+			
+		case 2:
+			temp = unitsP2[srcR][srcC];
+			unitsP2[srcR][srcC] = unitsP2[destR][destC];
+			unitsP2[destR][destC] = temp;
+			visualModelP2[srcR][srcC] = 0;
+			visualModelP2[destR][destC] = unitsP2[destR][destC].toInt();
+			break;
+			
+		case 3:
+			temp = unitsP3[srcR][srcC];
+			unitsP3[srcR][srcC] = unitsP3[destR][destC];
+			unitsP3[destR][destC] = temp;
+			visualModelP3[srcR][srcC] = 0;
+			visualModelP3[destR][destC] = unitsP3[destR][destC].toInt();
+			break;
+
+		default:
+			temp = unitsP4[srcR][srcC];
+			unitsP4[srcR][srcC] = unitsP4[destR][destC];
+			unitsP4[destR][destC] = temp;
+			visualModelP4[srcR][srcC] = 0;
+			visualModelP4[destR][destC] = unitsP4[destR][destC].toInt();
+			break;
+		}
 	}
 }
