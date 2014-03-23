@@ -61,101 +61,82 @@ public class PrimaryModel {
 		// Creates 2d arrays for terrain, units, and model.
 		// Initializes them.
 		terrainP1 = new int[size][size];
-		terrainP2 = new int[size][size];
-		terrainP3 = new int[size][size];
-		terrainP4 = new int[size][size];
+		generateMap(terrainP1);
 		unitsP1  = new AbstractUnit[size][size];
-		unitsP2  = new AbstractUnit[size][size];
-		unitsP3  = new AbstractUnit[size][size];
-		unitsP4  = new AbstractUnit[size][size];
+		int x = (int) (Math.random() * size / 4);
+		int y = (int) (Math.random() * size / 4);
+		unitsP1[x][y] = new RaeclarianManus(1, size * x + y);
+		unitsP1[x][y].setVisible(true);
+		unitsP1[x][y].setActive(true);
 		visualModelP1 = new int[size][size * 2];
+		generateVisualModel(visualModelP1, unitsP1, terrainP1);
+		
+		terrainP2 = new int[size][size];
+		copyMap(terrainP1, terrainP2);
+		unitsP2  = new AbstractUnit[size][size];
+		x = (int) (Math.random() * size / 4 + size * 3 / 4);
+		y = (int) (Math.random() * size / 4 + size * 3 / 4);
+		unitsP2[x][y] = new RaeclarianManus(2, size * x + y);
+		unitsP2[x][y].setVisible(true);
+		unitsP2[x][y].setActive(true);
 		visualModelP2 = new int[size][size * 2];
-		visualModelP3 = new int[size][size * 2];
-		visualModelP4 = new int[size][size * 2];
-		
-		for (int r = 0; r < size; r++) {
-			for (int c = 0; c < size; c++) {
-				int tileID = (int) (45 * Math.random() + 45);
-				terrainP1[r][c] = tileID;
-				terrainP2[r][c] = tileID;
-				terrainP3[r][c] = tileID;
-				terrainP4[r][c] = tileID;
-			}
-		}
-		
-		for (int r = 0; r < size; r++) {
-			for (int c = size; c < size * 2; c++) {
-				visualModelP1[r][c] = terrainP1[r][c - size];
-				visualModelP1[r][c] = terrainP1[r][c - size];
-				visualModelP1[r][c] = terrainP1[r][c - size];
-				visualModelP1[r][c] = terrainP1[r][c - size];
-			}
-		}
-		
-		// Initialize up to four players on the map
-		unitsP1[0][0] = new RaeclarianManus(1, 0);
-		unitsP1[0][0].setVisible(true);
-		unitsP1[0][0].setActive(true);
-		visualModelP1[0][0] = unitsP1[0][0].toInt();
-		
-		unitsP2[size - 1][size - 1] = new RaeclarianManus(2, ((size - 1) * size) + (size - 1)); // Converting row and column to an int
-		unitsP2[size - 1][size - 1].setVisible(true);
-		unitsP2[size - 1][size - 1].setActive(true);
-		visualModelP2[size - 1][size - 1] = unitsP2[size - 1][size - 1].toInt();
+		generateVisualModel(visualModelP2, unitsP2, terrainP2);
 		
 		if (playerCount > 2) {
-			unitsP3[size - 1][0] = new RaeclarianManus(3, ((size - 1) * size));
-			unitsP3[size - 1][0].setVisible(true);
-			unitsP3[size - 1][0].setActive(true);
-			visualModelP3[size - 1][0] = unitsP3[size - 1][0].toInt();
+			terrainP3 = new int[size][size];
+			copyMap(terrainP1, terrainP3);
+			unitsP3  = new AbstractUnit[size][size];
+			x = (int) (Math.random() * size / 4);
+			y = (int) (Math.random() * size / 4 + size * 3 / 4);
+			unitsP3[x][y] = new RaeclarianManus(3, size * x + y);
+			unitsP3[x][y].setVisible(true);
+			unitsP3[x][y].setActive(true);
+			visualModelP3 = new int[size][size * 2];
+			generateVisualModel(visualModelP3, unitsP3, terrainP3);
 		}
 		
 		if (playerCount > 3) {
-			unitsP4[0][size - 1] = new RaeclarianManus(4, (size - 1));
-			unitsP4[0][size - 1].setVisible(true);
-			unitsP4[0][size - 1].setActive(true);
-			visualModelP4[0][size - 1] = unitsP4[0][size - 1].toInt();
+			terrainP4 = new int[size][size];
+			copyMap(terrainP1, terrainP4);
+			unitsP4  = new AbstractUnit[size][size];
+			x = (int) (Math.random() * size / 4 + size * 3 / 4);
+			y = (int) (Math.random() * size / 4);
+			unitsP4[x][y] = new RaeclarianManus(4, size * x + y);
+			unitsP4[x][y].setVisible(true);
+			unitsP4[x][y].setActive(true);
+			visualModelP4 = new int[size][size * 2];
+			generateVisualModel(visualModelP4, unitsP4, terrainP4);
+		}
+	}
+
+	private void generateVisualModel(int[][] visM, AbstractUnit[][] units, int[][] terrain) {
+		for (int r = 0; r < units.length; r++) {
+			for (int c = 0; c < units.length; c++) {
+				visM[r][c] = units[r][c] != null ? units[r][c].toInt() : 0;
+				visM[r][c + units.length] = terrain[r][c];
+			}
+		}
+	}
+
+	private void copyMap(int[][] origin, int[][] dest) {
+		for (int r = 0; r < origin.length; r++) {
+			for (int c = 0; c < origin.length; c++) {
+				dest[r][c] = origin[r][c];
+			}
+		}
+	}
+
+	private void generateMap(int[][] dest) {
+		for (int r = 0; r < dest.length; r++) {
+			for (int c = 0; c < dest.length; c++) {
+				int tileID = (int) (45 * Math.random() + 45);
+				dest[r][c] = tileID;
+			}
 		}
 	}
 
 	protected void rotateTurn() {
 		if (currentTurn < playerCount) {
-			switch (key) {
-			case value:
-				
-				break;
-
-			default:
-				break;
-			}
-			
-			for (int r = 0; r < units.length; r++) {
-				for (int c = 0; c < units.length; c++) {
-					if (units[r][c] != null) {
-						AbstractUnit temp = units[r][c];
-						if (temp.getPlayer() == currentTurn) {
-							temp.setVisible(true);
-							if (temp.isDisabled()) {
-								temp.setActive(false);
-							}
-							else {
-								temp.setActive(true);
-							}
-						}
-						else {
-							if (temp.isVisibleBy(currentTurn)) {
-								temp.setVisible(true);
-							}
-							else {
-								temp.setVisible(false);
-							}
-							temp.setActive(false);
-						}
-						visualModel[r][c] = units[r][c].toInt();
-					}
-				}
-			}
-			
 			currentTurn += 1;
 			turnTimer.setRepeats(true);
 			turnTimer.start();
