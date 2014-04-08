@@ -40,7 +40,7 @@ public class PrimaryModel {
 				turnTimer.setRepeats(false);
 			}
 			if (percent == 10) {
-				percent = -1;
+				percent = 0;
 				rotateTurn();
 			}
 			percent++;
@@ -138,6 +138,7 @@ public class PrimaryModel {
 	protected void rotateTurn() {
 		if (currentTurn < playerCount) {
 			currentTurn += 1;
+			PrimaryController.generateNotification("Switching to Player " + currentTurn, 0);
 			turnTimer.setRepeats(true);
 			turnTimer.start();
 		}

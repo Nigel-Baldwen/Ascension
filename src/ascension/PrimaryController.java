@@ -22,6 +22,7 @@ import javax.swing.Timer;
 
 public class PrimaryController extends JFrame implements MouseListener, KeyListener {
 
+	private static boolean actionDisabled;
 	private GraphicsEnvironment gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	private GraphicsDevice primaryGDev = gEnv.getDefaultScreenDevice();
 	private boolean isFSSupported = primaryGDev.isFullScreenSupported();
@@ -77,6 +78,7 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 					int x = MouseInfo.getPointerInfo().getLocation().x, y = MouseInfo
 							.getPointerInfo().getLocation().y;
 
+					if (!actionDisabled) {
 					if (x < 5 && y < 5) {
 						gameView.scrollNorthWest();
 
@@ -110,6 +112,7 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 
 					if (x > 5 && x < boundX - 5 && y < 5) {
 						gameView.scrollNorth();
+					}
 					}
 				}
 			});
@@ -206,6 +209,14 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 					visualModel.transferUnit(p.x, p.y, ((r + y) / 64), ((c + x) / 64));
 				}
 			}
+		}
+	}
+
+	public static void generateNotification(String notification, int type) {
+		switch (type) {
+		case 0:
+			actionDisabled = true;
+			break;
 		}
 	}
 }
