@@ -6,6 +6,11 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
+/**
+ * @author Nigel_Baldwen - nigelbaldwen@gmail.com
+ * @version 1.0
+ */
+
 public class PrimaryModel {
 
 	// @formatter:off
@@ -34,6 +39,28 @@ public class PrimaryModel {
 		// to completion. The view takes the current value of percent
 		// for use in representing a clock face.
 
+		/**
+		 * Comment
+		 * 
+		 * <p>
+		 * <b>Called By</b> -
+		 * <ul>
+		 * <li> {@link }
+		 * </ul>
+		 * <b>Creates</b> -
+		 * <ul>
+		 * <li> {@link }
+	     * </ul>
+	     * <b>Calls</b> -
+	     * <ul>
+	     * <li> {@link }
+	     * </ul>
+		 * </p>
+		 * 
+		 * @param
+		 * @return
+		 */
+		
 		@Override
 		public void actionPerformed(ActionEvent evt) {
 			if (percent == 9) {
@@ -46,6 +73,45 @@ public class PrimaryModel {
 			percent++;
 		}
 	});
+	
+	
+	/* loadInitialModelState(int size, int playercount) {...}
+	 * Function:
+	 * 		Essentially, this method takes in a set of values from an instance of
+	 * PrimaryController and uses them to instantiate various things such as the
+	 * clock and the triples of arrays used by the various players.
+	 * 
+	 * Parameters:
+	 * 		size - indicates the number of squares available
+	 * 		playercount - the number of players involved in the game
+	 * 
+	 * Preconditions:
+	 * 		
+	 * 
+	 * 
+	 */
+
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
 	
 	public void loadInitialModelState(int size, int playerCount) {
 		currentTurn = 1;
@@ -109,6 +175,28 @@ public class PrimaryModel {
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	private void generateVisualModel(int[][] visM, AbstractUnit[][] units, int[][] terrain) {
 		for (int r = 0; r < units.length; r++) {
 			for (int c = 0; c < units.length; c++) {
@@ -118,6 +206,28 @@ public class PrimaryModel {
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	private void copyMap(int[][] origin, int[][] dest) {
 		for (int r = 0; r < origin.length; r++) {
 			for (int c = 0; c < origin.length; c++) {
@@ -126,6 +236,28 @@ public class PrimaryModel {
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	private void generateMap(int[][] dest) {
 		for (int r = 0; r < dest.length; r++) {
 			for (int c = 0; c < dest.length; c++) {
@@ -135,6 +267,28 @@ public class PrimaryModel {
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	protected void rotateTurn() {
 		if (currentTurn < playerCount) {
 			currentTurn += 1;
@@ -147,6 +301,28 @@ public class PrimaryModel {
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public int[][] getVisualModel() {
 		switch (currentTurn) {
 		case 1:
@@ -163,10 +339,54 @@ public class PrimaryModel {
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public int getClockFace() {
 		return percent;
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void transferUnit(int srcR, int srcC, int destR, int destC) {
 		AbstractUnit temp;
 		

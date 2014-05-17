@@ -20,14 +20,29 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
+/**
+ * <p>
+ * <code>PrimaryController</code> is the <i>controller</i> component
+ * of the <b>Ascension</b> project. (Model-View-Controller paradigm)
+ * </p>
+ * 
+ * <p>
+ * <code>PrimaryController</code> is responsible for intercepting user input
+ * as well as coordinating between the <i>model</i> and <i>view</i> components.
+ * </p>
+ * 
+ * @author Nigel_Baldwen - nigelbaldwen@gmail.com
+ * @version 1.0
+ */
+
 public class PrimaryController extends JFrame implements MouseListener, KeyListener {
 
 	private static boolean actionDisabled;
 	private GraphicsEnvironment gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 	private GraphicsDevice primaryGDev = gEnv.getDefaultScreenDevice();
 	private boolean isFSSupported = primaryGDev.isFullScreenSupported();
-	private PrimaryModel visualModel = new PrimaryModel();
-	private PrimaryView gameView = new PrimaryView();
+	private PrimaryModel visualModel;
+	private PrimaryView gameView;
 	private Container contentPane;
 	private Timer viewUpdateController;
 	private BufferStrategy bufferStrategy;
@@ -35,7 +50,17 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	private int boundX, boundY;
 	private boolean unitIsSelected = false;
 	
-	// Constructor
+	/**
+	 * Creates a new, disabled <code>PrimaryController</code> object.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link AppMain}
+	 * </ul>
+	 * </p>
+	 */
+	
 	public PrimaryController() {
 		super();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -45,14 +70,54 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	    contentPane = getContentPane();
 	}
 
+	/**
+	 * Initializes the <i>model</i> and <i>view</i> components
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link AppMain}
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link PrimaryModel PrimaryModel}
+     * <li> {@link PrimaryView PrimaryView}
+     * </ul>
+	 * </p>
+	 */
+	
 	public void loadInitialGameState() {
+		visualModel = new PrimaryModel();
 		visualModel.loadInitialModelState(50, 4);
+		gameView = new PrimaryView();
 		gameView.loadInitialViewState(getGraphicsConfiguration(), 50);
 		boundX = getGraphicsConfiguration().getBounds().width;
 		boundY = getGraphicsConfiguration().getBounds().height;
 		contentPane.add(gameView);
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void startGame() {
 		setUndecorated(isFSSupported);
         setResizable(!isFSSupported);
@@ -126,6 +191,28 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
         }
 		setEnabled(true);
 	}
+	
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
 
 	protected void render(Graphics g) {
 		try {
@@ -139,13 +226,56 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
         bufferStrategy.show();
 	}
 
-	// Intended for future development
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		if (arg0.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -153,24 +283,112 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// Preferable to segment usage into pressed and
 		// released actions.
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// Do Nothing. This makes no sense in a full-screen window.
 		// You cannot exit or enter.
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// Do Nothing. This makes no sense in a full-screen window.
@@ -180,6 +398,29 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	// Translates MouseEvent coordinates into meaningful
 	// gameModel coordinates in order to set a focus target for the
 	// view
+
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		int x = arg0.getLocationOnScreen().x, y = arg0.getLocationOnScreen().y;
@@ -194,6 +435,29 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	}
 
 	// Completes the actions initiated in mousePressed
+
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		int x = arg0.getLocationOnScreen().x, y = arg0.getLocationOnScreen().y;
@@ -212,6 +476,28 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public static void generateNotification(String notification, int type) {
 		switch (type) {
 		case 0:

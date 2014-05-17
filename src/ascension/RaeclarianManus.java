@@ -1,7 +1,34 @@
 package ascension;
 
+/**
+ * @author Nigel_Baldwen - nigelbaldwen@gmail.com
+ * @version 1.0
+ */
+
 public class RaeclarianManus extends AbstractUnit {
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public RaeclarianManus(int player, int location) {
 		intAtk = 3; intDef = 6;
 		solInv = -1; solAff = 3;
@@ -51,6 +78,28 @@ public class RaeclarianManus extends AbstractUnit {
 		trnPld = 0;
 		idValu = 1;
 	}
+
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
 	
 	public int toInt() {
 		if (visible) {

@@ -16,9 +16,23 @@ import javax.imageio.*;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
-// Inefficiently coded including a fair amount of
-// repetition and potentially useless code.
-// Intended for fix.
+/**
+ * <p>
+ * <code>PrimaryView</code> is the <i>view</i> component of the
+ * <b>Ascension</b> project. (Model-View-Controller paradigm)
+ * </p>
+ * 
+ * <p>
+ * <code>PrimaryView</code> is responsible for all things graphical.
+ * If you see it on the screen, it is because there is some
+ * method or other contained in <code>PrimaryView</code> which makes it
+ * happen.
+ * </p>
+ * 
+ * @author      Nigel_Baldwen - nigelbaldwen@gmail.com
+ * @version     1.0
+ */
+
 public class PrimaryView extends JPanel {
 
 	// @formatter:off
@@ -82,6 +96,29 @@ public class PrimaryView extends JPanel {
 
 	// General image manipulation and instantiation intended for use in the
 	// render(Graphics g, int[][] gameState) method
+
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void loadInitialViewState(GraphicsConfiguration gC, int units) {
 		this.gC = gC;
 		this.units = 64 * units;
@@ -210,6 +247,29 @@ public class PrimaryView extends JPanel {
 	// Creates a valid VolatileImage to be used for the
 	// portrait. May seem to be capable of infinite recursion.
 	// This is not possible. Trust me.
+
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	private VolatileImage createPortrait() {
 		VolatileImage image = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
 
@@ -229,6 +289,28 @@ public class PrimaryView extends JPanel {
 		return image;
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	private VolatileImage createClockImage() {
 		VolatileImage image = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
 
@@ -246,6 +328,28 @@ public class PrimaryView extends JPanel {
 		return image;
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	private VolatileImage createInformationImage() {
 		VolatileImage image = gC.createCompatibleVolatileImage(1920, 216);
 
@@ -256,6 +360,28 @@ public class PrimaryView extends JPanel {
 		return image;
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void render(Graphics g, int[][] gameState) {
 		// Calculate drawn squares
 		int cStart = visX / 64 + gameState.length;
@@ -382,6 +508,29 @@ public class PrimaryView extends JPanel {
 	// If the contents are lost, the portrait
 	// is restored. This is the same for restore:(
 	// ClockImage, UnitTile, InformationPanel, and TerrainTile)
+
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	private void restorePortrait() {
 		Graphics2D g = null;
 
@@ -407,6 +556,28 @@ public class PrimaryView extends JPanel {
 		} while (portrait.contentsLost());
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	private void restoreClockImage() {
 		Graphics2D g = null;
 
@@ -432,6 +603,28 @@ public class PrimaryView extends JPanel {
 		} while (clockImage.contentsLost());
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	private void restoreUnitTile(int i) {
 		Graphics2D g = null;
 
@@ -457,6 +650,28 @@ public class PrimaryView extends JPanel {
 		} while (unitImages[0].contentsLost());
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	private void restoreInformationPanel() {
 		Graphics2D g = null;
 
@@ -478,6 +693,28 @@ public class PrimaryView extends JPanel {
 		} while (informationPanel.contentsLost());
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	private void restoreTerrainTile(int i) {
 		Graphics2D g = null;
 
@@ -499,6 +736,28 @@ public class PrimaryView extends JPanel {
 		} while (terrainImages[i].contentsLost());
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	private VolatileImage createVolatileImage() {
 		VolatileImage image = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
 
@@ -516,12 +775,56 @@ public class PrimaryView extends JPanel {
 		return image;
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void scrollWest() {
 		if (visX > 9) {
 			visX -= 10;
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void scrollNorthWest() {
 		if (visY > 9) {
 			visY -= 10;
@@ -531,12 +834,56 @@ public class PrimaryView extends JPanel {
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void scrollNorth() {
 		if (visY > 9) {
 			visY -= 10;
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void scrollNorthEast() {
 		if (visY > 9) {
 			visY -= 10;
@@ -546,12 +893,56 @@ public class PrimaryView extends JPanel {
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void scrollEast() {
 		if (visX < boundX - 9) {
 			visX += 10;
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void scrollSouthEast() {
 		if (visY < boundY - 9) {
 			visY += 10;
@@ -561,12 +952,56 @@ public class PrimaryView extends JPanel {
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void scrollSouth() {
 		if (visY < boundY - 9) {
 			visY += 10;
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void scrollSouthWest() {
 		if (visY < boundY - 9) {
 			visY += 10;
@@ -576,16 +1011,83 @@ public class PrimaryView extends JPanel {
 		}
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public int getVisX() {
 		return visX;
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public int getVisY() {
 		return visY;
 	}
 
 	// Identifies a region for highlighting when a unit is
 	// selected
+
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void setFocusTarget(int c, int r, int rad, String name) {
 		focusing = true;
 		focusC = c;
@@ -594,15 +1096,80 @@ public class PrimaryView extends JPanel {
 		focusName = name;
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void updateClock(int face) {
 		clockFace = face;
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
 	
 	public Point getFocusTarget() {
 		return new Point(focusR, focusC);
 	}
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public void clearFocusTarget() {
 		focusing = false;
 	}

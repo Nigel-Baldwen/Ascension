@@ -1,9 +1,36 @@
 package ascension;
 
+/**
+ * @author Nigel_Baldwen - nigelbaldwen@gmail.com
+ * @version 1.0
+ */
+
 public class Activity {
 
 	private int[] activityKeys = new int[6];
 
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public Activity (int aP, int rP, int aT, int pI, int aD, int aR) {
 		activityKeys[0] = aP;
 		activityKeys[1] = rP;
@@ -30,6 +57,29 @@ public class Activity {
 	 * activityKeys[5] : special riders or effects to be applied
 	 * 		by an ability
 	 */
+
+	/**
+	 * Comment
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link }
+	 * </ul>
+	 * <b>Creates</b> -
+	 * <ul>
+	 * <li> {@link }
+     * </ul>
+     * <b>Calls</b> -
+     * <ul>
+     * <li> {@link }
+     * </ul>
+	 * </p>
+	 * 
+	 * @param
+	 * @return
+	 */
+	
 	public int[] provideActivityKeys() {
 		return activityKeys;
 	}
