@@ -37,14 +37,26 @@ import javax.swing.Timer;
 
 public class PrimaryController extends JFrame implements MouseListener, KeyListener {
 
+	/**
+	 * A timer, initialized in {@link PrimaryController#startGame() startGame()}, which
+	 * manages rendering and scrolling.
+	 * 
+	 * <p>
+	 * <b>Calls</b> -
+     * <ul>
+     * <li> {@link PrimaryController#render(Graphics) render(Graphics)}
+     * <li> {@link PrimaryView#scrollEast() Scrolling Methods}
+     * </ul>
+	 * </p>
+	 */
+	private Timer viewUpdateController;
 	private static boolean actionDisabled;
-	private GraphicsEnvironment gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
-	private GraphicsDevice primaryGDev = gEnv.getDefaultScreenDevice();
-	private boolean isFSSupported = primaryGDev.isFullScreenSupported();
+	private GraphicsEnvironment gEnv;
+	private GraphicsDevice primaryGDev;
+	private boolean isFSSupported;
 	private PrimaryModel visualModel;
 	private PrimaryView gameView;
 	private Container contentPane;
-	private Timer viewUpdateController;
 	private BufferStrategy bufferStrategy;
 	private Graphics graphicsPlaceHolder = null;
 	private int boundX, boundY;
@@ -97,28 +109,24 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	}
 
 	/**
-	 * Comment
+	 * Establishes the graphical context and starts the timer for visual rendering.
 	 * 
 	 * <p>
+	 * If supported by the default <code>GraphicsDevice</code>, the game opens
+	 * in full screen mode with a refresh rate matching the device's refresh
+	 * rate. 
+	 * 
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link AppMain AppMain}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+     * </p>
 	 */
 	
 	public void startGame() {
+		gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+		primaryGDev  = gEnv.getDefaultScreenDevice();
+		isFSSupported = primaryGDev.isFullScreenSupported();
 		setUndecorated(isFSSupported);
         setResizable(!isFSSupported);
         if (isFSSupported) {
@@ -193,31 +201,27 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	}
 	
 	/**
-	 * Comment
+	 * Utilizes a <code>BufferStrategy</code> in order to all the
+	 * <i>view</i> to draw upon a <code>Graphics</code> object.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
      * <b>Calls</b> -
      * <ul>
-     * <li> {@link }
+     * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
      * </ul>
 	 * </p>
 	 * 
-	 * @param
-	 * @return
+	 * @param g - A <code>Graphics</code> object which gets replaced each render
+	 * by the <code>BufferStrategy</code>'s next available <code>Graphics</code> object.
 	 */
 
 	protected void render(Graphics g) {
 		try {
             g = bufferStrategy.getDrawGraphics();
-            // Calling Primary View render(Graphics g, int[][] gameState)
             gameView.render(g, visualModel.getVisualModel());
         } finally {
         	// Prudent to free system resources when finished.
