@@ -37,7 +37,7 @@ public class PrimaryView extends JPanel {
 
 	// @formatter:off
 	/*
-	 * Terrain Key "T_" + "[0...44]": 
+	 * Terrain Key "T_" + "[0...89]": 
 	 * 0 * 9 + [0...8] Crystal 
 	 * 1 * 9 + [0...8] Dirt 
 	 * 2 * 9 + [0...8] Grass 
@@ -57,24 +57,26 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * -------------------------------
 	 * 
+	 * pixelLength = 64 * (# of unit rows/columns)
+	 * 
+	 * pixelLength describes the side length of 
+	 * the square of pixels occupied by all
+	 * of the 64 X 64 pixel images of the
+	 * grid of units
+	 * 
+	 * boundX and boundY describe the
+	 * upper-left hand corner of the
+	 * lower-right most displayed screen 
+	 * in pixels in the graphics
+	 * space such that they equal:
+	 * boundX = pixelLength - (width of screen)
+	 * boundY = pixelLength - (height of screen)
+	 * 
 	 * visX and visY describe the upper-left 
 	 * most pixels in graphics space such that
 	 * visX and visY fall into the ranges:
 	 * 0 <= visX <= boundX
 	 * 0 <= visY <= boundY
-	 * 
-	 * boundX and boundY describe the
-	 * lower-right most pixels in graphics
-	 * space such that they equal:
-	 * boundX = units - (width of screen)
-	 * boundY = units - (height of screen)
-	 * 
-	 * units describes the number of pixels
-	 * in graphics space occupied by all
-	 * of the 64 X 64 pixel images of the
-	 * grid of units
-	 * 
-	 * units = 64 * (# of unit rows/columns)
 	 * 
 	 * These fields are used to govern
 	 * scrolling display functions.
@@ -82,320 +84,86 @@ public class PrimaryView extends JPanel {
 	// @formatter:on
 
 	private VolatileImage[] terrainImages, unitImages;
-	private VolatileImage informationPanel;
-	private VolatileImage clockImage;
-	private VolatileImage portrait;
+	private VolatileImage informationPanel, clockImage, portrait;
 	private GraphicsConfiguration gC;
-	private int visX = 0, visY = 0, boundX, boundY, units, screenWidth, screenHeight;
+	private int visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, focusC, focusR, focusRad, clockFace;
 	private boolean focusing;
-	private int focusC;
-	private int focusR;
-	private int focusRad;
-	private int clockFace;
 	private String focusName;
 
-	// General image manipulation and instantiation intended for use in the
-	// render(Graphics g, int[][] gameState) method
-
 	/**
-	 * Comment
+	 * Establishes window boundaries and creates <code>VolatileImage</code>s
+	 * for use in rendering.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#loadInitialGameState() loadInitialGameState()}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
 	 * 
-	 * @param
-	 * @return
+	 * @param gC - the <code>GraphicsConfiguration</code> the view operates within
+	 * @param units - the number cells in one row of the square grid
 	 */
-	
+
 	public void loadInitialViewState(GraphicsConfiguration gC, int units) {
 		this.gC = gC;
-		this.units = 64 * units;
+		this.pixelLength = 64 * units;
 		screenWidth = gC.getBounds().width;
 		screenHeight = gC.getBounds().height;
-		boundX = this.units - screenWidth;
-		boundY = this.units - screenHeight + 219;
-		
+		boundX = this.pixelLength - screenWidth;
+		boundY = this.pixelLength - screenHeight + 219;
+		visX = 0;
+		visY = 0;
+
 		terrainImages = new VolatileImage[90];
-		unitImages = new VolatileImage[1];
 
 		for (int i = 0; i < terrainImages.length; i++) {
-			
-			terrainImages[i] = createVolatileImage();
-			Graphics2D g = null;
-
-			do {
-				if (terrainImages[i].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-					terrainImages[i] = createVolatileImage();
-				}
-
-				try {
-					g = terrainImages[i].createGraphics();
-
-					g.drawImage(
-							(new ImageIcon(getClass().getClassLoader()
-									.getResource("images/T_" + i + ".jpg")))
-									.getImage(), 0, 0, null);
-				} finally {
-					g.dispose();
-				}
-			} while (terrainImages[i].contentsLost());
+			terrainImages[i] = gC.createCompatibleVolatileImage(64, 64);
 		}
 
-		informationPanel = createInformationImage();
-		Graphics2D g = null;
+		unitImages = new VolatileImage[1];
 
-		do {
-			if (informationPanel.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				informationPanel = createInformationImage();
-			}
-
-			try {
-				g = informationPanel.createGraphics();
-
-				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/I_" + 0 + ".png"))).getImage(), 0,
-						0, null);
-			} finally {
-				g.dispose();
-			}
-		} while (informationPanel.contentsLost());
-
-		clockImage = createClockImage();
-		g = null;
-
-		do {
-			if (clockImage.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				clockImage = createClockImage();
-			}
-
-			try {
-				g = clockImage.createGraphics();
-				
-				g.setComposite(AlphaComposite.Src);
-				g.setColor(Color.black);
-				g.clearRect(0, 0, 64, 64);
-
-				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/clock_" + clockFace + ".png"))).getImage(), 0,
-						0, null);
-			} finally {
-				g.dispose();
-			}
-		} while (clockImage.contentsLost());
+		for (int i = 0; i < unitImages.length; i++) {
+			unitImages[i] = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
+		}
 		
-		portrait = createPortrait();
-		g = null;
-
-		do {
-			if (portrait.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				portrait = createPortrait();
-			}
-
-			try {
-				g = portrait.createGraphics();
-				
-				g.setComposite(AlphaComposite.Src);
-				g.setColor(Color.black);
-				g.clearRect(0, 0, 128, 157);
-
-				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/portrait.jpg"))).getImage(), 0,
-						0, null);
-			} finally {
-				g.dispose();
-			}
-		} while (portrait.contentsLost());
-		
-		unitImages[0] = createVolatileImage();
-		g = null;
-
-		do {
-			if (unitImages[0].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				unitImages[0] = createVolatileImage();
-			}
-
-			try {
-				g = unitImages[0].createGraphics();
-				
-				g.setComposite(AlphaComposite.Src);
-				g.setColor(Color.black);
-				g.clearRect(0, 0, 64, 64);
-
-				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/AedainianSeekerPlayer1.png"))).getImage(), 0,
-						0, null);
-			} finally {
-				g.dispose();
-			}
-		} while (unitImages[0].contentsLost());
+		informationPanel = gC.createCompatibleVolatileImage(1920, 216);
+		clockImage = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
+		portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
 	}
 
-	// Virtually identical to createClockImage,
-	// createInformationImage, and createVolatileImage
-	// Creates a valid VolatileImage to be used for the
-	// portrait. May seem to be capable of infinite recursion.
-	// This is not possible. Trust me.
-
 	/**
-	 * Comment
+	 * Handles all visual display operations.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#render(Graphics) render(Graphics)}
 	 * </ul>
-	 * <b>Creates</b> -
+	 * <b>Calls</b> -
 	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
+	 * <li> {@link PrimaryView#restorePortrait() Restoration Methods}
+	 * </ul>
 	 * </p>
 	 * 
-	 * @param
-	 * @return
+	 * @param gameState - the currently active player's visible information
+	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
 	 */
-	
-	private VolatileImage createPortrait() {
-		VolatileImage image = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
 
-		if (image.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-		
-			// Clears the image to transparent so that the image
-			// can be transparent.
-			Graphics2D g = image.createGraphics();
-			g.setComposite(AlphaComposite.Src);
-			g.setColor(Color.black);
-			g.clearRect(0, 0, 128, 157);
-			
-			image = createPortrait();
-			
-			return image;
-		}
-		return image;
-	}
-
-	/**
-	 * Comment
-	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
-	 */
-	
-	private VolatileImage createClockImage() {
-		VolatileImage image = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
-
-		if (image.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-			
-			Graphics2D g = image.createGraphics();
-			g.setComposite(AlphaComposite.Src);
-			g.setColor(Color.black);
-			g.clearRect(0, 0, 128, 128);
-			
-			image = createClockImage();
-			
-			return image;
-		}
-		return image;
-	}
-
-	/**
-	 * Comment
-	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
-	 */
-	
-	private VolatileImage createInformationImage() {
-		VolatileImage image = gC.createCompatibleVolatileImage(1920, 216);
-
-		if (image.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-			image = createInformationImage();
-			return image;
-		}
-		return image;
-	}
-
-	/**
-	 * Comment
-	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
-	 */
-	
 	public void render(Graphics g, int[][] gameState) {
 		// Calculate drawn squares
 		int cStart = visX / 64 + gameState.length;
 		int rStart = visY / 64;
 		int cEnd = cStart + screenWidth / 64 + 1;
 		int rEnd = rStart + screenHeight / 64 + 1;
-		
+
 		// Traversing the 2D gameState array to draw 
 		// terrain tiles. The do while ensures the images
 		// actually get drawn. Applies for the populate units
 		// region as well.
 		for (int r = rStart; r < rEnd && r < gameState.length; r++) {
 			for (int c = cStart; c < cEnd && c < gameState.length * 2; c++) {
-				
+
 				int i = gameState[r][c];
 
 				do {
@@ -404,7 +172,7 @@ public class PrimaryView extends JPanel {
 					if (valCode == VolatileImage.IMAGE_RESTORED) {
 						restoreTerrainTile(i);
 					} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-						terrainImages[i] = createVolatileImage();
+						terrainImages[i] = gC.createCompatibleVolatileImage(64, 64);
 					} else if (valCode == VolatileImage.IMAGE_OK) {
 						g.drawImage(terrainImages[i], ((c - gameState.length) * 64) - visX,
 								(r * 64) - visY, null);
@@ -416,7 +184,7 @@ public class PrimaryView extends JPanel {
 		// Populate Units
 		for (int r = rStart; r < rEnd && r < gameState.length; r++) {
 			for (int c = cStart - gameState.length; c < cEnd - gameState.length && c < gameState.length * 2; c++) {
-				
+
 				int i = gameState[r][c];
 
 				do {
@@ -425,7 +193,7 @@ public class PrimaryView extends JPanel {
 					if (valCode == VolatileImage.IMAGE_RESTORED) {
 						restoreUnitTile(i);
 					} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-						unitImages[0] = createVolatileImage();
+						unitImages[0] = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
 					} else if (valCode == VolatileImage.IMAGE_OK && gameState[r][c] > 0) {
 						g.drawImage(unitImages[0], (c * 64) - visX,
 								(r * 64) - visY, null);
@@ -433,7 +201,7 @@ public class PrimaryView extends JPanel {
 				} while (unitImages[0].contentsLost());
 			}
 		}
-		
+
 		// Used to draw the highlight boxes for displaying the unit's
 		// movement radius.
 		if (focusing) {
@@ -445,7 +213,7 @@ public class PrimaryView extends JPanel {
 					g.drawRect(c * 64 + 1  - visX, r * 64 + 1 - visY, 62, 62);
 				}
 		}
-		
+
 		// Information Panel
 		do {
 			int valCode = informationPanel.validate(gC);
@@ -453,51 +221,51 @@ public class PrimaryView extends JPanel {
 			if (valCode == VolatileImage.IMAGE_RESTORED) {
 				restoreInformationPanel();
 			} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-				informationPanel = createVolatileImage();
+				informationPanel = gC.createCompatibleVolatileImage(1920, 216);
 			} else if (valCode == VolatileImage.IMAGE_OK) {
 				g.drawImage(informationPanel, 0, 864, null);
 			}
 		} while (informationPanel.contentsLost());
-		
+
 		// Clock Face
 		do {
 			restoreClockImage();
-			
+
 			int valCode = clockImage.validate(gC);
 
 			if (valCode == VolatileImage.IMAGE_RESTORED) {
 				restoreClockImage();
 			} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-				clockImage = createClockImage();
+				clockImage = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
 			} else if (valCode == VolatileImage.IMAGE_OK) {
 				g.drawImage(clockImage, 10, 874, null);
 			}
 		} while (clockImage.contentsLost());
-		
+
 		if (focusing) {
 			do {
 				int i = gameState[focusR][focusC];
-				
+
 				int valCode = unitImages[0].validate(gC);
 
 				if (valCode == VolatileImage.IMAGE_RESTORED) {
 					restoreUnitTile(i);
 				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-					unitImages[0] = createVolatileImage();
+					unitImages[0] = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
 				} else if (valCode == VolatileImage.IMAGE_OK) {
 					g.drawImage(unitImages[0], 170, 886, null);
 					g.setColor(Color.WHITE);
 					g.drawString(focusName, 1162, 1061);
 				}
 			} while (unitImages[0].contentsLost());
-			
+
 			do {
 				int valCode = portrait.validate(gC);
 
 				if (valCode == VolatileImage.IMAGE_RESTORED) {
 					restorePortrait();
 				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-					portrait = createPortrait();
+					portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
 				} else if (valCode == VolatileImage.IMAGE_OK) {
 					g.drawImage(portrait, 1148, 874, null);
 				}
@@ -505,48 +273,29 @@ public class PrimaryView extends JPanel {
 		}	
 	}
 
-	// If the contents are lost, the portrait
-	// is restored. This is the same for restore:(
-	// ClockImage, UnitTile, InformationPanel, and TerrainTile)
-
 	/**
-	 * Comment
+	 * Restores the lost contents of the portrait image.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	private void restorePortrait() {
 		Graphics2D g = null;
 
 		do {
 
 			if (portrait.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				portrait = createPortrait();
+				portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
 			}
 
 			try {
 				g = portrait.createGraphics();
-				
 				g.setComposite(AlphaComposite.Src);
-				g.setColor(Color.black);
-				g.clearRect(0, 0, 128, 157);
-				
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
 						.getResource("images/portrait.jpg"))).getImage(), 0,
 						0, null);
@@ -557,43 +306,28 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Restores the lost contents of the clock image.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	private void restoreClockImage() {
 		Graphics2D g = null;
 
 		do {
 
 			if (clockImage.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				clockImage = createClockImage();
+				clockImage = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
 			}
 
 			try {
 				g = clockImage.createGraphics();
-				
 				g.setComposite(AlphaComposite.Src);
-				g.setColor(Color.black);
-				g.clearRect(0, 0, 128, 128);
-				
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
 						.getResource("images/clock_" + clockFace + ".png"))).getImage(), 0,
 						0, null);
@@ -604,43 +338,28 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Restores the lost contents of the unit image.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	private void restoreUnitTile(int i) {
 		Graphics2D g = null;
 
 		do {
 
 			if (unitImages[0].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				unitImages[0] = createVolatileImage();
+				unitImages[0] = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
 			}
 
 			try {
 				g = unitImages[0].createGraphics();
-				
 				g.setComposite(AlphaComposite.Src);
-				g.setColor(Color.black);
-				g.clearRect(0, 0, 64, 64);
-				
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
 						.getResource("images/AedainianSeekerPlayer1.png"))).getImage(), 0,
 						0, null);
@@ -651,34 +370,23 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Restores the lost contents of the information panel image.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	private void restoreInformationPanel() {
 		Graphics2D g = null;
 
 		do {
 
 			if (informationPanel.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				informationPanel = createVolatileImage();
+				informationPanel = gC.createCompatibleVolatileImage(1920, 216);
 			}
 
 			try {
@@ -694,34 +402,23 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Restores the lost contents of the terrain tile image.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	private void restoreTerrainTile(int i) {
 		Graphics2D g = null;
 
 		do {
 
 			if (terrainImages[i].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				terrainImages[i] = createVolatileImage();
+				terrainImages[i] = gC.createCompatibleVolatileImage(64, 64);
 			}
 
 			try {
@@ -737,66 +434,15 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Scrolls the display to the west.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
-	private VolatileImage createVolatileImage() {
-		VolatileImage image = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
 
-		if (image.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-			
-			Graphics2D g = image.createGraphics();
-			g.setComposite(AlphaComposite.Src);
-			g.setColor(Color.black);
-			g.clearRect(0, 0, 64, 64);
-			
-			image = createVolatileImage();
-			
-			return image;
-		}
-		return image;
-	}
-
-	/**
-	 * Comment
-	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
-	 */
-	
 	public void scrollWest() {
 		if (visX > 9) {
 			visX -= 10;
@@ -804,27 +450,15 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Scrolls the display to the north-west.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	public void scrollNorthWest() {
 		if (visY > 9) {
 			visY -= 10;
@@ -835,27 +469,15 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Scrolls the display to the north.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	public void scrollNorth() {
 		if (visY > 9) {
 			visY -= 10;
@@ -863,27 +485,15 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Scrolls the display to the north-east.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	public void scrollNorthEast() {
 		if (visY > 9) {
 			visY -= 10;
@@ -894,27 +504,15 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Scrolls the display to the east.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	public void scrollEast() {
 		if (visX < boundX - 9) {
 			visX += 10;
@@ -922,27 +520,15 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Scrolls the display to the south-east.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	public void scrollSouthEast() {
 		if (visY < boundY - 9) {
 			visY += 10;
@@ -953,27 +539,15 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Scrolls the display to the south.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	public void scrollSouth() {
 		if (visY < boundY - 9) {
 			visY += 10;
@@ -981,27 +555,15 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Scrolls the display to the south-west.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	public void scrollSouthWest() {
 		if (visY < boundY - 9) {
 			visY += 10;
@@ -1012,82 +574,57 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Returns the upper-left-most visible pixel's x coordinate relative to the entire graphics space.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#mousePressed(java.awt.event.MouseEvent) mousePressed(java.awt.event.MouseEvent)}
+	 * <li> {@link PrimaryController#mouseReleased(java.awt.event.MouseEvent) mouseReleased(java.awt.event.MouseEvent)}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
 	 * 
-	 * @param
-	 * @return
+	 * @return the upper-left-most visible pixel's x coordinate
 	 */
-	
+
 	public int getVisX() {
 		return visX;
 	}
 
 	/**
-	 * Comment
+	 * Returns the upper-left-most visible pixel's y coordinate relative to the entire graphics space.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#mousePressed(java.awt.event.MouseEvent) mousePressed(java.awt.event.MouseEvent)}
+	 * <li> {@link PrimaryController#mouseReleased(java.awt.event.MouseEvent) mouseReleased(java.awt.event.MouseEvent)}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
 	 * 
-	 * @param
-	 * @return
+	 * @return the upper-left-most visible pixel's y coordinate
 	 */
-	
+
 	public int getVisY() {
 		return visY;
 	}
 
-	// Identifies a region for highlighting when a unit is
-	// selected
-
 	/**
-	 * Comment
+	 * Identifies a selected unit and its movement radius.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#mousePressed(java.awt.event.MouseEvent) mousePressed(java.awt.event.MouseEvent)}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
 	 * 
-	 * @param
-	 * @return
+	 * @param c - the abstract column coordinate of the unit
+	 * @param r - the abstract row coordinate of the unit
+	 * @param rad - the unit's movement radius
+	 * @param name - the unit's name
 	 */
-	
+
 	public void setFocusTarget(int c, int r, int rad, String name) {
 		focusing = true;
 		focusC = c;
@@ -1097,79 +634,50 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Comment
+	 * Replaces the clock face in order to keep it up to date.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
 	 * 
-	 * @param
-	 * @return
+	 * @param face - the current clock face
 	 */
-	
+
 	public void updateClock(int face) {
 		clockFace = face;
 	}
 
 	/**
-	 * Comment
+	 * Returns the current focus target.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#mouseReleased(java.awt.event.MouseEvent) mouseReleased(java.awt.event.MouseEvent)}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
 	 * 
-	 * @param
-	 * @return
+	 * @return the focus target
 	 */
-	
+
 	public Point getFocusTarget() {
 		return new Point(focusR, focusC);
 	}
 
 	/**
-	 * Comment
+	 * Clears the focus target.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#mouseReleased(java.awt.event.MouseEvent) mouseReleased(java.awt.event.MouseEvent)}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
-	 * 
-	 * @param
-	 * @return
 	 */
-	
+
 	public void clearFocusTarget() {
 		focusing = false;
 	}

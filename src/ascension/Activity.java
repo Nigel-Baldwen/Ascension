@@ -10,25 +10,14 @@ public class Activity {
 	private int[] activityKeys = new int[6];
 
 	/**
-	 * Comment
+	 * Makes a new activity.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @param aP - absolute priority
+	 * @param rP - relative priority
+	 * @param aT - activity type
+	 * @param pI - position index
+	 * @param aD - activity destination
+	 * @param aR - activity riders and effects
 	 */
 	
 	public Activity (int aP, int rP, int aT, int pI, int aD, int aR) {
@@ -59,25 +48,9 @@ public class Activity {
 	 */
 
 	/**
-	 * Comment
+	 * Returns the activity keys of this activity.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the activity keys
 	 */
 	
 	public int[] provideActivityKeys() {

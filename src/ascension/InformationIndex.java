@@ -4,6 +4,9 @@ package ascension;
 // Currently incomplete
 
 /**
+ * Intended as a sort of library/reference class.
+ * May or may not see actual use.
+ * 
  * @author Nigel_Baldwen - nigelbaldwen@gmail.com
  * @version 1.0
  */
@@ -11,25 +14,10 @@ package ascension;
 public class InformationIndex {
 
 	/**
-	 * Comment
+	 * Returns a unit's sight radius.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @param idTag - the unit's type
+	 * @return the unit's sight radius
 	 */
 	
 	public static int getSightRadius(int idTag) {
@@ -38,25 +26,16 @@ public class InformationIndex {
 	}
 
 	/**
-	 * Comment
+	 * Returns a unit's movement radius.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#mousePressed(java.awt.event.MouseEvent) mousePressed(java.awt.event.MouseEvent)}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
 	 * 
-	 * @param
-	 * @return
+	 * @param idTag - the unit's type
+	 * @return the unit's movement radius
 	 */
 	
 	public static int getMovementRadius(int idTag) {
@@ -65,25 +44,16 @@ public class InformationIndex {
 	}
 
 	/**
-	 * Comment
+	 * Returns a unit's name.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryController#mousePressed(java.awt.event.MouseEvent) mousePressed(java.awt.event.MouseEvent)}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
 	 * 
-	 * @param
-	 * @return
+	 * @param idTag - the unit's type
+	 * @return the unit's name
 	 */
 	
 	public static String getName(int idTag) {

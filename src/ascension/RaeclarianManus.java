@@ -8,25 +8,17 @@ package ascension;
 public class RaeclarianManus extends AbstractUnit {
 
 	/**
-	 * Comment
+	 * Creates a new RaeclarianManus.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryModel#loadInitialModelState(int, int) loadInitialModelState(int, int)}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
 	 * </p>
 	 * 
-	 * @param
-	 * @return
+	 * @param player - the owner
+	 * @param location - the location in the grid
 	 */
 	
 	public RaeclarianManus(int player, int location) {
@@ -80,25 +72,9 @@ public class RaeclarianManus extends AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the current visual state of this <code>RaeclarianManus</code>.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return - the current visual state
 	 */
 	
 	public int toInt() {

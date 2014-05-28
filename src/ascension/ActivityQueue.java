@@ -10,25 +10,9 @@ import java.util.ArrayList;
 public class ActivityQueue extends ArrayList<ActivityList> {
 
 	/**
-	 * Comment
+	 * Processes the Queue and returns an ordered list.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the processed list
 	 */
 	
 	public ActivityList process() {

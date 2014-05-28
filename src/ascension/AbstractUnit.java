@@ -1,18 +1,14 @@
 package ascension;
 
-// @formatter:off
-/* AbstractUnit, as may be guessed, serves as
- * the basic structure for all units. All units
- * possess several stats, represented by named
- * int fields. They additionally possess at
- * least one basic, melee attack and four
- * special abilities. (The builder units give
- * one of their "ability" slots to their building
- * menus)
- */
-// @formatter:on
-
 /**
+ * <code>AbstractUnit</code> serves as the basis for all units.
+ * 
+ * <p>
+ * All units possess several stats represented by named int fields.
+ * They additionally possess at least one basic attack and four
+ * special abilities.
+ * </p>
+ * 
  * @author Nigel_Baldwen - nigelbaldwen@gmail.com
  * @version 1.0
  */
@@ -21,7 +17,7 @@ public class AbstractUnit {
 
 	// @formatter:off
 	// All atk/def stats are paired left to right.
-	// Values of -1 indicate that the given stat
+	// values of -1 indicate that the given stat
 	// is not readily applicable to the given unit.
 	protected int intAtk, intDef,
 				solInv, solAff,
@@ -75,28 +71,18 @@ public class AbstractUnit {
 	protected boolean visible = false, active = false, disabled;
 	// @formatter:on
 
-	// Returns an int which encapsulates the visual state of the unit
-
 	/**
-	 * Comment
+	 * Returns an int which encapsulates the visual state of the unit.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link }
+	 * <li> {@link PrimaryModel#generateVisualModel(int[][], AbstractUnit[][], int[][]) generateVisualModel(int[][], AbstractUnit[][], int[][])}
+	 * <li> {@link PrimaryModel#transferUnit(int, int, int, int) transferUnit(int, int, int, int)}
 	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
+	 * <p>
 	 * 
-	 * @param
-	 * @return
+	 * @return the unit's visual state
 	 */
 	
 	public int toInt() {
@@ -104,25 +90,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Allows an individual unit to track who sees it.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @param player - the player who sees the unit
 	 */
 	
 	public void setVisibleBy(int player) {
@@ -130,25 +100,10 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Check to see if a unit is visible to a given player.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @param player - the player checking for vision
+	 * @return true if the player can see the unit
 	 */
 	
 	public boolean isVisibleBy(int player) {
@@ -156,25 +111,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's ID value which corresponds to its type.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's type
 	 */
 	
 	public int getIdValu() {
@@ -182,25 +121,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Intelligence Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Intelligence Attack value.
 	 */
 	
 	public int getIntAtk() {
@@ -208,25 +131,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Intelligence Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Intelligence Defense value.
 	 */
 	
 	public int getIntDef() {
@@ -234,25 +141,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Soul Investment Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Soul Investment Attack value.
 	 */
 	
 	public int getSolInv() {
@@ -260,25 +151,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Soul Affinity Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Soul Affinity Defense value.
 	 */
 	
 	public int getSolAff() {
@@ -286,25 +161,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Symbiosis Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Symbiosis Attack value.
 	 */
 	
 	public int getSymbio() {
@@ -312,25 +171,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Hoarding Aptitude Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Hoarding Aptitude Defense value.
 	 */
 	
 	public int getHordAp() {
@@ -338,25 +181,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Poison Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Poison Attack value.
 	 */
 	
 	public int getPoison() {
@@ -364,25 +191,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Health Regeneration Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Health Regeneration Defense value.
 	 */
 	
 	public int getHltReg() {
@@ -390,25 +201,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Kinesis Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Kinesis Attack value.
 	 */
 	
 	public int getKenisi() {
@@ -416,25 +211,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Calming Aura Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Calming Aura Defense value.
 	 */
 	
 	public int getCalmAu() {
@@ -442,25 +221,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Illusion Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Illusion Attack value.
 	 */
 	
 	public int getIllusi() {
@@ -468,25 +231,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Disillusionment Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Disillusionment Defense value.
 	 */
 	
 	public int getDisIll() {
@@ -494,25 +241,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Holy Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Holy Attack value.
 	 */
 	
 	public int getHlyAtk() {
@@ -520,25 +251,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Holy Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Holy Defense value.
 	 */
 	
 	public int getHlyDef() {
@@ -546,25 +261,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Dark Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Dark Attack value.
 	 */
 	
 	public int getDrkAtk() {
@@ -572,25 +271,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Dark Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Dark Defense value.
 	 */
 	
 	public int getDrkDef() {
@@ -598,25 +281,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Dispel Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Dispel Attack value.
 	 */
 	
 	public int getDispel() {
@@ -624,25 +291,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Spell Strength Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Spell Strength Defense value.
 	 */
 	
 	public int getSplStr() {
@@ -650,25 +301,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Summon Strength Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Summon Strength Attack value.
 	 */
 	
 	public int getSumStr() {
@@ -676,25 +311,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Planar Affinity Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Planar Affinity Defense value.
 	 */
 	
 	public int getPlnAff() {
@@ -702,25 +321,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Threat Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Threat Attack value.
 	 */
 	
 	public int getThreat() {
@@ -728,25 +331,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Bravery Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Bravery Defense value.
 	 */
 	
 	public int getBravry() {
@@ -754,25 +341,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Earth Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Earth Attack value.
 	 */
 	
 	public int getEthAtk() {
@@ -780,25 +351,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Earth Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Earth Defense value.
 	 */
 	
 	public int getEthDef() {
@@ -806,25 +361,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Wind Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Wind Attack value.
 	 */
 	
 	public int getWndAtk() {
@@ -832,25 +371,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Wind Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Wind Defense value.
 	 */
 	
 	public int getWndDef() {
@@ -858,25 +381,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Fire Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Fire Attack value.
 	 */
 	
 	public int getFirAtk() {
@@ -884,25 +391,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Fire Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Fire Defense value.
 	 */
 	
 	public int getFirDef() {
@@ -910,25 +401,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Water Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Water Attack value.
 	 */
 	
 	public int getWtrAtk() {
@@ -936,25 +411,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Water Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Water Defense value.
 	 */
 	
 	public int getWtrDef() {
@@ -962,25 +421,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Death Blow Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Death Blow Attack value.
 	 */
 	
 	public int getDthBlw() {
@@ -988,25 +431,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Nullification Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Nullification Defense value.
 	 */
 	
 	public int getNullif() {
@@ -1014,25 +441,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Unarmed Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Unarmed Attack value.
 	 */
 	
 	public int getUnarmd() {
@@ -1040,25 +451,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Strength Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Strength Defense value.
 	 */
 	
 	public int getStrnth() {
@@ -1066,25 +461,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Agility Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Agility Attack value.
 	 */
 	
 	public int getAglAtk() {
@@ -1092,25 +471,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Agility Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Agility Defense value.
 	 */
 	
 	public int getAglDef() {
@@ -1118,25 +481,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Charge value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Charge value.
 	 */
 	
 	public int getCharge() {
@@ -1144,25 +491,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Stability.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Stability.
 	 */
 	
 	public int getStabil() {
@@ -1170,25 +501,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Blunt Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Blunt Attack value.
 	 */
 	
 	public int getBlunts() {
@@ -1196,25 +511,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Padding Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Padding Defense value.
 	 */
 	
 	public int getPaddin() {
@@ -1222,25 +521,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Blade Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Blade Attack value.
 	 */
 	
 	public int getBlades() {
@@ -1248,25 +531,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Shell Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Shell Defense value.
 	 */
 	
 	public int getShells() {
@@ -1274,25 +541,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Pierce Attack value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Pierce Attack value.
 	 */
 	
 	public int getPierce() {
@@ -1300,25 +551,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Reinforcement Defense value.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Reinforcement Defense value.
 	 */
 	
 	public int getRnfrcm() {
@@ -1326,25 +561,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Melee Attack Damage.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Melee Attack Damage.
 	 */
 	
 	public int getDmgMel() {
@@ -1352,25 +571,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Ranged Attack Damage.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Ranged Attack Damage.
 	 */
 	
 	public int getDmgRng() {
@@ -1378,25 +581,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Damage for Special Attack One.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Damage for Special Attack One.
 	 */
 	
 	public int getDmgOne() {
@@ -1404,25 +591,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Damage for Special Attack Two.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Damage for Special Attack Two.
 	 */
 	
 	public int getDmgTwo() {
@@ -1430,25 +601,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Damage for Special Attack Three.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Damage for Special Attack Three.
 	 */
 	
 	public int getDmgThr() {
@@ -1456,25 +611,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Damage for Special Attack Four.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Damage for Special Attack Four.
 	 */
 	
 	public int getDmgFor() {
@@ -1482,25 +621,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Health Capacity.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Health Capacity.
 	 */
 	
 	public int getHealth() {
@@ -1508,25 +631,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Mana Capacity.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Mana Capacity.
 	 */
 	
 	public int getMagPnt() {
@@ -1534,25 +641,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Mana Regeneration Rate.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Mana Regeneration Rate.
 	 */
 	
 	public int getMagRgn() {
@@ -1560,25 +651,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Energy Capacity.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Energy Capacity.
 	 */
 	
 	public int getEngPnt() {
@@ -1586,25 +661,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Energy Regeneration Rate.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Energy Regeneration Rate.
 	 */
 	
 	public int getEngRgn() {
@@ -1612,25 +671,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Attack Speed.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Attack Speed.
 	 */
 	
 	public int getAtkSpd() {
@@ -1638,25 +681,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Attack Per Turn.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Attacks Per Turn.
 	 */
 	
 	public int getNumAtk() {
@@ -1664,25 +691,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Sight Radius.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Sight Radius.
 	 */
 	
 	public int getSihtRd() {
@@ -1690,25 +701,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Movement Speed.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Movement Speed.
 	 */
 	
 	public int getMovSpd() {
@@ -1716,25 +711,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Production Cost.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Production Cost.
 	 */
 	
 	public int getPrdCst() {
@@ -1742,25 +721,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Attack Range.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Attack Range.
 	 */
 	
 	public int getRanged() {
@@ -1768,25 +731,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Size In Squares.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Size In Squares.
 	 */
 	
 	public int getSqrOcu() {
@@ -1794,25 +741,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Levels.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Levels.
 	 */
 	
 	public int getLevels() {
@@ -1820,25 +751,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Death Experience Reward.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Death Experience Reward.
 	 */
 	
 	public int getDthEXP() {
@@ -1846,25 +761,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Owner.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Owner.
 	 */
 	
 	public int getPlayer() {
@@ -1872,25 +771,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Current Location.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Current Location.
 	 */
 	
 	public int getCurLoc() {
@@ -1898,25 +781,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the unit's Channel Time.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the unit's Channel Time.
 	 */
 	
 	public int getChnTim() {
@@ -1924,25 +791,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Returns the number of turns the unit has been in the game.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return the number of turns the unit has been in the game.
 	 */
 	
 	public int getTrnPld() {
@@ -1950,25 +801,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Indicates whether or not the unit is visible.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return true if the unit is visible
 	 */
 	
 	public boolean isVisible() {
@@ -1976,25 +811,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Indicates whether or not the unit is active.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return true if the unit is active
 	 */
 	
 	public boolean isActive() {
@@ -2002,25 +821,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Indicates whether or not the unit is disabled.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @return true if the unit is disabled
 	 */
 	
 	public boolean isDisabled() {
@@ -2028,25 +831,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Sets the unit to be visible or invisible.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @param b - if true, set visible
 	 */
 	
 	public void setVisible(boolean b) {
@@ -2054,25 +841,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Sets the unit to be active or inactive.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @param b - if true, set active
 	 */
 	
 	public void setActive(boolean b) {
@@ -2080,25 +851,9 @@ public class AbstractUnit {
 	}
 
 	/**
-	 * Comment
+	 * Sets the unit to be disabled or enabled.
 	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * @param b - if true, set disabled
 	 */
 	
 	public void setDisabled(boolean b) {

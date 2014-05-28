@@ -10,25 +10,7 @@ import java.util.ArrayList;
 public class ActivityList extends ArrayList<Activity> {
 
 	/**
-	 * Comment
-	 * 
-	 * <p>
-	 * <b>Called By</b> -
-	 * <ul>
-	 * <li> {@link }
-	 * </ul>
-	 * <b>Creates</b> -
-	 * <ul>
-	 * <li> {@link }
-     * </ul>
-     * <b>Calls</b> -
-     * <ul>
-     * <li> {@link }
-     * </ul>
-	 * </p>
-	 * 
-	 * @param
-	 * @return
+	 * Organizes this <code>ActivityList</code>. 
 	 */
 	
 	public void organize() {
