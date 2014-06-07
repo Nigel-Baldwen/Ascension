@@ -10,7 +10,12 @@ import java.util.ArrayList;
 public class ActivityList extends ArrayList<Activity> {
 
 	/**
-	 * Organizes this <code>ActivityList</code>. 
+	 * Organizes this <code>ActivityList</code>.
+	 * 
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link ActivityQueue#process() process()}
+	 * </ul>
 	 */
 	
 	public void organize() {

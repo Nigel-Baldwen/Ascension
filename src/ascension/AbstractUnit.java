@@ -67,13 +67,41 @@ public class AbstractUnit {
 				chnTim,
 				trnPld,
 				idValu;
+	protected ActivityList activityList = new ActivityList();
 	private int[] visibleBy = new int[4];
 	protected boolean visible = false, active = false, disabled;
 	// @formatter:on
 
 	/**
+	 * Adds an <code>Activity</code> to the <code>AbstractUnit</code>'s
+	 * <code>ActivityList</code>.
+	 * 
+	 * @param activity - the <code>Activity</code> to be added
+	 */
+	public void addActivity(Activity activity) {
+		activityList.add(activity);
+	}
+	
+	/**
+	 * Returns the unit's <code>ActivityList</code>.
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryModel#rotateTurn() rotateTurn()}
+	 * </ul>
+	 * <p>
+	 * @return the unit's <code>ActivityList</code>
+	 */
+	
+	public ActivityList getActivityList() {
+		return activityList;
+	}
+	
+	/**
 	 * Returns an int which encapsulates the visual state of the unit.
 	 * 
+	 * <p>
+	 * Only <code>AbstractUnit</code> objects return a value of 0.
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>

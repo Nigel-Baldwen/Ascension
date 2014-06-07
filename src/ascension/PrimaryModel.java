@@ -47,7 +47,7 @@ public class PrimaryModel {
 	private AbstractUnit[][] unitsP1, unitsP2, unitsP3, unitsP4;
 	private int[][] terrainP1, terrainP2, terrainP3, terrainP4, visualModelP1, visualModelP2, visualModelP3, visualModelP4;
 	private int turnLength, percent, currentTurn, playerCount;
-	private ActivityQueue actvivityQueue;
+	private ActivityQueue activityQueue;
 
 	/**
 	 * Takes in a set of values from the <i>model</i> in order
@@ -226,6 +226,9 @@ public class PrimaryModel {
 	 * Rotates the turn to the next player in sequence.
 	 * 
 	 * <p>
+	 * At the end of a round, processes the <code>ActivityQueue</code>
+	 * and resolves all pending <code>Activities</code>.
+	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
 	 * <li> {@link PrimaryModel#turnTimer turnTimer}
@@ -233,6 +236,8 @@ public class PrimaryModel {
 	 * <b>Calls</b> -
 	 * <ul>
 	 * <li> {@link PrimaryController#generateNotification(String, int) generateNotification(String, int)}
+	 * <li> {@link AbstractUnit#getActivityList() getActivityList()}
+	 * <li> {@link ActivityQueue#process() process()}
 	 * </ul>
 	 * </p>
 	 */
@@ -245,6 +250,25 @@ public class PrimaryModel {
 			turnTimer.start();
 		}
 		else {
+			for (int r = 0; r < unitsP1.length; r++) {
+				for (int c = 0; c < unitsP1.length; c++) {
+					if (unitsP1[r][c].toInt() != 0) {
+						activityQueue.add(unitsP1[r][c].getActivityList());
+					}
+					if (unitsP2[r][c].toInt() != 0) {
+						activityQueue.add(unitsP2[r][c].getActivityList());
+					}
+					if (unitsP3[r][c].toInt() != 0) {
+						activityQueue.add(unitsP3[r][c].getActivityList());
+					}
+					if (unitsP4[r][c].toInt() != 0) {
+						activityQueue.add(unitsP4[r][c].getActivityList());
+					}
+				}
+			}
+			
+			activityQueue.process();
+			// Consider how to implement the chain of activities
 			currentTurn = 1;
 		}
 	}
