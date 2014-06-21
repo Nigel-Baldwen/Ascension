@@ -127,9 +127,14 @@ public class PrimaryView extends JPanel {
 			unitImages[i] = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
 		}
 		
-		informationPanel = gC.createCompatibleVolatileImage(1920, 216);
-		clockImage = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
-		portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
+		if (screenWidth == 2560 && screenHeight == 1440) {
+			
+		}
+		else if (screenWidth == 1920 && screenHeight == 1080) {
+			informationPanel = gC.createCompatibleVolatileImage(1920, 216);
+			clockImage = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
+			portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
+		}
 	}
 
 	/**
