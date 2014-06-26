@@ -86,7 +86,7 @@ public class PrimaryView extends JPanel {
 	private VolatileImage[] terrainImages, unitImages;
 	private VolatileImage informationPanel, clockImage, portrait;
 	private GraphicsConfiguration gC;
-	private int visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, focusC, focusR, focusRad, clockFace;
+	private int visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, focusC, focusR, focusRad, clockFace;
 	private boolean focusing;
 	private String focusName;
 
@@ -127,14 +127,33 @@ public class PrimaryView extends JPanel {
 			unitImages[i] = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
 		}
 		
-		if (screenWidth == 2560 && screenHeight == 1440) {
-			
+		if (screenWidth < 1280 || screenHeight < 720) {
+			System.exit(0);
 		}
-		else if (screenWidth == 1920 && screenHeight == 1080) {
-			informationPanel = gC.createCompatibleVolatileImage(1920, 216);
-			clockImage = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
-			portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
+		else if (screenWidth < 1366  && screenHeight < 768) {
+			xOffset = (screenWidth - 1280) / 2;
+			yOffset = (screenHeight - 720) / 2;
 		}
+		else if (screenWidth < 1600  && screenHeight < 900) {
+			xOffset = (screenWidth - 1366) / 2;
+			yOffset = (screenHeight - 768) / 2;
+		}
+		else if (screenWidth < 1920  && screenHeight < 1080) {
+			xOffset = (screenWidth - 1600) / 2;
+			yOffset = (screenHeight - 900) / 2;
+		}
+		else if (screenWidth < 2560 && screenHeight < 1440) {
+			xOffset = (screenWidth - 1920) / 2;
+			yOffset = (screenHeight - 1080) / 2;
+		}
+		else {
+			xOffset = (screenWidth - 2560) / 2;
+			yOffset = (screenHeight - 1440) / 2;
+		}
+		
+		informationPanel = gC.createCompatibleVolatileImage(screenWidth - 2 * xOffset, (screenHeight - 2 * yOffset) / 5);
+		clockImage = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
+		portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
 	}
 
 	/**
