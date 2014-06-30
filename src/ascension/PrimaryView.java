@@ -86,7 +86,8 @@ public class PrimaryView extends JPanel {
 	private VolatileImage[] terrainImages, unitImages;
 	private VolatileImage informationPanel, clockImage, portrait;
 	private GraphicsConfiguration gC;
-	private int visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, focusC, focusR, focusRad, clockFace;
+	private int visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
+		iPaneWidth, iPaneHeight, clockWidth, clockHeight, portraitWidth, portraitHeight, focusC, focusR, focusRad, clockFace;
 	private boolean focusing;
 	private String focusName;
 
@@ -133,6 +134,9 @@ public class PrimaryView extends JPanel {
 		else if (screenWidth < 1366  && screenHeight < 768) {
 			xOffset = (screenWidth - 1280) / 2;
 			yOffset = (screenHeight - 720) / 2;
+			iPaneWidth = 1280;
+			iPaneHeight = 256;
+			//clockWidth = 
 		}
 		else if (screenWidth < 1600  && screenHeight < 900) {
 			xOffset = (screenWidth - 1366) / 2;
@@ -417,7 +421,7 @@ public class PrimaryView extends JPanel {
 				g = informationPanel.createGraphics();
 
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/I_" + 0 + ".png"))).getImage(), 0,
+						.getResource("images/I_0_1" + ".jpg"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
