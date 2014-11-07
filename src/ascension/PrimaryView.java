@@ -87,7 +87,7 @@ public class PrimaryView extends JPanel {
 	private VolatileImage informationPanel, clockImage, portrait;
 	private GraphicsConfiguration gC;
 	private int visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
-		iPaneWidth, iPaneHeight, clockWidth, clockHeight, portraitWidth, portraitHeight, focusC, focusR, focusRad, clockFace;
+		iPaneWidth, iPaneHeight, resKey, clockWidth, clockHeight, portraitWidth, portraitHeight, focusC, focusR, focusRad, clockFace;
 	private boolean focusing;
 	private String focusName;
 
@@ -108,7 +108,7 @@ public class PrimaryView extends JPanel {
 
 	public void loadInitialViewState(GraphicsConfiguration gC, int units) {
 		this.gC = gC;
-		this.pixelLength = 64 * units;
+		pixelLength = 64 * units;
 		screenWidth = gC.getBounds().width;
 		screenHeight = gC.getBounds().height;
 		boundX = this.pixelLength - screenWidth;
@@ -135,27 +135,32 @@ public class PrimaryView extends JPanel {
 			xOffset = (screenWidth - 1280) / 2;
 			yOffset = (screenHeight - 720) / 2;
 			iPaneWidth = 1280;
-			iPaneHeight = 256;
-			//clockWidth = 
-		}
-		else if (screenWidth < 1600  && screenHeight < 900) {
-			xOffset = (screenWidth - 1366) / 2;
-			yOffset = (screenHeight - 768) / 2;
+			iPaneHeight = 144;
+			resKey = 3;
 		}
 		else if (screenWidth < 1920  && screenHeight < 1080) {
 			xOffset = (screenWidth - 1600) / 2;
 			yOffset = (screenHeight - 900) / 2;
+			iPaneWidth = 1600;
+			iPaneHeight = 180;
+			resKey = 2;
 		}
 		else if (screenWidth < 2560 && screenHeight < 1440) {
 			xOffset = (screenWidth - 1920) / 2;
 			yOffset = (screenHeight - 1080) / 2;
+			iPaneWidth = 1920;
+			iPaneHeight = 216;
+			resKey = 1;
 		}
 		else {
 			xOffset = (screenWidth - 2560) / 2;
 			yOffset = (screenHeight - 1440) / 2;
+			iPaneWidth = 2560;
+			iPaneHeight = 288;
+			resKey = 0;
 		}
 		
-		informationPanel = gC.createCompatibleVolatileImage(screenWidth - 2 * xOffset, (screenHeight - 2 * yOffset) / 5);
+		informationPanel = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
 		clockImage = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
 		portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
 	}
@@ -249,9 +254,9 @@ public class PrimaryView extends JPanel {
 			if (valCode == VolatileImage.IMAGE_RESTORED) {
 				restoreInformationPanel();
 			} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-				informationPanel = gC.createCompatibleVolatileImage(1920, 216);
+				informationPanel = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
 			} else if (valCode == VolatileImage.IMAGE_OK) {
-				g.drawImage(informationPanel, 0, 864, null);
+				g.drawImage(informationPanel, xOffset, screenHeight - yOffset - iPaneHeight, null);
 			}
 		} while (informationPanel.contentsLost());
 
@@ -325,7 +330,7 @@ public class PrimaryView extends JPanel {
 				g = portrait.createGraphics();
 				g.setComposite(AlphaComposite.Src);
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/portrait.jpg"))).getImage(), 0,
+						.getResource("images/Units/portrait.jpg"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
@@ -357,7 +362,7 @@ public class PrimaryView extends JPanel {
 				g = clockImage.createGraphics();
 				g.setComposite(AlphaComposite.Src);
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/clock_" + clockFace + ".png"))).getImage(), 0,
+						.getResource("images/Clock/C_" + clockFace + "_0.png"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
@@ -389,7 +394,7 @@ public class PrimaryView extends JPanel {
 				g = unitImages[0].createGraphics();
 				g.setComposite(AlphaComposite.Src);
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/AedainianSeekerPlayer1.png"))).getImage(), 0,
+						.getResource("images/Units/AedainianSeekerPlayer1.png"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
@@ -414,14 +419,14 @@ public class PrimaryView extends JPanel {
 		do {
 
 			if (informationPanel.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				informationPanel = gC.createCompatibleVolatileImage(1920, 216);
+				informationPanel = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
 			}
 
 			try {
 				g = informationPanel.createGraphics();
 
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/I_0_1" + ".jpg"))).getImage(), 0,
+						.getResource("images/Information Panel/I_0_" + resKey + ".jpg"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
@@ -453,7 +458,7 @@ public class PrimaryView extends JPanel {
 				g = terrainImages[i].createGraphics();
 
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/T_" + i + ".jpg"))).getImage(), 0,
+						.getResource("images/Terrain/T_" + i + ".jpg"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
