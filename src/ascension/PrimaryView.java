@@ -128,38 +128,34 @@ public class PrimaryView extends JPanel {
 			unitImages[i] = gC.createCompatibleVolatileImage(64, 64, VolatileImage.TRANSLUCENT);
 		}
 		
-		if (screenWidth < 1280 || screenHeight < 720) {
-			System.exit(0);
-		}
-		else if (screenWidth < 1366  && screenHeight < 768) {
-			xOffset = (screenWidth - 1280) / 2;
-			yOffset = (screenHeight - 720) / 2;
-			iPaneWidth = 1280;
-			iPaneHeight = 144;
-			resKey = 3;
-		}
-		else if (screenWidth < 1920  && screenHeight < 1080) {
-			xOffset = (screenWidth - 1600) / 2;
-			yOffset = (screenHeight - 900) / 2;
-			iPaneWidth = 1600;
-			iPaneHeight = 180;
-			resKey = 2;
-		}
-		else if (screenWidth < 2560 && screenHeight < 1440) {
-			xOffset = (screenWidth - 1920) / 2;
-			yOffset = (screenHeight - 1080) / 2;
-			iPaneWidth = 1920;
-			iPaneHeight = 216;
-			resKey = 1;
-		}
-		else {
+		if (screenWidth >= 2560 && screenHeight >= 1440) {
 			xOffset = (screenWidth - 2560) / 2;
 			yOffset = (screenHeight - 1440) / 2;
 			iPaneWidth = 2560;
 			iPaneHeight = 288;
 			resKey = 0;
+		} else if (screenWidth >= 1920 && screenHeight >= 1080) {
+			xOffset = (screenWidth - 1920) / 2;
+			yOffset = (screenHeight - 1080) / 2;
+			iPaneWidth = 1920;
+			iPaneHeight = 216;
+			resKey = 1;
+		} else if (screenWidth >= 1600  && screenHeight >= 900) {
+			xOffset = (screenWidth - 1600) / 2;
+			yOffset = (screenHeight - 900) / 2;
+			iPaneWidth = 1600;
+			iPaneHeight = 180;
+			resKey = 2;
+		} else if (screenWidth >= 1280  && screenHeight >= 720) {
+			xOffset = (screenWidth - 1280) / 2;
+			yOffset = (screenHeight - 720) / 2;
+			iPaneWidth = 1280;
+			iPaneHeight = 144;
+			resKey = 3;
+		} else {
+			System.exit(0);
 		}
-		
+				
 		informationPanel = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
 		clockImage = gC.createCompatibleVolatileImage(128, 128, VolatileImage.TRANSLUCENT);
 		portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
