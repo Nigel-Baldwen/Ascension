@@ -5,10 +5,10 @@ package ascension;
  * @version 1.0
  */
 
-public class RaeclarianManus extends AbstractUnit {
+public class PhysicalBuilder extends AbstractUnit {
 
 	/**
-	 * Creates a new RaeclarianManus.
+	 * Creates a new PhysicalBuilder.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
@@ -20,8 +20,7 @@ public class RaeclarianManus extends AbstractUnit {
 	 * @param player - the owner
 	 * @param location - the location in the grid
 	 */
-	
-	public RaeclarianManus(int player, int location) {
+	public PhysicalBuilder(int player, int location) {
 		intAtk = 3; intDef = 6;
 		solInv = -1; solAff = 3;
 		symbio = -1; hordAp = 3;
@@ -68,18 +67,17 @@ public class RaeclarianManus extends AbstractUnit {
 		curLoc = location;
 		chnTim = 0;
 		trnPld = 0;
-		idValu = 1;
+		idValu = 0;
 	}
 
 	/**
-	 * Returns the current visual state of this <code>RaeclarianManus</code>.
+	 * Returns the current visual state of this <code>PhysicalBuilder</code>.
 	 * 
 	 * @return - the current visual state
 	 */
-	
 	public int toInt() {
 		if (visible) {
-			return 1;
+			return 0;
 		}
 		else {
 			return - 1;

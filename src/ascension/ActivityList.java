@@ -17,7 +17,6 @@ public class ActivityList extends ArrayList<Activity> {
 	 * <li> {@link ActivityQueue#process() process()}
 	 * </ul>
 	 */
-	
 	public void organize() {
 		// Do nothing for now as lists will always be in order
 	}

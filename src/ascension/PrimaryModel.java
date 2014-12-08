@@ -42,7 +42,6 @@ public class PrimaryModel {
 	 * </ul>
 	 * </p>
 	 */
-
 	private Timer turnTimer;
 	private AbstractUnit[][] unitsP1, unitsP2, unitsP3, unitsP4;
 	private int[][] terrainP1, terrainP2, terrainP3, terrainP4, visualModelP1, visualModelP2, visualModelP3, visualModelP4;
@@ -60,7 +59,7 @@ public class PrimaryModel {
 	 * </ul>
 	 * <b>Creates</b> -
 	 * <ul>
-	 * <li> {@link RaeclarianManus RaeclarianManus}
+	 * <li> {@link PhysicalBuilder RaeclarianManus}
 	 * </ul>
 	 * <b>Calls</b> -
 	 * <ul>
@@ -73,7 +72,6 @@ public class PrimaryModel {
 	 * @param size - the number of squares in the square map
 	 * @param playerCount - the number of players in the match
 	 */
-
 	public void loadInitialModelState(int size, int playerCount) {
 		currentTurn = 1;
 		this.playerCount = playerCount;
@@ -106,7 +104,7 @@ public class PrimaryModel {
 		unitsP1  = new AbstractUnit[size][size];
 		int x = (int) (Math.random() * size / 4);
 		int y = (int) (Math.random() * size / 4);
-		unitsP1[x][y] = new RaeclarianManus(1, size * x + y);
+		unitsP1[x][y] = new PhysicalBuilder(1, size * x + y);
 		unitsP1[x][y].setVisible(true);
 		unitsP1[x][y].setActive(true);
 		visualModelP1 = new int[size][size * 2];
@@ -117,7 +115,7 @@ public class PrimaryModel {
 		unitsP2  = new AbstractUnit[size][size];
 		x = (int) (Math.random() * size / 4 + size * 3 / 4);
 		y = (int) (Math.random() * size / 4 + size * 3 / 4);
-		unitsP2[x][y] = new RaeclarianManus(2, size * x + y);
+		unitsP2[x][y] = new PhysicalBuilder(2, size * x + y);
 		unitsP2[x][y].setVisible(true);
 		unitsP2[x][y].setActive(true);
 		visualModelP2 = new int[size][size * 2];
@@ -129,7 +127,7 @@ public class PrimaryModel {
 			unitsP3  = new AbstractUnit[size][size];
 			x = (int) (Math.random() * size / 4);
 			y = (int) (Math.random() * size / 4 + size * 3 / 4);
-			unitsP3[x][y] = new RaeclarianManus(3, size * x + y);
+			unitsP3[x][y] = new PhysicalBuilder(3, size * x + y);
 			unitsP3[x][y].setVisible(true);
 			unitsP3[x][y].setActive(true);
 			visualModelP3 = new int[size][size * 2];
@@ -142,7 +140,7 @@ public class PrimaryModel {
 			unitsP4  = new AbstractUnit[size][size];
 			x = (int) (Math.random() * size / 4 + size * 3 / 4);
 			y = (int) (Math.random() * size / 4);
-			unitsP4[x][y] = new RaeclarianManus(4, size * x + y);
+			unitsP4[x][y] = new PhysicalBuilder(4, size * x + y);
 			unitsP4[x][y].setVisible(true);
 			unitsP4[x][y].setActive(true);
 			visualModelP4 = new int[size][size * 2];
@@ -168,11 +166,10 @@ public class PrimaryModel {
 	 * @param units - the source unit array
 	 * @param terrain - the source terrain array
 	 */
-
 	private void generateVisualModel(int[][] visM, AbstractUnit[][] units, int[][] terrain) {
 		for (int r = 0; r < units.length; r++) {
 			for (int c = 0; c < units.length; c++) {
-				visM[r][c] = units[r][c] != null ? units[r][c].toInt() : 0;
+				visM[r][c] = units[r][c] != null ? units[r][c].toInt() : -1;
 				visM[r][c + units.length] = terrain[r][c];
 			}
 		}
@@ -191,7 +188,6 @@ public class PrimaryModel {
 	 * @param origin - the map to be copied
 	 * @param dest - the map to receive the copy
 	 */
-
 	private void copyMap(int[][] origin, int[][] dest) {
 		for (int r = 0; r < origin.length; r++) {
 			for (int c = 0; c < origin.length; c++) {
@@ -212,7 +208,6 @@ public class PrimaryModel {
 	 * 
 	 * @param dest - the terrain array that will receive the map
 	 */
-
 	private void generateMap(int[][] dest) {
 		for (int r = 0; r < dest.length; r++) {
 			for (int c = 0; c < dest.length; c++) {
@@ -241,7 +236,6 @@ public class PrimaryModel {
 	 * </ul>
 	 * </p>
 	 */
-
 	protected void rotateTurn() {
 		if (currentTurn < playerCount) {
 			currentTurn += 1;
@@ -287,7 +281,6 @@ public class PrimaryModel {
 	 * 
 	 * @return the current visual model
 	 */
-
 	public int[][] getVisualModel() {
 		switch (currentTurn) {
 		case 1:
@@ -316,7 +309,6 @@ public class PrimaryModel {
 	 * 
 	 * @return represents the current clock face
 	 */
-
 	public int getClockFace() {
 		return percent;
 	}
@@ -340,7 +332,6 @@ public class PrimaryModel {
 	 * @param destR - the unit's destination row
 	 * @param destC - the unit's destination column
 	 */
-
 	public void transferUnit(int srcR, int srcC, int destR, int destC) {
 		AbstractUnit temp;
 

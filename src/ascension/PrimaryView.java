@@ -105,7 +105,6 @@ public class PrimaryView extends JPanel {
 	 * @param gC - the <code>GraphicsConfiguration</code> the view operates within
 	 * @param units - the number cells in one row of the square grid
 	 */
-
 	public void loadInitialViewState(GraphicsConfiguration gC, int units) {
 		this.gC = gC;
 		screenWidth = gC.getBounds().width;
@@ -171,7 +170,7 @@ public class PrimaryView extends JPanel {
 			terrainImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength);
 		}
 
-		unitImages = new VolatileImage[1];
+		unitImages = new VolatileImage[40];
 
 		for (int i = 0; i < unitImages.length; i++) {
 			unitImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
@@ -199,14 +198,13 @@ public class PrimaryView extends JPanel {
 	 * @param gameState - the currently active player's visible information
 	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
 	 */
-
 	public void render(Graphics g, int[][] gameState) {
 		// Calculate drawn squares
 		int cStart = visX / unitLength + gameState.length;
 		int rStart = visY / unitLength;
-		int cEnd = cStart + screenWidth / unitLength + 1;
-		int rEnd = rStart + screenHeight / unitLength + 1;
-
+		int cEnd = cStart + (screenWidth - 2 * xOffset) / unitLength + 1;
+		int rEnd = rStart + (screenHeight - 2 * yOffset) / unitLength + 1;
+		
 		// Traversing the 2D gameState array to draw 
 		// terrain tiles. The do while ensures the images
 		// actually get drawn. Applies for the populate units
@@ -224,8 +222,8 @@ public class PrimaryView extends JPanel {
 					} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
 						terrainImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength);
 					} else if (valCode == VolatileImage.IMAGE_OK) {
-						g.drawImage(terrainImages[i], ((c - gameState.length) * unitLength) - visX,
-								(r * unitLength) - visY, null);
+						g.drawImage(terrainImages[i], ((c - gameState.length) * unitLength) - visX + xOffset,
+								(r * unitLength) - visY + yOffset, null);
 					}
 				} while (terrainImages[i].contentsLost());
 			}
@@ -237,30 +235,37 @@ public class PrimaryView extends JPanel {
 
 				int i = gameState[r][c];
 
-				do {
-					int valCode = unitImages[0].validate(gC);
+				if (i > -1) {
+					do {
+						int valCode = unitImages[i].validate(gC);
 
-					if (valCode == VolatileImage.IMAGE_RESTORED) {
-						restoreUnitTile(i);
-					} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-						unitImages[0] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
-					} else if (valCode == VolatileImage.IMAGE_OK && gameState[r][c] > 0) {
-						g.drawImage(unitImages[0], (c * unitLength) - visX,
-								(r * unitLength) - visY, null);
-					}
-				} while (unitImages[0].contentsLost());
+						if (valCode == VolatileImage.IMAGE_RESTORED) {
+							restoreUnitTile(i);
+						} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+							unitImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+						} else if (valCode == VolatileImage.IMAGE_OK) {
+							g.drawImage(unitImages[i], (c * unitLength) - visX + xOffset,
+									(r * unitLength) - visY + yOffset, null);
+						}
+					} while (unitImages[i].contentsLost());
+				}
 			}
 		}
 
-		// Used to draw the highlight boxes for displaying the unit's
-		// movement radius.
+		// Draw the highlight boxes for displaying the unit's movement radius.
 		if (focusing) {
 			g.setColor(Color.GREEN);
+			int stroke = unitLength * 5 / 100;
 			for (int r = focusR - focusRad; r < focusR + focusRad + 1; r++)
 				for (int c = focusC - focusRad; c < focusC + focusRad + 1; c++) {
-					g.drawRect(c * unitLength - visX, r * unitLength - visY, unitLength, unitLength);
-//					g.drawRect(c * unitLength - 1  - visX, r * unitLength - 1 - visY, 66, 66);
-//					g.drawRect(c * unitLength + 1  - visX, r * unitLength + 1 - visY, 62, 62);
+					// Upper Stroke
+					g.fillRect(c * unitLength - visX + xOffset - stroke, r * unitLength - visY + yOffset - stroke, unitLength + stroke * 2, stroke);
+					// Left Stroke
+					g.fillRect(c * unitLength - visX + xOffset - stroke, r * unitLength - visY + yOffset - stroke, stroke, unitLength + stroke * 2);
+					// Bottom Stroke
+					g.fillRect(c * unitLength - visX + xOffset - stroke, r * unitLength - visY + yOffset + unitLength, unitLength + stroke * 2, stroke);
+					// Right Stroke
+					g.fillRect(c * unitLength - visX + xOffset + unitLength, r * unitLength - visY + yOffset - stroke, stroke, unitLength + stroke * 2);
 				}
 		}
 
@@ -292,22 +297,22 @@ public class PrimaryView extends JPanel {
 			}
 		} while (clockImage.contentsLost());
 
-		if (focusing) {
+//		if (focusing) {
+//			int i = gameState[focusR][focusC];
+//			
 //			do {
-//				int i = gameState[focusR][focusC];
-//
-//				int valCode = unitImages[0].validate(gC);
+//				int valCode = unitImages[i].validate(gC);
 //
 //				if (valCode == VolatileImage.IMAGE_RESTORED) {
 //					restoreUnitTile(i);
 //				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-//					unitImages[0] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+//					unitImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
 //				} else if (valCode == VolatileImage.IMAGE_OK) {
-//					g.drawImage(unitImages[0], 170, 886, null);
+//					g.drawImage(unitImages[i], 170, 886, null);
 //					g.setColor(Color.WHITE);
 //					g.drawString(focusName, 1162, 1061);
 //				}
-//			} while (unitImages[0].contentsLost());
+//			} while (unitImages[i].contentsLost());
 //
 //			do {
 //				int valCode = portrait.validate(gC);
@@ -320,7 +325,14 @@ public class PrimaryView extends JPanel {
 //					g.drawImage(portrait, 1148, 874, null);
 //				}
 //			} while (portrait.contentsLost());
-		}	
+//		}	
+		
+		// Draw black rectangles in xOffset and yOffset regions
+		g.setColor(Color.BLACK);
+		g.fillRect(0, 0, xOffset, screenHeight);
+		g.fillRect(0, 0, screenWidth, yOffset);
+		g.fillRect(screenWidth - xOffset, 0, xOffset, screenHeight);
+		g.fillRect(0, screenHeight - yOffset, screenWidth, screenHeight);
 	}
 
 	/**
@@ -333,7 +345,6 @@ public class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 */
-
 	private void restorePortrait() {
 		Graphics2D g = null;
 
@@ -365,7 +376,6 @@ public class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 */
-
 	private void restoreClockImage() {
 		Graphics2D g = null;
 
@@ -397,7 +407,6 @@ public class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 */
-
 	private void restoreUnitTile(int i) {
 		Graphics2D g = null;
 
@@ -429,7 +438,6 @@ public class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 */
-
 	private void restoreInformationPanel() {
 		Graphics2D g = null;
 
@@ -461,7 +469,6 @@ public class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 */
-
 	private void restoreTerrainTile(int i) {
 		Graphics2D g = null;
 
@@ -492,7 +499,6 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-
 	public void scrollWest() {
 		if (visX > 9) {
 			visX -= 10;
@@ -508,7 +514,6 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-
 	public void scrollNorthWest() {
 		if (visY > 9) {
 			visY -= 10;
@@ -527,7 +532,6 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-
 	public void scrollNorth() {
 		if (visY > 9) {
 			visY -= 10;
@@ -543,7 +547,6 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-
 	public void scrollNorthEast() {
 		if (visY > 9) {
 			visY -= 10;
@@ -562,7 +565,6 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-
 	public void scrollEast() {
 		if (visX < boundX - 9) {
 			visX += 10;
@@ -578,7 +580,6 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-
 	public void scrollSouthEast() {
 		if (visY < boundY - 9) {
 			visY += 10;
@@ -597,7 +598,6 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-
 	public void scrollSouth() {
 		if (visY < boundY - 9) {
 			visY += 10;
@@ -613,7 +613,6 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-
 	public void scrollSouthWest() {
 		if (visY < boundY - 9) {
 			visY += 10;
@@ -636,7 +635,6 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the upper-left-most visible pixel's x coordinate
 	 */
-
 	public int getVisX() {
 		return visX;
 	}
@@ -654,7 +652,6 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the upper-left-most visible pixel's y coordinate
 	 */
-
 	public int getVisY() {
 		return visY;
 	}
@@ -674,7 +671,6 @@ public class PrimaryView extends JPanel {
 	 * @param rad - the unit's movement radius
 	 * @param name - the unit's name
 	 */
-
 	public void setFocusTarget(int c, int r, int rad, String name) {
 		focusing = true;
 		focusC = c;
@@ -695,7 +691,6 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @param face - the current clock face
 	 */
-
 	public void updateClock(int face) {
 		clockFace = face;
 	}
@@ -712,11 +707,78 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the focus target
 	 */
-
 	public Point getFocusTarget() {
 		return new Point(focusR, focusC);
 	}
 
+	/**
+	 * Returns the information panel height.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mousePressed(java.awt.event.MouseEvent) mousePressed(java.awt.event.MouseEvent)}
+	 * <li> {@link PrimaryController#mouseReleased(java.awt.event.MouseEvent) mouseReleased(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the information panel height.
+	 */
+	public int getIPaneHeight() {
+		return iPaneHeight;
+	}
+	
+	/**
+	 * Returns the x dimension offset.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mousePressed(java.awt.event.MouseEvent) mousePressed(java.awt.event.MouseEvent)}
+	 * <li> {@link PrimaryController#mouseReleased(java.awt.event.MouseEvent) mouseReleased(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the x dimension offset.
+	 */
+	public int getXOffset() {
+		return xOffset;
+	}
+
+	/**
+	 * Returns the y dimension offset.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mousePressed(java.awt.event.MouseEvent) mousePressed(java.awt.event.MouseEvent)}
+	 * <li> {@link PrimaryController#mouseReleased(java.awt.event.MouseEvent) mouseReleased(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the y dimension offset.
+	 */
+	public int getYOffset() {
+		return yOffset;
+	}
+
+	/**
+	 * Returns the unit length.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mousePressed(java.awt.event.MouseEvent) mousePressed(java.awt.event.MouseEvent)}
+	 * <li> {@link PrimaryController#mouseReleased(java.awt.event.MouseEvent) mouseReleased(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the unit length.
+	 */
+	public int getUnitLength() {
+		return unitLength;
+	}
+	
 	/**
 	 * Clears the focus target.
 	 * 
@@ -727,7 +789,6 @@ public class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 */
-
 	public void clearFocusTarget() {
 		focusing = false;
 	}

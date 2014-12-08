@@ -92,7 +92,6 @@ public class AbstractUnit {
 	 * <p>
 	 * @return the unit's <code>ActivityList</code>
 	 */
-	
 	public ActivityList getActivityList() {
 		return activityList;
 	}
@@ -112,7 +111,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's visual state
 	 */
-	
 	public int toInt() {
 		return 0;
 	}
@@ -122,7 +120,6 @@ public class AbstractUnit {
 	 * 
 	 * @param player - the player who sees the unit
 	 */
-	
 	public void setVisibleBy(int player) {
 		visibleBy[player - 1] = player;
 	}
@@ -133,7 +130,6 @@ public class AbstractUnit {
 	 * @param player - the player checking for vision
 	 * @return true if the player can see the unit
 	 */
-	
 	public boolean isVisibleBy(int player) {
 		return visibleBy[player - 1] == player;
 	}
@@ -143,7 +139,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's type
 	 */
-	
 	public int getIdValu() {
 		return idValu;
 	}
@@ -153,7 +148,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Intelligence Attack value.
 	 */
-	
 	public int getIntAtk() {
 		return intAtk;
 	}
@@ -163,7 +157,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Intelligence Defense value.
 	 */
-	
 	public int getIntDef() {
 		return intDef;
 	}
@@ -173,7 +166,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Soul Investment Attack value.
 	 */
-	
 	public int getSolInv() {
 		return solInv;
 	}
@@ -183,7 +175,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Soul Affinity Defense value.
 	 */
-	
 	public int getSolAff() {
 		return solAff;
 	}
@@ -193,7 +184,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Symbiosis Attack value.
 	 */
-	
 	public int getSymbio() {
 		return symbio;
 	}
@@ -203,7 +193,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Hoarding Aptitude Defense value.
 	 */
-	
 	public int getHordAp() {
 		return hordAp;
 	}
@@ -213,7 +202,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Poison Attack value.
 	 */
-	
 	public int getPoison() {
 		return poison;
 	}
@@ -223,7 +211,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Health Regeneration Defense value.
 	 */
-	
 	public int getHltReg() {
 		return hltReg;
 	}
@@ -233,7 +220,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Kinesis Attack value.
 	 */
-	
 	public int getKenisi() {
 		return kenisi;
 	}
@@ -243,7 +229,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Calming Aura Defense value.
 	 */
-	
 	public int getCalmAu() {
 		return calmAu;
 	}
@@ -253,7 +238,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Illusion Attack value.
 	 */
-	
 	public int getIllusi() {
 		return illusi;
 	}
@@ -263,7 +247,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Disillusionment Defense value.
 	 */
-	
 	public int getDisIll() {
 		return disIll;
 	}
@@ -273,7 +256,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Holy Attack value.
 	 */
-	
 	public int getHlyAtk() {
 		return hlyAtk;
 	}
@@ -283,7 +265,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Holy Defense value.
 	 */
-	
 	public int getHlyDef() {
 		return hlyDef;
 	}
@@ -293,7 +274,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Dark Attack value.
 	 */
-	
 	public int getDrkAtk() {
 		return drkAtk;
 	}
@@ -303,7 +283,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Dark Defense value.
 	 */
-	
 	public int getDrkDef() {
 		return drkDef;
 	}
@@ -313,7 +292,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Dispel Attack value.
 	 */
-	
 	public int getDispel() {
 		return dispel;
 	}
@@ -323,7 +301,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Spell Strength Defense value.
 	 */
-	
 	public int getSplStr() {
 		return splStr;
 	}
@@ -333,7 +310,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Summon Strength Attack value.
 	 */
-	
 	public int getSumStr() {
 		return sumStr;
 	}
@@ -343,7 +319,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Planar Affinity Defense value.
 	 */
-	
 	public int getPlnAff() {
 		return plnAff;
 	}
@@ -353,7 +328,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Threat Attack value.
 	 */
-	
 	public int getThreat() {
 		return threat;
 	}
@@ -363,7 +337,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Bravery Defense value.
 	 */
-	
 	public int getBravry() {
 		return bravry;
 	}
@@ -373,7 +346,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Earth Attack value.
 	 */
-	
 	public int getEthAtk() {
 		return ethAtk;
 	}
@@ -383,7 +355,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Earth Defense value.
 	 */
-	
 	public int getEthDef() {
 		return ethDef;
 	}
@@ -393,7 +364,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Wind Attack value.
 	 */
-	
 	public int getWndAtk() {
 		return wndAtk;
 	}
@@ -403,7 +373,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Wind Defense value.
 	 */
-	
 	public int getWndDef() {
 		return wndDef;
 	}
@@ -413,7 +382,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Fire Attack value.
 	 */
-	
 	public int getFirAtk() {
 		return firAtk;
 	}
@@ -423,7 +391,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Fire Defense value.
 	 */
-	
 	public int getFirDef() {
 		return firDef;
 	}
@@ -433,7 +400,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Water Attack value.
 	 */
-	
 	public int getWtrAtk() {
 		return wtrAtk;
 	}
@@ -443,7 +409,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Water Defense value.
 	 */
-	
 	public int getWtrDef() {
 		return wtrDef;
 	}
@@ -453,7 +418,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Death Blow Attack value.
 	 */
-	
 	public int getDthBlw() {
 		return dthBlw;
 	}
@@ -463,7 +427,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Nullification Defense value.
 	 */
-	
 	public int getNullif() {
 		return nullif;
 	}
@@ -473,7 +436,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Unarmed Attack value.
 	 */
-	
 	public int getUnarmd() {
 		return unarmd;
 	}
@@ -483,7 +445,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Strength Defense value.
 	 */
-	
 	public int getStrnth() {
 		return strnth;
 	}
@@ -493,7 +454,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Agility Attack value.
 	 */
-	
 	public int getAglAtk() {
 		return aglAtk;
 	}
@@ -503,7 +463,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Agility Defense value.
 	 */
-	
 	public int getAglDef() {
 		return aglDef;
 	}
@@ -513,7 +472,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Charge value.
 	 */
-	
 	public int getCharge() {
 		return charge;
 	}
@@ -523,7 +481,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Stability.
 	 */
-	
 	public int getStabil() {
 		return stabil;
 	}
@@ -533,7 +490,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Blunt Attack value.
 	 */
-	
 	public int getBlunts() {
 		return blunts;
 	}
@@ -543,7 +499,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Padding Defense value.
 	 */
-	
 	public int getPaddin() {
 		return paddin;
 	}
@@ -553,7 +508,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Blade Attack value.
 	 */
-	
 	public int getBlades() {
 		return blades;
 	}
@@ -563,7 +517,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Shell Defense value.
 	 */
-	
 	public int getShells() {
 		return shells;
 	}
@@ -573,7 +526,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Pierce Attack value.
 	 */
-	
 	public int getPierce() {
 		return pierce;
 	}
@@ -583,7 +535,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Reinforcement Defense value.
 	 */
-	
 	public int getRnfrcm() {
 		return rnfrcm;
 	}
@@ -593,7 +544,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Melee Attack Damage.
 	 */
-	
 	public int getDmgMel() {
 		return dmgMel;
 	}
@@ -603,7 +553,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Ranged Attack Damage.
 	 */
-	
 	public int getDmgRng() {
 		return dmgRng;
 	}
@@ -613,7 +562,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Damage for Special Attack One.
 	 */
-	
 	public int getDmgOne() {
 		return dmgOne;
 	}
@@ -623,7 +571,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Damage for Special Attack Two.
 	 */
-	
 	public int getDmgTwo() {
 		return dmgTwo;
 	}
@@ -633,7 +580,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Damage for Special Attack Three.
 	 */
-	
 	public int getDmgThr() {
 		return dmgThr;
 	}
@@ -643,7 +589,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Damage for Special Attack Four.
 	 */
-	
 	public int getDmgFor() {
 		return dmgFor;
 	}
@@ -653,7 +598,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Health Capacity.
 	 */
-	
 	public int getHealth() {
 		return health;
 	}
@@ -663,7 +607,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Mana Capacity.
 	 */
-	
 	public int getMagPnt() {
 		return magPnt;
 	}
@@ -673,7 +616,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Mana Regeneration Rate.
 	 */
-	
 	public int getMagRgn() {
 		return magRgn;
 	}
@@ -683,7 +625,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Energy Capacity.
 	 */
-	
 	public int getEngPnt() {
 		return engPnt;
 	}
@@ -693,7 +634,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Energy Regeneration Rate.
 	 */
-	
 	public int getEngRgn() {
 		return engRgn;
 	}
@@ -703,7 +643,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Attack Speed.
 	 */
-	
 	public int getAtkSpd() {
 		return atkSpd;
 	}
@@ -713,7 +652,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Attacks Per Turn.
 	 */
-	
 	public int getNumAtk() {
 		return numAtk;
 	}
@@ -723,7 +661,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Sight Radius.
 	 */
-	
 	public int getSihtRd() {
 		return sihtRd;
 	}
@@ -733,7 +670,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Movement Speed.
 	 */
-	
 	public int getMovSpd() {
 		return movSpd;
 	}
@@ -743,7 +679,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Production Cost.
 	 */
-	
 	public int getPrdCst() {
 		return prdCst;
 	}
@@ -753,7 +688,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Attack Range.
 	 */
-	
 	public int getRanged() {
 		return ranged;
 	}
@@ -763,7 +697,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Size In Squares.
 	 */
-	
 	public int getSqrOcu() {
 		return sqrOcu;
 	}
@@ -773,7 +706,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Levels.
 	 */
-	
 	public int getLevels() {
 		return levels;
 	}
@@ -783,7 +715,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Death Experience Reward.
 	 */
-	
 	public int getDthEXP() {
 		return dthEXP;
 	}
@@ -793,7 +724,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Owner.
 	 */
-	
 	public int getPlayer() {
 		return player;
 	}
@@ -803,7 +733,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Current Location.
 	 */
-	
 	public int getCurLoc() {
 		return curLoc;
 	}
@@ -813,7 +742,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Channel Time.
 	 */
-	
 	public int getChnTim() {
 		return chnTim;
 	}
@@ -823,7 +751,6 @@ public class AbstractUnit {
 	 * 
 	 * @return the number of turns the unit has been in the game.
 	 */
-	
 	public int getTrnPld() {
 		return trnPld;
 	}
@@ -833,7 +760,6 @@ public class AbstractUnit {
 	 * 
 	 * @return true if the unit is visible
 	 */
-	
 	public boolean isVisible() {
 		return visible;
 	}
@@ -843,7 +769,6 @@ public class AbstractUnit {
 	 * 
 	 * @return true if the unit is active
 	 */
-	
 	public boolean isActive() {
 		return active;
 	}
@@ -853,7 +778,6 @@ public class AbstractUnit {
 	 * 
 	 * @return true if the unit is disabled
 	 */
-	
 	public boolean isDisabled() {
 		return disabled;
 	}
@@ -863,7 +787,6 @@ public class AbstractUnit {
 	 * 
 	 * @param b - if true, set visible
 	 */
-	
 	public void setVisible(boolean b) {
 		visible = b;
 	}
@@ -873,7 +796,6 @@ public class AbstractUnit {
 	 * 
 	 * @param b - if true, set active
 	 */
-	
 	public void setActive(boolean b) {
 		active = b;
 	}
@@ -883,7 +805,6 @@ public class AbstractUnit {
 	 * 
 	 * @param b - if true, set disabled
 	 */
-	
 	public void setDisabled(boolean b) {
 		disabled = b;
 	}

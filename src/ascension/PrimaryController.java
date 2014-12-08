@@ -49,13 +49,12 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	 * </ul>
 	 * </p>
 	 */
-	
 	private Timer viewUpdateController;
 	private static boolean actionDisabled;
 	private GraphicsEnvironment gEnv;
 	private GraphicsDevice primaryGDev;
 	private boolean isFSSupported;
-	private PrimaryModel visualModel;
+	private PrimaryModel gameModel;
 	private PrimaryView gameView;
 	private Container contentPane;
 	private BufferStrategy bufferStrategy;
@@ -73,7 +72,6 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	 * </ul>
 	 * </p>
 	 */
-
 	public PrimaryController() {
 		super();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -98,14 +96,15 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	 * </ul>
 	 * </p>
 	 */
-
 	public void loadInitialGameState() {
-		visualModel = new PrimaryModel();
-		visualModel.loadInitialModelState(50, 4);
+		gameModel = new PrimaryModel();
+		gameModel.loadInitialModelState(50, 4);
 		gameView = new PrimaryView();
 		gameView.loadInitialViewState(getGraphicsConfiguration(), 50);
 		boundX = getGraphicsConfiguration().getBounds().width;
 		boundY = getGraphicsConfiguration().getBounds().height;
+
+
 		contentPane.add(gameView);
 	}
 
@@ -123,7 +122,6 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	 * </ul>
 	 * </p>
 	 */
-
 	public void startGame() {
 		gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		primaryGDev  = gEnv.getDefaultScreenDevice();
@@ -144,7 +142,7 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 
 				@Override
 				public void actionPerformed(ActionEvent arg0) {
-					gameView.updateClock(visualModel.getClockFace());
+					gameView.updateClock(gameModel.getClockFace());
 					render(graphicsPlaceHolder);
 
 					int x = MouseInfo.getPointerInfo().getLocation().x, y = MouseInfo
@@ -217,11 +215,10 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	 * @param g - a <code>Graphics</code> object which gets replaced each render
 	 * by the <code>BufferStrategy</code>'s next available <code>Graphics</code> object.
 	 */
-
 	protected void render(Graphics g) {
 		try {
 			g = bufferStrategy.getDrawGraphics();
-			gameView.render(g, visualModel.getVisualModel());
+			gameView.render(g, gameModel.getVisualModel());
 		} finally {
 			// Prudent to free system resources when finished.
 			g.dispose();
@@ -232,7 +229,6 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	/**
 	 * Currently Unused. Required when implementing KeyListener.
 	 */
-
 	@Override
 	public void keyPressed(KeyEvent arg0) {
 		// TODO Auto-generated method stub
@@ -251,7 +247,6 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 
 	 * @param arg0 - the triggering event. This may be any key.
 	 */
-
 	@Override
 	public void keyReleased(KeyEvent arg0) {
 		if (arg0.getKeyCode() == KeyEvent.VK_ESCAPE) {
@@ -262,7 +257,6 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	/**
 	 * Currently Unused. Required when implementing KeyListener.
 	 */
-
 	@Override
 	public void keyTyped(KeyEvent arg0) {
 		// TODO Auto-generated method stub
@@ -272,7 +266,6 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	/**
 	 * Currently Unused. Required when implementing MouseListener.
 	 */
-
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
 		// Preferable to segment usage into pressed and
@@ -282,7 +275,6 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	/**
 	 * Currently Unused. Required when implementing MouseListener.
 	 */
-
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// Do Nothing. This makes no sense in a full-screen window.
@@ -292,7 +284,6 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	/**
 	 * Currently Unused. Required when implementing MouseListener.
 	 */
-
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// Do Nothing. This makes no sense in a full-screen window.
@@ -313,16 +304,15 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	 * 
 	 * @param arg0 - the mouse pressed event.
 	 */
-
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		int x = arg0.getLocationOnScreen().x, y = arg0.getLocationOnScreen().y;
-		if (y < 864) {
+		if (y <= boundY - gameView.getIPaneHeight() - gameView.getYOffset() && y > gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
 			int c = gameView.getVisX(), r = gameView.getVisY(),
-					idTag = visualModel.getVisualModel()[((r + y) / 64)][((c + x) / 64)];
-			if (idTag > 0) {
+					idTag = gameModel.getVisualModel()[((r + y - gameView.getYOffset()) / gameView.getUnitLength())][((c + x - gameView.getXOffset()) / gameView.getUnitLength())];
+			if (idTag > -1) {
 				unitIsSelected = true;
-				gameView.setFocusTarget(((c + x) / 64), ((r + y) / 64), InformationIndex.getMovementRadius(idTag), InformationIndex.getName(idTag));
+				gameView.setFocusTarget(((c + x - gameView.getXOffset()) / gameView.getUnitLength()), ((r + y - gameView.getYOffset()) / gameView.getUnitLength()), InformationIndex.getMovementRadius(idTag), InformationIndex.getName(idTag));
 			}
 		}
 	}
@@ -341,20 +331,19 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	 * 
 	 * @param arg0 - the mouse released event.
 	 */
-
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		int x = arg0.getLocationOnScreen().x, y = arg0.getLocationOnScreen().y;
 		if (unitIsSelected) {
-			if (y < 864) {
+			if (y <= boundY - gameView.getIPaneHeight() - gameView.getYOffset() && y > gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
 				int c = gameView.getVisX(), r = gameView.getVisY(),
-						idTag = visualModel.getVisualModel()[((r + y) / 64)][((c + x) / 64)];
+						idTag = gameModel.getVisualModel()[((r + y - gameView.getYOffset()) / gameView.getUnitLength())][((c + x - gameView.getXOffset()) / gameView.getUnitLength())];
 				unitIsSelected = false;
 
-				if (idTag == 0) {
+				if (idTag == -1) {
 					Point p = gameView.getFocusTarget();
 					gameView.clearFocusTarget();
-					visualModel.transferUnit(p.x, p.y, ((r + y) / 64), ((c + x) / 64));
+					gameModel.transferUnit(p.x, p.y, ((r + y - gameView.getYOffset()) / gameView.getUnitLength()), ((c + x - gameView.getXOffset()) / gameView.getUnitLength()));
 				}
 			}
 		}
@@ -374,7 +363,6 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	 * @param notification - a message describing the notification
 	 * @param type - the type of notification
 	 */
-
 	public static void generateNotification(String notification, int type) {
 		switch (type) {
 		case 0:

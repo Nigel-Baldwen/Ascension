@@ -25,7 +25,6 @@ public class ActivityQueue extends ArrayList<ActivityList> {
 	 * 
 	 * @return the processed list
 	 */
-	
 	public ActivityList process() {
 
 		ActivityList result = new ActivityList();

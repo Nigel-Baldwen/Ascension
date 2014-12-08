@@ -19,7 +19,6 @@ public class Activity {
 	 * @param aD - activity destination
 	 * @param aR - activity riders and effects
 	 */
-	
 	public Activity (int aP, int rP, int aT, int pI, int aD, int aR) {
 		activityKeys[0] = aP;
 		activityKeys[1] = rP;
@@ -52,7 +51,6 @@ public class Activity {
 	 * 
 	 * @return the activity keys
 	 */
-	
 	public int[] provideActivityKeys() {
 		return activityKeys;
 	}
