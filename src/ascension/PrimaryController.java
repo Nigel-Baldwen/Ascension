@@ -334,17 +334,19 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		int x = arg0.getLocationOnScreen().x, y = arg0.getLocationOnScreen().y;
-		if (unitIsSelected) {
-			if (y <= boundY - gameView.getIPaneHeight() - gameView.getYOffset() && y > gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
-				int c = gameView.getVisX(), r = gameView.getVisY(),
-						idTag = gameModel.getVisualModel()[((r + y - gameView.getYOffset()) / gameView.getUnitLength())][((c + x - gameView.getXOffset()) / gameView.getUnitLength())];
-				unitIsSelected = false;
+		if (unitIsSelected && y <= boundY - gameView.getIPaneHeight() - gameView.getYOffset() && y > gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
+			int c = gameView.getVisX(), r = gameView.getVisY(),
+					idTag = gameModel.getVisualModel()[((r + y - gameView.getYOffset()) / gameView.getUnitLength())][((c + x - gameView.getXOffset()) / gameView.getUnitLength())];
+			unitIsSelected = false;
 
-				if (idTag == -1) {
-					Point p = gameView.getFocusTarget();
-					gameView.clearFocusTarget();
-					gameModel.transferUnit(p.x, p.y, ((r + y - gameView.getYOffset()) / gameView.getUnitLength()), ((c + x - gameView.getXOffset()) / gameView.getUnitLength()));
-				}
+			if (idTag == -1) {
+				Point p = gameView.getFocusTarget();
+				gameView.clearFocusTarget();
+				gameModel.transferUnit(p.x, p.y, ((r + y - gameView.getYOffset()) / gameView.getUnitLength()), ((c + x - gameView.getXOffset()) / gameView.getUnitLength()));
+			}
+		} else if (y > boundY - gameView.getIPaneHeight() - gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
+			if (x >= gameView.getEndTurnX() && x < gameView.getEndTurnX() + gameView.getEndTurnWidth() && y >= gameView.getEndTurnY() && y < gameView.getEndTurnY() + gameView.getEndTurnHeight()) {
+				System.out.println("You pressed the end turn button.");
 			}
 		}
 	}

@@ -241,6 +241,7 @@ public class PrimaryModel {
 			currentTurn += 1;
 			PrimaryController.generateNotification("Switching to Player " + currentTurn, 0);
 			turnTimer.setRepeats(true);
+			percent = 0;
 			turnTimer.start();
 		}
 		else {
@@ -340,7 +341,7 @@ public class PrimaryModel {
 			temp = unitsP1[srcR][srcC];
 			unitsP1[srcR][srcC] = unitsP1[destR][destC];
 			unitsP1[destR][destC] = temp;
-			visualModelP1[srcR][srcC] = 0;
+			visualModelP1[srcR][srcC] = -1;
 			visualModelP1[destR][destC] = unitsP1[destR][destC].toInt();
 			break;
 
@@ -348,7 +349,7 @@ public class PrimaryModel {
 			temp = unitsP2[srcR][srcC];
 			unitsP2[srcR][srcC] = unitsP2[destR][destC];
 			unitsP2[destR][destC] = temp;
-			visualModelP2[srcR][srcC] = 0;
+			visualModelP2[srcR][srcC] = -1;
 			visualModelP2[destR][destC] = unitsP2[destR][destC].toInt();
 			break;
 
@@ -356,7 +357,7 @@ public class PrimaryModel {
 			temp = unitsP3[srcR][srcC];
 			unitsP3[srcR][srcC] = unitsP3[destR][destC];
 			unitsP3[destR][destC] = temp;
-			visualModelP3[srcR][srcC] = 0;
+			visualModelP3[srcR][srcC] = -1;
 			visualModelP3[destR][destC] = unitsP3[destR][destC].toInt();
 			break;
 
@@ -364,7 +365,7 @@ public class PrimaryModel {
 			temp = unitsP4[srcR][srcC];
 			unitsP4[srcR][srcC] = unitsP4[destR][destC];
 			unitsP4[destR][destC] = temp;
-			visualModelP4[srcR][srcC] = 0;
+			visualModelP4[srcR][srcC] = -1;
 			visualModelP4[destR][destC] = unitsP4[destR][destC].toInt();
 			break;
 		}

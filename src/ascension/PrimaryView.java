@@ -87,7 +87,7 @@ public class PrimaryView extends JPanel {
 	private VolatileImage informationPanel, clockImage, portrait;
 	private GraphicsConfiguration gC;
 	private int unitLength, visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
-		iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitWidth, portraitHeight, focusC, focusR, focusRad, clockFace;
+		iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitWidth, portraitHeight, focusC, focusR, focusRad, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
 	private boolean focusing;
 	private String focusName;
 
@@ -122,6 +122,10 @@ public class PrimaryView extends JPanel {
 			clockOffset = 14;
 			portraitWidth = 170;
 			portraitHeight = 208;
+			endTurnX = xOffset + 12;
+			endTurnY = screenHeight - yOffset - iPaneHeight + 196;
+			endTurnWidth = 174;
+			endTurnHeight = 80;
 			resKey = 0;
 		} else if (screenWidth >= 1920 && screenHeight >= 1080) {
 			xOffset = (screenWidth - 1920) / 2;
@@ -133,6 +137,10 @@ public class PrimaryView extends JPanel {
 			clockOffset = 10;
 			portraitWidth = 128;
 			portraitHeight = 156;
+			endTurnX = xOffset + 9;
+			endTurnY = screenHeight - yOffset - iPaneHeight + 147;
+			endTurnWidth = 130;
+			endTurnHeight = 60;
 			resKey = 1;
 		} else if (screenWidth >= 1600  && screenHeight >= 900) {
 			xOffset = (screenWidth - 1600) / 2;
@@ -144,6 +152,10 @@ public class PrimaryView extends JPanel {
 			clockOffset = 9;
 			portraitWidth = 105;
 			portraitHeight = 130;
+			endTurnX = xOffset + 8;
+			endTurnY = screenHeight - yOffset - iPaneHeight + 123;
+			endTurnWidth = 108;
+			endTurnHeight = 49;
 			resKey = 2;
 		} else if (screenWidth >= 1280  && screenHeight >= 720) {
 			xOffset = (screenWidth - 1280) / 2;
@@ -155,6 +167,10 @@ public class PrimaryView extends JPanel {
 			clockOffset = 7;
 			portraitWidth = 85;
 			portraitHeight = 105;
+			endTurnX = xOffset + 6;
+			endTurnY = screenHeight - yOffset - iPaneHeight + 98;
+			endTurnWidth = 87;
+			endTurnHeight = 40;
 			resKey = 3;
 		} else {
 			System.exit(0);
@@ -777,6 +793,70 @@ public class PrimaryView extends JPanel {
 	 */
 	public int getUnitLength() {
 		return unitLength;
+	}
+	
+	/**
+	 * Returns the x coordinate of the end turn button.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mouseReleased(java.awt.event.MouseEvent) mouseReleased(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the end turn button x coordinate.
+	 */
+	public int getEndTurnX() {
+		return endTurnX;
+	}
+	
+	/**
+	 * Returns the y coordinate of the end turn button.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mouseReleased(java.awt.event.MouseEvent) mouseReleased(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the end turn button y coordinate.
+	 */
+	public int getEndTurnY() {
+		return endTurnY;
+	}
+	
+	/**
+	 * Returns the width of the end turn button.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mouseReleased(java.awt.event.MouseEvent) mouseReleased(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the end turn button width.
+	 */
+	public int getEndTurnWidth() {
+		return endTurnWidth;
+	}
+	
+	/**
+	 * Returns the height of the end turn button.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mouseReleased(java.awt.event.MouseEvent) mouseReleased(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the end turn button height.
+	 */
+	public int getEndTurnHeight() {
+		return endTurnHeight;
 	}
 	
 	/**
