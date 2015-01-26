@@ -1,6 +1,7 @@
 package ascension;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * @author Nigel_Baldwen - nigelbaldwen@gmail.com
@@ -18,6 +19,15 @@ public class ActivityList extends ArrayList<Activity> {
 	 * </ul>
 	 */
 	public void organize() {
-		// Do nothing for now as lists will always be in order
+		if(size() < 2)
+			return;
+		
+		for(int i = 0; i < size() - 1; i++) {
+			for (int j = i + 1; j < size(); j++) {
+				if (!get(i).comparePriority(get(i))); {
+					Collections.swap(this, i, j);	
+				}
+			}
+		}
 	}
 }

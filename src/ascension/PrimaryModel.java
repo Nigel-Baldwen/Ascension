@@ -45,7 +45,7 @@ public class PrimaryModel {
 	private Timer turnTimer;
 	private AbstractUnit[][] unitsP1, unitsP2, unitsP3, unitsP4;
 	private int[][] terrainP1, terrainP2, terrainP3, terrainP4, visualModelP1, visualModelP2, visualModelP3, visualModelP4;
-	private int turnLength, percent, currentTurn, playerCount;
+	private int turnLength, percent, currentTurn, playerCount, waitingState;
 	private ActivityQueue activityQueue;
 
 	/**
@@ -73,6 +73,7 @@ public class PrimaryModel {
 	 * @param playerCount - the number of players in the match
 	 */
 	public void loadInitialModelState(int size, int playerCount) {
+		waitingState = 0;
 		currentTurn = 1;
 		this.playerCount = playerCount;
 
@@ -266,6 +267,7 @@ public class PrimaryModel {
 			// Consider how to implement the chain of activities
 			currentTurn = 1;
 		}
+		waitingState = 1;
 	}
 
 	/**

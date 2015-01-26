@@ -54,4 +54,12 @@ public class Activity {
 	public int[] provideActivityKeys() {
 		return activityKeys;
 	}
+
+	public boolean comparePriority(Activity otherAct) {
+		// TODO Implement a reasonable comparison for two activities.
+		// Keep in mind key-frame divisions as well as order of entry
+		// into the queue. Perhaps add some keys for those ideas.
+		// If the otherAct should occur after thisAct, then return true.
+		return false;
+	}
 }
