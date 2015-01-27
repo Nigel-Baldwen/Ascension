@@ -24,8 +24,8 @@ public class ActivityList extends ArrayList<Activity> {
 		
 		for(int i = 0; i < size() - 1; i++) {
 			for (int j = i + 1; j < size(); j++) {
-				if (!get(i).comparePriority(get(i))); {
-					Collections.swap(this, i, j);	
+				if (!get(i).comparePriority(get(j))); {
+					Collections.swap(this, i, j);
 				}
 			}
 		}

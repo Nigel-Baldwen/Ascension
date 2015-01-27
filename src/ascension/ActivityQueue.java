@@ -36,6 +36,7 @@ public class ActivityQueue extends ArrayList<ActivityList> {
 			}
 		}
 
+		result.organize();
 		return result;
 	}
 }
