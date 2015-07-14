@@ -78,7 +78,7 @@ public class PrimaryModel {
 		this.playerCount = playerCount;
 
 		// Clock instantiation
-		percent = 0;
+		percent = -1;
 		turnLength = 10 * 1000;
 		turnTimer = new Timer(0, new ActionListener() {
 
@@ -88,7 +88,7 @@ public class PrimaryModel {
 					turnTimer.setRepeats(false);
 				}
 				if (percent == 10) {
-					percent = 0;
+					percent = -1;
 					rotateTurn();
 				}
 				percent++;
