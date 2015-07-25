@@ -83,7 +83,7 @@ public class PrimaryView extends JPanel {
 	 */
 	// @formatter:on
 
-	private VolatileImage[] terrainImages, unitImages;
+	private VolatileImage[] terrainImages, unitImages, unitFocusImages;
 	private VolatileImage informationPanel, clockImage, portrait;
 	private GraphicsConfiguration gC;
 	private int unitLength, visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
@@ -116,8 +116,8 @@ public class PrimaryView extends JPanel {
 			xOffset = (screenWidth - 2560) / 2;
 			yOffset = (screenHeight - 1440) / 2;
 			iPaneWidth = 2560;
-			iPaneHeight = 288;
-			unitLength = 128;
+			iPaneHeight = 140;
+			unitLength = 52;
 			clockLength = 170;
 			clockOffset = 14;
 			portraitWidth = 170;
@@ -131,8 +131,8 @@ public class PrimaryView extends JPanel {
 			xOffset = (screenWidth - 1920) / 2;
 			yOffset = (screenHeight - 1080) / 2;
 			iPaneWidth = 1920;
-			iPaneHeight = 216;
-			unitLength = 96;
+			iPaneHeight = 105;
+			unitLength = 39;
 			clockLength = 128;
 			clockOffset = 10;
 			portraitWidth = 128;
@@ -146,8 +146,8 @@ public class PrimaryView extends JPanel {
 			xOffset = (screenWidth - 1600) / 2;
 			yOffset = (screenHeight - 900) / 2;
 			iPaneWidth = 1600;
-			iPaneHeight = 180;
-			unitLength = 80;
+			iPaneHeight = 75;
+			unitLength = 33;
 			clockLength = 105;
 			clockOffset = 9;
 			portraitWidth = 105;
@@ -161,8 +161,8 @@ public class PrimaryView extends JPanel {
 			xOffset = (screenWidth - 1280) / 2;
 			yOffset = (screenHeight - 720) / 2;
 			iPaneWidth = 1280;
-			iPaneHeight = 144;
-			unitLength = 64;
+			iPaneHeight = 70;
+			unitLength = 26;
 			clockLength = 85;
 			clockOffset = 7;
 			portraitWidth = 85;
@@ -190,6 +190,12 @@ public class PrimaryView extends JPanel {
 
 		for (int i = 0; i < unitImages.length; i++) {
 			unitImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+		}
+		
+		unitFocusImages = new VolatileImage[40];
+
+		for (int i = 0; i < unitFocusImages.length; i++) {
+			unitFocusImages[i] = gC.createCompatibleVolatileImage(unitLength * 3, unitLength * 3);
 		}
 		
 		informationPanel = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
@@ -221,7 +227,7 @@ public class PrimaryView extends JPanel {
 		int cEnd = cStart + (screenWidth - 2 * xOffset) / unitLength + 1;
 		int rEnd = rStart + (screenHeight - 2 * yOffset) / unitLength + 1;
 		
-		// Traversing the 2D gameState array to draw 
+		// Traversing the 2D gameState array to draw
 		// terrain tiles. The do while ensures the images
 		// actually get drawn. Applies for the populate units
 		// region as well.
@@ -270,6 +276,33 @@ public class PrimaryView extends JPanel {
 
 		// Draw the highlight boxes for displaying the unit's movement radius.
 		if (focusing) {
+			int xAdjustment = focusC * unitLength - unitLength - visX, yAdjustment = focusR * unitLength - unitLength - visY;
+			if (focusC * unitLength < visX + unitLength) {
+				xAdjustment = xOffset;
+			}
+			if (focusC * unitLength > visX + screenWidth - xOffset - unitLength * 2) {
+				xAdjustment = screenWidth - 2 * xOffset - unitLength * 3;
+			}
+			if (focusR * unitLength < visY + unitLength) {
+				yAdjustment = yOffset;
+			}
+			if (focusR * unitLength > visY + screenHeight - yOffset - iPaneHeight - unitLength * 2) {
+				yAdjustment = screenWidth - 2 * yOffset - unitLength * 3;
+			}
+			
+			do {
+				int valCode = unitFocusImages[0].validate(gC);
+
+				if (valCode == VolatileImage.IMAGE_RESTORED) {
+					restoreUnitFocusImage(0);
+				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+					unitFocusImages[0] = gC.createCompatibleVolatileImage(unitLength, unitLength);
+				} else if (valCode == VolatileImage.IMAGE_OK) {
+					g.drawImage(unitFocusImages[0], xAdjustment,
+							yAdjustment, null);
+				}
+			} while (unitFocusImages[0].contentsLost());
+			
 			g.setColor(Color.GREEN);
 			int stroke = unitLength * 5 / 100;
 			for (int r = focusR - focusRad; r < focusR + focusRad + 1; r++)
@@ -436,7 +469,38 @@ public class PrimaryView extends JPanel {
 				g = unitImages[0].createGraphics();
 				g.setComposite(AlphaComposite.Src);
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Units/" + resKey + "/" + 0 + "/U_" + i + ".png"))).getImage(), 0,
+						.getResource("images/Units/" + resKey + "/Tile/" + 0 + "/U_" + i + ".png"))).getImage(), 0,
+						0, null);
+			} finally {
+				g.dispose();
+			}
+		} while (unitImages[0].contentsLost());
+	}
+	
+	/**
+	 * Restores the lost contents of the unit focus image.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
+	 * </ul>
+	 * </p>
+	 */
+	private void restoreUnitFocusImage(int i) {
+		Graphics2D g = null;
+
+		do {
+
+			if (unitFocusImages[0].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
+				unitFocusImages[0] = gC.createCompatibleVolatileImage(unitLength * 3, unitLength * 3);
+			}
+
+			try {
+				g = unitFocusImages[0].createGraphics();
+				
+				g.drawImage((new ImageIcon(getClass().getClassLoader()
+						.getResource("images/Units/" + resKey + "/Focus/" + 0 + "/U_" + i + "_F.jpg"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
@@ -498,7 +562,7 @@ public class PrimaryView extends JPanel {
 				g = terrainImages[i].createGraphics();
 
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Terrain/" + resKey + "/T_" + i + ".jpg"))).getImage(), 0,
+						.getResource("images/Terrain/" + resKey + "/Tile/T_" + i + ".jpg"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
