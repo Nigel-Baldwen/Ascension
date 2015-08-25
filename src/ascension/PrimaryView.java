@@ -87,8 +87,8 @@ public class PrimaryView extends JPanel {
 	private VolatileImage informationPanel, clockImage, portrait;
 	private GraphicsConfiguration gC;
 	private int unitLength, visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
-		iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitWidth, portraitHeight, focusC, focusR, focusRad, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
-	private boolean focusing;
+		iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitWidth, portraitHeight, focusC, focusR, focusRad, focusBoxX, focusBoxY, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
+	private boolean focusingUnit, focusingTerrain;
 	private String focusName;
 
 	/**
@@ -275,19 +275,20 @@ public class PrimaryView extends JPanel {
 		}
 
 		// Draw the highlight boxes for displaying the unit's movement radius.
-		if (focusing) {
-			int xAdjustment = focusC * unitLength - unitLength - visX, yAdjustment = focusR * unitLength - unitLength - visY;
+		if (focusingUnit) {
+			focusBoxX = focusC * unitLength - unitLength - visX;
+			focusBoxY = focusR * unitLength - unitLength - visY;
 			if (focusC * unitLength < visX + unitLength) {
-				xAdjustment = xOffset;
+				focusBoxX = xOffset;
 			}
 			if (focusC * unitLength > visX + screenWidth - xOffset - unitLength * 2) {
-				xAdjustment = screenWidth - 2 * xOffset - unitLength * 3;
+				focusBoxX = screenWidth - 2 * xOffset - unitLength * 3;
 			}
 			if (focusR * unitLength < visY + unitLength) {
-				yAdjustment = yOffset;
+				focusBoxY = yOffset;
 			}
 			if (focusR * unitLength > visY + screenHeight - yOffset - iPaneHeight - unitLength * 2) {
-				yAdjustment = screenWidth - 2 * yOffset - unitLength * 3;
+				focusBoxY = screenWidth - 2 * yOffset - unitLength * 3;
 			}
 			
 			do {
@@ -298,8 +299,8 @@ public class PrimaryView extends JPanel {
 				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
 					unitFocusImages[0] = gC.createCompatibleVolatileImage(unitLength, unitLength);
 				} else if (valCode == VolatileImage.IMAGE_OK) {
-					g.drawImage(unitFocusImages[0], xAdjustment,
-							yAdjustment, null);
+					g.drawImage(unitFocusImages[0], focusBoxX,
+							focusBoxY, null);
 				}
 			} while (unitFocusImages[0].contentsLost());
 			
@@ -737,12 +738,12 @@ public class PrimaryView extends JPanel {
 	}
 
 	/**
-	 * Identifies a selected unit and its movement radius.
+	 * Identifies a selected unit.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
 	 * <ul>
-	 * <li> {@link PrimaryController#mousePressed(java.awt.event.MouseEvent) mousePressed(java.awt.event.MouseEvent)}
+	 * <li> {@link PrimaryController#mouseClicked(java.awt.event.MouseEvent) mouseClicked(java.awt.event.MouseEvent)}
 	 * </ul>
 	 * </p>
 	 * 
@@ -752,11 +753,30 @@ public class PrimaryView extends JPanel {
 	 * @param name - the unit's name
 	 */
 	public void setFocusTarget(int c, int r, int rad, String name) {
-		focusing = true;
+		focusingUnit = true;
 		focusC = c;
 		focusR = r;
 		focusRad = rad;
 		focusName = name;
+	}
+	
+	/**
+	 * Identifies a selected terrain tile.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mouseClicked(java.awt.event.MouseEvent) mouseClicked(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param c = the abstract column coordinate of the terrain
+	 * @param r = the abstract row coordinate of the terrain
+	 * @param id - the terrain image ID
+	 */
+	public void setTerrainFocusTarget(int c, int r, int id) {
+		focusC = c;
+		focusR = r;
 	}
 
 	/**
@@ -934,6 +954,22 @@ public class PrimaryView extends JPanel {
 	 * </p>
 	 */
 	public void clearFocusTarget() {
-		focusing = false;
+		focusingUnit = false;
+	}
+
+	/**
+	 * Returns the on-screen coordinates of the unit focus box.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mousePressed(java.awt.event.MouseEvent) mousePressed(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the unit focus box coordinates.
+	 */
+	public Point getFocusBoxCoords() {
+		return new Point(focusBoxX, focusBoxY);
 	}
 }

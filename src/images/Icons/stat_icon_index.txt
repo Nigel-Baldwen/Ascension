@@ -1,0 +1,74 @@
+STAT ICON INDEX
+
+S_ :
+
+BASIC
+
+0 - Health - Red Tear Drop
+1 - Magic Points - Blue Tear Drop
+2 - Energy - Sideways Lightning Bolt
+3 - Attack Speed - Tilted Sword With Motion Lines
+4 - Attacks Per Turn - Three Swords In A Fan
+5 - Sight Radius - An Open Eye
+6 - Movement Speed - A Winged Boot
+7 - Production Cost - A Golden Coin
+8 - Range - A Crosshair
+9 - Squares Occupied - 5x5 Grid With Magenta Center
+10 - Level - A Golden Upwards Arrow
+11 - Death Experience - A Red X
+12 - Owner, Player 1 - A number one
+13 - Owner, Player 2 - A number two
+14 - Owner, Player 3 - A number three
+15 - Owner, Player 4 - A number four
+16 - Current Location - A Compass
+17 - Turns Played - A Clock
+
+ATTACK
+
+18 - Intelligence Attack - A blue Spellbook
+19 - Soul Investment - Scream Face
+20 - Symbiosis - A Steel Fang
+21 - Poison - A Green Teardrop
+22 - Kinesis - Motion Symbol
+23 - Illusion - Split Drama Mask
+24 - Holy Attack - A Golden Starburst
+25 - Dark Attack - A Darkened Starburst
+26 - Dispel - The Dispel hand
+27 - Summon Strength - A Red Imp
+28 - Threat - Fanged Snake on Red Backdrop
+29 - Earth - A Rock Cluster
+30 - Wind - Blue Cyclone
+31 - Fire - A Stylized Flame
+32 - Water - A Blue Wave
+33 - Death Blow - A Skull and Crossbones
+34 - Unarmed - A Clenched Fist, And Communism
+35 - Agility Attack - Panther Head 
+36 - Charge - Ram's Head
+37 - Blunt - Thor Hammer
+38 - Blade - A Grey Blade
+39 - Pierce - Stone Arrowhead
+
+DEFENSE
+
+40 - Intelligence Defense - A Maze
+41 - Soul Affinity - A Steel Lock
+42 - Hoarding Aptitude - A Red Shield With a Teardrop Cutout
+43 - Health Regeneration - A Green Cross
+44 - Calming Aura - Concentric blue circles
+45 - Disillusionment - A Questionmark
+46 - Holy Defense - Golden Starburst On Shield
+47 - Dark Defense - Purple Starburst on Shield
+48 - Spell Strength - Golden Cross In Blue Crystal
+49 - Plane Affinity - An Anchor
+50 - Bravery - A Lion Roaring
+51 - Earth Resist - A Shattered Stone
+52 - Construction Grade - A Spread Fan
+53 - Heat Threshold - An Icecube
+54 - Liquid Threshold - A Blazing Sun
+55 - Nullification - Leaf In Hand
+56 - Strength - Plate Armor
+57 - Agility Defense - Eye in Hand
+58 - Stability - Brick Wall
+59 - Padding - A Pillow
+60 - Shell - A Turtle Shell
+61 - Reinforcement - A Buckler

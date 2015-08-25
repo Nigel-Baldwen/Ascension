@@ -35,7 +35,7 @@ import javax.swing.Timer;
  * @version 1.0
  */
 
-public class PrimaryController extends JFrame implements MouseListener, KeyListener {
+public class PrimaryController extends JFrame implements MouseListener, MouseMotionListener, KeyListener {
 
 	/**
 	 * A timer, initialized in {@link PrimaryController#startGame() startGame()}, which
@@ -59,8 +59,10 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	private Container contentPane;
 	private BufferStrategy bufferStrategy;
 	private Graphics graphicsPlaceHolder = null;
-	private int boundX, boundY;
-	private boolean unitIsSelected = false;
+	private int boundX, boundY, gridSize;
+	private boolean unitIsSelected = false, unitMoving = false, unitAttacking =false, 
+			unitAbilityOne = false, unitAbilityTwo = false, unitAbilityThree = false, 
+			unitAbilityFour = false, terrainIsSelected = false;
 
 	/**
 	 * Creates a new, disabled <code>PrimaryController</code> object.
@@ -98,9 +100,10 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	 */
 	public void loadInitialGameState() {
 		gameModel = new PrimaryModel();
-		gameModel.loadInitialModelState(50, 4);
+		gridSize = 50;
+		gameModel.loadInitialModelState(gridSize, 4);
 		gameView = new PrimaryView();
-		gameView.loadInitialViewState(getGraphicsConfiguration(), 50);
+		gameView.loadInitialViewState(getGraphicsConfiguration(), gridSize);
 		boundX = getGraphicsConfiguration().getBounds().width;
 		boundY = getGraphicsConfiguration().getBounds().height;
 
@@ -264,12 +267,76 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	}
 
 	/**
-	 * Currently Unused. Required when implementing MouseListener.
+	 * Manages individual target selection.
+	 * 
+	 * <p>
+	 * <b>Calls</b> -
+	 * <ul>
+	 * <li> {@link PrimaryView#getFocusBoxCoords() getFocusBoxCoords()}
+	 * <li> {@link PrimaryView#getVisX() Visible Region Accessors}
+	 * <li> {@link PrimaryView#setFocusTarget(int, int, int, String) setFocusTarget(int, int, int, String)}
+	 * <li> {@link PrimaryView#setTerrainFocusTarget(int, int, int) setTerrainFocusTarget(int, int, int)}
+	 * <li> {@link PrimaryModel#getVisualModel() getVisualModel()}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param arg0 - the mouse clicked event.
 	 */
 	@Override
 	public void mouseClicked(MouseEvent arg0) {
-		// Preferable to segment usage into pressed and
-		// released actions.
+		int x = arg0.getLocationOnScreen().x, y = arg0.getLocationOnScreen().y;
+		// Clicked inside the map grid.
+		if (y <= boundY - gameView.getIPaneHeight() - gameView.getYOffset() && y > gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
+			// Identify the target of the click.
+			int c = gameView.getVisX(), r = gameView.getVisY(),
+					idTag = gameModel.getVisualModel()[((r + y - gameView.getYOffset()) / gameView.getUnitLength())][((c + x - gameView.getXOffset()) / gameView.getUnitLength())];
+			
+			if (!unitIsSelected && !terrainIsSelected) {
+				if (idTag == -1) {
+					terrainIsSelected = true;
+					gameView.setTerrainFocusTarget(((r + y - gameView.getYOffset()) / gameView.getUnitLength()), ((c + x - gameView.getXOffset()) / gameView.getUnitLength()) + gridSize, gameModel.getVisualModel()[((r + y - gameView.getYOffset()) / gameView.getUnitLength())][((c + x - gameView.getXOffset()) / gameView.getUnitLength()) + gridSize]);
+				} else {
+					unitIsSelected = true;
+					gameView.setFocusTarget(((c + x - gameView.getXOffset()) / gameView.getUnitLength()), ((r + y - gameView.getYOffset()) / gameView.getUnitLength()), InformationIndex.getMovementRadius(idTag), InformationIndex.getName(idTag));
+				}
+			} else {
+				
+			}
+			
+			
+			if (!unitIsSelected && idTag > -1) {
+				unitIsSelected = true;
+				gameView.setFocusTarget(((c + x - gameView.getXOffset()) / gameView.getUnitLength()), ((r + y - gameView.getYOffset()) / gameView.getUnitLength()), InformationIndex.getMovementRadius(idTag), InformationIndex.getName(idTag));
+			} else if (unitIsSelected) {
+				Point p = gameView.getFocusBoxCoords();
+				if (y >= p.y + gameView.getUnitLength() * 2 + gameView.getUnitLength() / 2 && y < p.y + gameView.getUnitLength() * 3) {
+					if (x >= p.x && x < p.x + gameView.getUnitLength() / 2) {
+						unitMoving = true;
+					} else if (x >= p.x + gameView.getUnitLength() / 2 && x < p.x + gameView.getUnitLength()) {
+						System.out.println("Attacking");
+					} else if (x >= p.x + gameView.getUnitLength() && x < p.x + gameView.getUnitLength() * 3 / 2) {
+						System.out.println("Ability One");
+					} else if (x >= p.x + gameView.getUnitLength() * 3 / 2 && x < p.x + gameView.getUnitLength() * 2) {
+						System.out.println("Ability Two");
+					} else if (x >= p.x + gameView.getUnitLength() * 2 && x < p.x + gameView.getUnitLength() * 5 / 2) {
+						System.out.println("Ability Three");
+					} else if (x >= p.x + gameView.getUnitLength() * 5 / 2 && x < p.x + gameView.getUnitLength() * 3) {
+						System.out.println("Ability Four");
+					}
+				}
+			}
+			
+			if (idTag == -1) {
+				Point p = gameView.getFocusTarget();
+				gameView.clearFocusTarget();
+				gameModel.transferUnit(p.x, p.y, ((r + y - gameView.getYOffset()) / gameView.getUnitLength()), ((c + x - gameView.getXOffset()) / gameView.getUnitLength()));
+			}
+		} else if (y > boundY - gameView.getIPaneHeight() - gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
+			// The Information Panel
+			if (x >= gameView.getEndTurnX() && x < gameView.getEndTurnX() + gameView.getEndTurnWidth() && y >= gameView.getEndTurnY() && y < gameView.getEndTurnY() + gameView.getEndTurnHeight()) {
+				System.out.println("You pressed the end turn button.");
+			}
+		}
 	}
 
 	/**
@@ -291,64 +358,19 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 	}
 
 	/**
-	 * Sets a focus target.
-	 * 
-	 * <p>
-	 * <b>Calls</b> -
-	 * <ul>
-	 * <li> {@link PrimaryView#getVisX() Visible Region Accessors}
-	 * <li> {@link PrimaryView#setFocusTarget(int, int, int, String) setFocusTarget(int, int, int, String)}
-	 * <li> {@link PrimaryModel#getVisualModel() getVisualModel()}
-	 * </ul>
-	 * </p>
-	 * 
-	 * @param arg0 - the mouse pressed event.
+	 * Currently Unused. Required when implementing MouseListener.
 	 */
 	@Override
 	public void mousePressed(MouseEvent arg0) {
-		int x = arg0.getLocationOnScreen().x, y = arg0.getLocationOnScreen().y;
-		if (y <= boundY - gameView.getIPaneHeight() - gameView.getYOffset() && y > gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
-			int c = gameView.getVisX(), r = gameView.getVisY(),
-					idTag = gameModel.getVisualModel()[((r + y - gameView.getYOffset()) / gameView.getUnitLength())][((c + x - gameView.getXOffset()) / gameView.getUnitLength())];
-			if (idTag > -1) {
-				unitIsSelected = true;
-				gameView.setFocusTarget(((c + x - gameView.getXOffset()) / gameView.getUnitLength()), ((r + y - gameView.getYOffset()) / gameView.getUnitLength()), InformationIndex.getMovementRadius(idTag), InformationIndex.getName(idTag));
-			}
-		}
+		// Probably going to be used...not yet though.
 	}
 
 	/**
-	 * Drops the focus target at the mouse release point.
-	 * 
-	 * <p>
-	 * <b>Calls</b> -
-	 * <ul>
-	 * <li> {@link PrimaryView#getFocusTarget() getFocusTarget()}
-	 * <li> {@link PrimaryView#clearFocusTarget() clearFocusTarget()}
-	 * <li> {@link PrimaryModel#transferUnit(int, int, int, int) transferUnit(int, int, int, int)}
-	 * </ul>
-	 * </p>
-	 * 
-	 * @param arg0 - the mouse released event.
+	 * Currently Unused. Required when implementing MouseListener.
 	 */
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
-		int x = arg0.getLocationOnScreen().x, y = arg0.getLocationOnScreen().y;
-		if (unitIsSelected && y <= boundY - gameView.getIPaneHeight() - gameView.getYOffset() && y > gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
-			int c = gameView.getVisX(), r = gameView.getVisY(),
-					idTag = gameModel.getVisualModel()[((r + y - gameView.getYOffset()) / gameView.getUnitLength())][((c + x - gameView.getXOffset()) / gameView.getUnitLength())];
-			unitIsSelected = false;
-
-			if (idTag == -1) {
-				Point p = gameView.getFocusTarget();
-				gameView.clearFocusTarget();
-				gameModel.transferUnit(p.x, p.y, ((r + y - gameView.getYOffset()) / gameView.getUnitLength()), ((c + x - gameView.getXOffset()) / gameView.getUnitLength()));
-			}
-		} else if (y > boundY - gameView.getIPaneHeight() - gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
-			if (x >= gameView.getEndTurnX() && x < gameView.getEndTurnX() + gameView.getEndTurnWidth() && y >= gameView.getEndTurnY() && y < gameView.getEndTurnY() + gameView.getEndTurnHeight()) {
-				System.out.println("You pressed the end turn button.");
-			}
-		}
+		// Probably going to be used...not yet though.
 	}
 
 	/**
@@ -371,5 +393,17 @@ public class PrimaryController extends JFrame implements MouseListener, KeyListe
 			actionDisabled = true;
 			break;
 		}
+	}
+
+	@Override
+	public void mouseDragged(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseMoved(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }
