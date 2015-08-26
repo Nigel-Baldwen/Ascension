@@ -64,6 +64,8 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 			unitAbilityOne = false, unitAbilityTwo = false, unitAbilityThree = false, 
 			unitAbilityFour = false, terrainIsSelected = false;
 
+	// Potato
+	
 	/**
 	 * Creates a new, disabled <code>PrimaryController</code> object.
 	 * 
