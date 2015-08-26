@@ -118,8 +118,8 @@ public class PrimaryView extends JPanel {
 			iPaneWidth = 2560;
 			iPaneHeight = 140;
 			unitLength = 52;
-			clockLength = 170;
-			clockOffset = 14;
+			clockLength = 132;
+			clockOffset = 4;
 			portraitWidth = 170;
 			portraitHeight = 208;
 			endTurnX = xOffset + 12;
