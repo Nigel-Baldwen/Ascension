@@ -102,14 +102,13 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 	 */
 	public void loadInitialGameState() {
 		gameModel = new PrimaryModel();
-		gridSize = 50;
+		gridSize = 500;
 		gameModel.loadInitialModelState(gridSize, 4);
 		gameView = new PrimaryView();
 		gameView.loadInitialViewState(getGraphicsConfiguration(), gridSize);
 		boundX = getGraphicsConfiguration().getBounds().width;
 		boundY = getGraphicsConfiguration().getBounds().height;
-
-
+		
 		contentPane.add(gameView);
 	}
 
@@ -277,7 +276,7 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 	 * <li> {@link PrimaryView#getFocusBoxCoords() getFocusBoxCoords()}
 	 * <li> {@link PrimaryView#getVisX() Visible Region Accessors}
 	 * <li> {@link PrimaryView#setFocusTarget(int, int, int, String) setFocusTarget(int, int, int, String)}
-	 * <li> {@link PrimaryView#setTerrainFocusTarget(int, int, int) setTerrainFocusTarget(int, int, int)}
+	 * <li> {@link PrimaryView#setTerrainFocusTarget(int, int, String) setTerrainFocusTarget(int, int, int)}
 	 * <li> {@link PrimaryModel#getVisualModel() getVisualModel()}
 	 * </ul>
 	 * </p>
@@ -291,47 +290,19 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 		if (y <= boundY - gameView.getIPaneHeight() - gameView.getYOffset() && y > gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
 			// Identify the target of the click.
 			int c = gameView.getVisX(), r = gameView.getVisY(),
-					idTag = gameModel.getVisualModel()[((r + y - gameView.getYOffset()) / gameView.getUnitLength())][((c + x - gameView.getXOffset()) / gameView.getUnitLength())];
+					row = (r + y - gameView.getYOffset()) / gameView.getUnitLength(), column = (c + x - gameView.getXOffset()) / gameView.getUnitLength(),
+					idTag = gameModel.getVisualModel()[row][column];
 			
 			if (!unitIsSelected && !terrainIsSelected) {
 				if (idTag == -1) {
 					terrainIsSelected = true;
-					gameView.setTerrainFocusTarget(((r + y - gameView.getYOffset()) / gameView.getUnitLength()), ((c + x - gameView.getXOffset()) / gameView.getUnitLength()) + gridSize, gameModel.getVisualModel()[((r + y - gameView.getYOffset()) / gameView.getUnitLength())][((c + x - gameView.getXOffset()) / gameView.getUnitLength()) + gridSize]);
+					gameView.setTerrainFocusTarget(row, column + gridSize, gameModel.getDescriptor(row, column + gridSize));
 				} else {
 					unitIsSelected = true;
-					gameView.setFocusTarget(((c + x - gameView.getXOffset()) / gameView.getUnitLength()), ((r + y - gameView.getYOffset()) / gameView.getUnitLength()), InformationIndex.getMovementRadius(idTag), InformationIndex.getName(idTag));
+					gameView.setFocusTarget(row, column, InformationIndex.getMovementRadius(idTag), InformationIndex.getName(idTag));
 				}
 			} else {
 				
-			}
-			
-			
-			if (!unitIsSelected && idTag > -1) {
-				unitIsSelected = true;
-				gameView.setFocusTarget(((c + x - gameView.getXOffset()) / gameView.getUnitLength()), ((r + y - gameView.getYOffset()) / gameView.getUnitLength()), InformationIndex.getMovementRadius(idTag), InformationIndex.getName(idTag));
-			} else if (unitIsSelected) {
-				Point p = gameView.getFocusBoxCoords();
-				if (y >= p.y + gameView.getUnitLength() * 2 + gameView.getUnitLength() / 2 && y < p.y + gameView.getUnitLength() * 3) {
-					if (x >= p.x && x < p.x + gameView.getUnitLength() / 2) {
-						unitMoving = true;
-					} else if (x >= p.x + gameView.getUnitLength() / 2 && x < p.x + gameView.getUnitLength()) {
-						System.out.println("Attacking");
-					} else if (x >= p.x + gameView.getUnitLength() && x < p.x + gameView.getUnitLength() * 3 / 2) {
-						System.out.println("Ability One");
-					} else if (x >= p.x + gameView.getUnitLength() * 3 / 2 && x < p.x + gameView.getUnitLength() * 2) {
-						System.out.println("Ability Two");
-					} else if (x >= p.x + gameView.getUnitLength() * 2 && x < p.x + gameView.getUnitLength() * 5 / 2) {
-						System.out.println("Ability Three");
-					} else if (x >= p.x + gameView.getUnitLength() * 5 / 2 && x < p.x + gameView.getUnitLength() * 3) {
-						System.out.println("Ability Four");
-					}
-				}
-			}
-			
-			if (idTag == -1) {
-				Point p = gameView.getFocusTarget();
-				gameView.clearFocusTarget();
-				gameModel.transferUnit(p.x, p.y, ((r + y - gameView.getYOffset()) / gameView.getUnitLength()), ((c + x - gameView.getXOffset()) / gameView.getUnitLength()));
 			}
 		} else if (y > boundY - gameView.getIPaneHeight() - gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
 			// The Information Panel

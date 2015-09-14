@@ -89,7 +89,7 @@ public class PrimaryView extends JPanel {
 	private int unitLength, visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
 		iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitWidth, portraitHeight, focusC, focusR, focusRad, focusBoxX, focusBoxY, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
 	private boolean focusingUnit, focusingTerrain;
-	private String focusName;
+	private String focusDescriptor;
 
 	/**
 	 * Establishes window boundaries and creates <code>VolatileImage</code>s
@@ -133,8 +133,8 @@ public class PrimaryView extends JPanel {
 			iPaneWidth = 1920;
 			iPaneHeight = 105;
 			unitLength = 39;
-			clockLength = 128;
-			clockOffset = 10;
+			clockLength = 99;
+			clockOffset = 3;
 			portraitWidth = 128;
 			portraitHeight = 156;
 			endTurnX = xOffset + 9;
@@ -747,17 +747,17 @@ public class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 * 
-	 * @param c - the abstract column coordinate of the unit
 	 * @param r - the abstract row coordinate of the unit
+	 * @param c - the abstract column coordinate of the unit
 	 * @param rad - the unit's movement radius
 	 * @param name - the unit's name
 	 */
-	public void setFocusTarget(int c, int r, int rad, String name) {
+	public void setFocusTarget(int r, int c, int rad, String descriptor) {
 		focusingUnit = true;
-		focusC = c;
 		focusR = r;
+		focusC = c;
 		focusRad = rad;
-		focusName = name;
+		focusDescriptor = descriptor;
 	}
 	
 	/**
@@ -774,9 +774,11 @@ public class PrimaryView extends JPanel {
 	 * @param r = the abstract row coordinate of the terrain
 	 * @param id - the terrain image ID
 	 */
-	public void setTerrainFocusTarget(int c, int r, int id) {
+	public void setTerrainFocusTarget(int c, int r, String descriptor) {
 		focusC = c;
 		focusR = r;
+		focusDescriptor = descriptor;
+		focusingTerrain = true;
 	}
 
 	/**

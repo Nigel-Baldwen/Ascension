@@ -808,4 +808,9 @@ public class AbstractUnit {
 	public void setDisabled(boolean b) {
 		disabled = b;
 	}
+
+	public String getDescriptor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
