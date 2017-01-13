@@ -12,15 +12,15 @@ public class Activity {
 	/**
 	 * Makes a new activity.
 	 * 
-	 * @param aP - absolute priority
+	 * @param tier - absolute priority
 	 * @param rP - relative priority
 	 * @param aT - activity type
 	 * @param pI - position index
 	 * @param aD - activity destination
 	 * @param aR - activity riders and effects
 	 */
-	public Activity (int aP, int rP, int aT, int pI, int aD, int aR) {
-		activityKeys[0] = aP;
+	public Activity (int tier, int rP, int aT, int pI, int aD, int aR) {
+		activityKeys[0] = tier;
 		activityKeys[1] = rP;
 		activityKeys[2] = aT;
 		activityKeys[3] = pI;

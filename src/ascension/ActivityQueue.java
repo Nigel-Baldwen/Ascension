@@ -12,7 +12,7 @@ public class ActivityQueue extends ArrayList<ActivityList> {
 	/**
 	 * Processes the Queue and returns an ordered list.
 	 * 
-	 * <p>
+	 * <p>,
 	 * <b>Called By</b> -
 	 * <ul>
 	 * <li> {@link PrimaryModel#rotateTurn() rotateTurn()}
