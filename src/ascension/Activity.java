@@ -30,8 +30,9 @@ public class Activity {
 
 	/*
 	 * Activity Keys are broken down into the following sections.
-	 * activityKeys[0] : absolute priority; this priority is
-	 * 		compared to the activities of other units
+	 * activityKeys[0] : tier; this is a reflection of the placement
+	 * 		of the unit in relation to other classes of units
+	 * 		it determines which bracket of activity this unit acts in.
 	 * activityKeys[1] : relative priority; this priority is
 	 * 		compared to activities within the same activity list
 	 * activityKeys[2] : type of action
