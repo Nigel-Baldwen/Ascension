@@ -6,7 +6,7 @@ public class Terrain {
 	
 	public Terrain(int id, int picID) {
 		type = id;
-		pictureID = picID;
+		pictureID = picID; // Think about whether or not pictureID should be mutable.
 	}
 
 	public int getPictureID() {

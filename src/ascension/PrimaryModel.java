@@ -105,8 +105,8 @@ public class PrimaryModel {
 		terrainP1 = new Terrain[size][size];
 		generateMap(terrainP1);
 		unitsP1  = new AbstractUnit[size][size];
-		int c = (int) (Math.random() * size / 4);
-		int r = (int) (Math.random() * size / 4);
+		int c = 10; // (int) (Math.random() * size / 4);
+		int r = 10; // (int) (Math.random() * size / 4);
 		unitsP1[c][r] = new PhysicalBuilder(1, size * c + r);
 		unitsP1[c][r].setVisible(true);
 		unitsP1[c][r].setActive(true);
