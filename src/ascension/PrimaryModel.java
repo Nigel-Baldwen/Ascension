@@ -21,7 +21,7 @@ import javax.swing.Timer;
  * various image representations. e.g. health bars, 
  * unit portraits, and transparent unit portraits.
  * 
- * *A separate triple of arrays in necessary for each player
+ * *A separate triple of arrays is necessary for each player
  * in order to reflect the various vision and control rules.
  * This requirement applies to the off-line/single-machine variant.
  * </p>
@@ -98,8 +98,7 @@ public class PrimaryModel {
 		});
 		turnTimer.setDelay(turnLength / 10);
 		turnTimer.setRepeats(true);
-		turnTimer.start();
-
+		
 		// Creates 2d arrays for terrain, units, and model.
 		// Initializes them.
 		terrainP1 = new Terrain[size][size];
@@ -149,6 +148,10 @@ public class PrimaryModel {
 			visualModelP4 = new int[size][size * 2];
 			generateVisualModel(visualModelP4, unitsP4, terrainP4);
 		}
+		
+		// TODO Think about moving the start of the turn to somewhere more practical.
+		// Maybe a "Start Game" screen or something. Probably something similar to the turn rotations.
+		turnTimer.start();
 	}
 
 	/**
