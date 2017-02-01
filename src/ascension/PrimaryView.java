@@ -347,7 +347,7 @@ public class PrimaryView extends JPanel {
 			}
 		} while (clockImage.contentsLost());
 
-//		if (focusing) {
+//		if (focusingUnit) {
 //			int i = gameState[focusR][focusC];
 //			
 //			do {
@@ -360,7 +360,7 @@ public class PrimaryView extends JPanel {
 //				} else if (valCode == VolatileImage.IMAGE_OK) {
 //					g.drawImage(unitImages[i], 170, 886, null);
 //					g.setColor(Color.WHITE);
-//					g.drawString(focusName, 1162, 1061);
+//					g.drawString(focusDescriptor, 1162, 1061);
 //				}
 //			} while (unitImages[i].contentsLost());
 //
@@ -957,6 +957,7 @@ public class PrimaryView extends JPanel {
 	 */
 	public void clearFocusTarget() {
 		focusingUnit = false;
+		focusingTerrain = false;
 	}
 
 	/**
