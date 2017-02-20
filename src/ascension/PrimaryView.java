@@ -87,7 +87,7 @@ public class PrimaryView extends JPanel {
 	private VolatileImage informationPanel, clockImage, portrait;
 	private GraphicsConfiguration gC;
 	private int unitLength, visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
-		iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitWidth, portraitHeight, focusC, focusR, focusRad, focusBoxX, focusBoxY, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
+		iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitSize, portraitOffset, focusC, focusR, focusRad, focusBoxX, focusBoxY, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
 	private boolean focusingUnit, focusingTerrain;
 	private String focusDescriptor;
 
@@ -120,8 +120,8 @@ public class PrimaryView extends JPanel {
 			unitLength = 52;
 			clockLength = 132;
 			clockOffset = 4;
-			portraitWidth = 170;
-			portraitHeight = 208;
+			portraitSize = 132;
+			portraitOffset = 141;
 			endTurnX = xOffset + 12;
 			endTurnY = screenHeight - yOffset - iPaneHeight + 196;
 			endTurnWidth = 174;
@@ -135,8 +135,8 @@ public class PrimaryView extends JPanel {
 			unitLength = 39;
 			clockLength = 99;
 			clockOffset = 3;
-			portraitWidth = 128;
-			portraitHeight = 156;
+			portraitSize = 99;
+			portraitOffset = 106;
 			endTurnX = xOffset + 9;
 			endTurnY = screenHeight - yOffset - iPaneHeight + 147;
 			endTurnWidth = 130;
@@ -150,8 +150,8 @@ public class PrimaryView extends JPanel {
 			unitLength = 33;
 			clockLength = 105;
 			clockOffset = 9;
-			portraitWidth = 105;
-			portraitHeight = 130;
+			portraitSize = 105;
+			portraitOffset = -1;
 			endTurnX = xOffset + 8;
 			endTurnY = screenHeight - yOffset - iPaneHeight + 123;
 			endTurnWidth = 108;
@@ -165,8 +165,8 @@ public class PrimaryView extends JPanel {
 			unitLength = 26;
 			clockLength = 85;
 			clockOffset = 7;
-			portraitWidth = 85;
-			portraitHeight = 105;
+			portraitSize = 85;
+			portraitOffset = -1;
 			endTurnX = xOffset + 6;
 			endTurnY = screenHeight - yOffset - iPaneHeight + 98;
 			endTurnWidth = 87;
@@ -200,7 +200,7 @@ public class PrimaryView extends JPanel {
 		
 		informationPanel = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
 		clockImage = gC.createCompatibleVolatileImage(clockLength, clockLength, VolatileImage.TRANSLUCENT);
-		portrait = gC.createCompatibleVolatileImage(portraitWidth, portraitHeight, VolatileImage.TRANSLUCENT);
+		portrait = gC.createCompatibleVolatileImage(portraitSize, portraitSize, VolatileImage.TRANSLUCENT);
 	}
 
 	/**
@@ -347,35 +347,22 @@ public class PrimaryView extends JPanel {
 			}
 		} while (clockImage.contentsLost());
 
-//		if (focusingUnit) {
-//			int i = gameState[focusR][focusC];
-//			
-//			do {
-//				int valCode = unitImages[i].validate(gC);
-//
-//				if (valCode == VolatileImage.IMAGE_RESTORED) {
-//					restoreUnitTile(i);
-//				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-//					unitImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
-//				} else if (valCode == VolatileImage.IMAGE_OK) {
-//					g.drawImage(unitImages[i], 170, 886, null);
-//					g.setColor(Color.WHITE);
-//					g.drawString(focusDescriptor, 1162, 1061);
-//				}
-//			} while (unitImages[i].contentsLost());
-//
-//			do {
-//				int valCode = portrait.validate(gC);
-//
-//				if (valCode == VolatileImage.IMAGE_RESTORED) {
-//					restorePortrait();
-//				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-//					portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
-//				} else if (valCode == VolatileImage.IMAGE_OK) {
-//					g.drawImage(portrait, 1148, 874, null);
-//				}
-//			} while (portrait.contentsLost());
-//		}	
+		if (focusingUnit) {
+			int i = gameState[focusR][focusC];
+
+			do {
+				int valCode = portrait.validate(gC);
+
+				if (valCode == VolatileImage.IMAGE_RESTORED) {
+					restorePortrait();
+				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+					portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
+				} else if (valCode == VolatileImage.IMAGE_OK) {
+					g.drawImage(portrait, xOffset + portraitOffset, screenHeight - yOffset - iPaneHeight + clockOffset, null);
+					g.setColor(Color.WHITE);
+					g.drawString(focusDescriptor, 1162, 1061);}
+			} while (portrait.contentsLost());
+		}	
 		
 		// Draw black rectangles in xOffset and yOffset regions
 		g.setColor(Color.BLACK);
@@ -401,7 +388,7 @@ public class PrimaryView extends JPanel {
 		do {
 
 			if (portrait.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				portrait = gC.createCompatibleVolatileImage(portraitWidth, portraitHeight, VolatileImage.TRANSLUCENT);
+				portrait = gC.createCompatibleVolatileImage(portraitSize, portraitSize, VolatileImage.TRANSLUCENT);
 			}
 
 			try {
@@ -956,6 +943,7 @@ public class PrimaryView extends JPanel {
 	 * </p>
 	 */
 	public void clearFocusTarget() {
+		System.out.println("made it here");
 		focusingUnit = false;
 		focusingTerrain = false;
 	}
