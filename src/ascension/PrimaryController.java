@@ -292,7 +292,7 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 					idTag = gameModel.getVisualModel()[row][column];
 			
 			if (!unitIsSelected && !terrainIsSelected) {
-				if (idTag == -1) {
+				if (idTag < 0) {
 					terrainIsSelected = true;
 					gameView.setTerrainFocusTarget(row, column + gridSize, gameModel.getDescriptor(row, column + gridSize));
 				} else {

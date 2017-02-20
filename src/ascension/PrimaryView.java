@@ -2,6 +2,7 @@ package ascension;
 
 import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
@@ -84,12 +85,13 @@ public class PrimaryView extends JPanel {
 	// @formatter:on
 
 	private VolatileImage[] terrainImages, unitImages, unitFocusImages;
-	private VolatileImage informationPanel, clockImage, portrait;
+	private VolatileImage unitIP, terrainIP, clockImage, portrait;
 	private GraphicsConfiguration gC;
 	private int unitLength, visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
-		iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitSize, portraitOffset, focusC, focusR, focusRad, focusBoxX, focusBoxY, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
+	iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitSize, portraitOffset, focusC, focusR, focusRad, focusBoxX, focusBoxY, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
 	private boolean focusingUnit, focusingTerrain;
 	private String focusDescriptor;
+	private Font basicText;
 
 	/**
 	 * Establishes window boundaries and creates <code>VolatileImage</code>s
@@ -175,11 +177,11 @@ public class PrimaryView extends JPanel {
 		} else {
 			System.exit(0);
 		}
-		
+
 		pixelLength = unitLength * units;
 		boundX = this.pixelLength - screenWidth;
 		boundY = this.pixelLength - screenHeight + iPaneHeight;
-		
+
 		terrainImages = new VolatileImage[90];
 
 		for (int i = 0; i < terrainImages.length; i++) {
@@ -191,17 +193,20 @@ public class PrimaryView extends JPanel {
 		for (int i = 0; i < unitImages.length; i++) {
 			unitImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
 		}
-		
+
 		unitFocusImages = new VolatileImage[40];
 
 		for (int i = 0; i < unitFocusImages.length; i++) {
 			unitFocusImages[i] = gC.createCompatibleVolatileImage(unitLength * 3, unitLength * 3);
 		}
-		
-		informationPanel = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
+
+		unitIP = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
+		terrainIP = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
 		clockImage = gC.createCompatibleVolatileImage(clockLength, clockLength, VolatileImage.TRANSLUCENT);
 		portrait = gC.createCompatibleVolatileImage(portraitSize, portraitSize, VolatileImage.TRANSLUCENT);
+		basicText = new Font("Veranda", Font.BOLD, 20);
 	}
+
 
 	/**
 	 * Handles all visual display operations.
@@ -226,11 +231,47 @@ public class PrimaryView extends JPanel {
 		int rStart = visY / unitLength;
 		int cEnd = cStart + (screenWidth - 2 * xOffset) / unitLength + 1;
 		int rEnd = rStart + (screenHeight - 2 * yOffset) / unitLength + 1;
-		
-		// Traversing the 2D gameState array to draw
-		// terrain tiles. The do while ensures the images
-		// actually get drawn. Applies for the populate units
-		// region as well.
+
+		// Traversing the 2D gameState array to draw terrain tiles.
+		drawTerrainTiles(rStart, rEnd, cStart, cEnd, gameState, g);
+
+		// Traversing the 2D gameState array to draw unit tiles.
+		drawUnitTiles(rStart, rEnd, cStart, cEnd, gameState, g);
+
+		// Draw the highlight boxes and focus for a focused unit.
+		drawUnitFocus(g);		
+
+		// Draw the relevant information panel.
+		drawInformationPanel(g);
+
+		// Draw the current clock face.
+		drawClock(g);
+
+		// Draw the target unit's portrait.
+		drawUnitPortrait(g);
+
+		// Draw black rectangles in xOffset and yOffset regions
+		drawOffsets(g);
+	}
+
+	/**
+	 * A helper method for render to factor out code.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param rStart - the abstract row coordinate of the upper-left-most unit
+	 * @param rEnd - the abstract row coordinate of the lower-right-most unit
+	 * @param cStart - the abstract column coordinate of the upper-left-most unit
+	 * @param cEnd - the abstract column coordinate of the lower-right-most unit
+	 * @param gameState - the currently active player's visible information
+	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
+	 */
+	private void drawTerrainTiles(int rStart, int rEnd, int cStart, int cEnd, int[][] gameState, Graphics g){
 		for (int r = rStart; r < rEnd && r < gameState.length; r++) {
 			for (int c = cStart; c < cEnd && c < gameState.length * 2; c++) {
 
@@ -250,8 +291,26 @@ public class PrimaryView extends JPanel {
 				} while (terrainImages[i].contentsLost());
 			}
 		}
+	}
 
-		// Populate Units
+	/** 
+	 * A helper method for render to factor out code.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param rStart - the abstract row coordinate of the upper-left-most unit
+	 * @param rEnd - the abstract row coordinate of the lower-right-most unit
+	 * @param cStart - the abstract column coordinate of the upper-left-most unit
+	 * @param cEnd - the abstract column coordinate of the lower-right-most unit
+	 * @param gameState - the currently active player's visible information
+	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
+	 */
+	private void drawUnitTiles(int rStart, int rEnd, int cStart, int cEnd, int[][] gameState, Graphics g){
 		for (int r = rStart; r < rEnd && r < gameState.length; r++) {
 			for (int c = cStart - gameState.length; c < cEnd - gameState.length && c < gameState.length * 2; c++) {
 
@@ -273,8 +332,21 @@ public class PrimaryView extends JPanel {
 				}
 			}
 		}
+	}
 
-		// Draw the highlight boxes for displaying the unit's movement radius.
+	/** 
+	 * A helper method for render to factor out code.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
+	 */
+	private void drawUnitFocus(Graphics g) {
 		if (focusingUnit) {
 			focusBoxX = focusC * unitLength - unitLength - visX;
 			focusBoxY = focusR * unitLength - unitLength - visY;
@@ -290,7 +362,7 @@ public class PrimaryView extends JPanel {
 			if (focusR * unitLength > visY + screenHeight - yOffset - iPaneHeight - unitLength * 2) {
 				focusBoxY = screenWidth - 2 * yOffset - unitLength * 3;
 			}
-			
+
 			do {
 				int valCode = unitFocusImages[0].validate(gC);
 
@@ -303,7 +375,7 @@ public class PrimaryView extends JPanel {
 							focusBoxY, null);
 				}
 			} while (unitFocusImages[0].contentsLost());
-			
+
 			g.setColor(Color.GREEN);
 			int stroke = unitLength * 5 / 100;
 			for (int r = focusR - focusRad; r < focusR + focusRad + 1; r++)
@@ -318,21 +390,65 @@ public class PrimaryView extends JPanel {
 					g.fillRect(c * unitLength - visX + xOffset + unitLength, r * unitLength - visY + yOffset - stroke, stroke, unitLength + stroke * 2);
 				}
 		}
+	}
 
-		// Information Panel
-		do {
-			int valCode = informationPanel.validate(gC);
+	/** 
+	 * A helper method for render to factor out code.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
+	 */
+	private void drawInformationPanel(Graphics g) {
+		if (focusingUnit) {
+			do {
+				int valCode = unitIP.validate(gC);
 
-			if (valCode == VolatileImage.IMAGE_RESTORED) {
-				restoreInformationPanel();
-			} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-				informationPanel = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
-			} else if (valCode == VolatileImage.IMAGE_OK) {
-				g.drawImage(informationPanel, xOffset, screenHeight - yOffset - iPaneHeight, null);
-			}
-		} while (informationPanel.contentsLost());
+				if (valCode == VolatileImage.IMAGE_RESTORED) {
+					restoreUnitIP();
+				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+					unitIP = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
+				} else if (valCode == VolatileImage.IMAGE_OK) {
+					g.drawImage(unitIP, xOffset, screenHeight - yOffset - iPaneHeight, null);
+				}
+			} while (unitIP.contentsLost());
+		} else if(focusingTerrain) {
+			do {
+				int valCode = terrainIP.validate(gC);
 
-		// Clock Face
+				if (valCode == VolatileImage.IMAGE_RESTORED) {
+					restoreTerrainIP();
+				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+					terrainIP = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
+				} else if (valCode == VolatileImage.IMAGE_OK) {
+					g.drawImage(terrainIP, xOffset, screenHeight - yOffset - iPaneHeight, null);
+					g.setColor(Color.WHITE);
+					g.setFont(basicText);
+					g.drawString(focusDescriptor, xOffset + portraitOffset + clockLength / 4, (int) (screenHeight - yOffset - iPaneHeight + clockOffset + clockLength / 2));
+				}
+			} while (terrainIP.contentsLost());
+		}
+	}
+
+
+	/** 
+	 * A helper method for render to factor out code.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
+	 */
+	private void drawClock(Graphics g) {
 		do {
 			restoreClockImage();
 
@@ -346,10 +462,23 @@ public class PrimaryView extends JPanel {
 				g.drawImage(clockImage, xOffset + clockOffset, screenHeight - yOffset - iPaneHeight + clockOffset, null);
 			}
 		} while (clockImage.contentsLost());
+	}
 
+
+	/** 
+	 * A helper method for render to factor out code.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
+	 */
+	private void drawUnitPortrait(Graphics g) {
 		if (focusingUnit) {
-			int i = gameState[focusR][focusC];
-
 			do {
 				int valCode = portrait.validate(gC);
 
@@ -359,12 +488,24 @@ public class PrimaryView extends JPanel {
 					portrait = gC.createCompatibleVolatileImage(128, 157, VolatileImage.TRANSLUCENT);
 				} else if (valCode == VolatileImage.IMAGE_OK) {
 					g.drawImage(portrait, xOffset + portraitOffset, screenHeight - yOffset - iPaneHeight + clockOffset, null);
-					g.setColor(Color.WHITE);
-					g.drawString(focusDescriptor, 1162, 1061);}
+				}
 			} while (portrait.contentsLost());
-		}	
-		
-		// Draw black rectangles in xOffset and yOffset regions
+		}
+	}
+
+	/** 
+	 * A helper method for render to factor out code.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
+	 */
+	private void drawOffsets(Graphics g) {
 		g.setColor(Color.BLACK);
 		g.fillRect(0, 0, xOffset, screenHeight);
 		g.fillRect(0, 0, screenWidth, yOffset);
@@ -395,13 +536,14 @@ public class PrimaryView extends JPanel {
 				g = portrait.createGraphics();
 				g.setComposite(AlphaComposite.Src);
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Portraits/" + resKey + "/P_0.jpg"))).getImage(), 0,
+						.getResource("images/Units/" + resKey + "/Portraits/"+ 0 + "/P_0.jpg"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
 			}
 		} while (portrait.contentsLost());
 	}
+
 
 	/**
 	 * Restores the lost contents of the clock image.
@@ -434,6 +576,7 @@ public class PrimaryView extends JPanel {
 		} while (clockImage.contentsLost());
 	}
 
+
 	/**
 	 * Restores the lost contents of the unit image.
 	 * 
@@ -464,7 +607,8 @@ public class PrimaryView extends JPanel {
 			}
 		} while (unitImages[0].contentsLost());
 	}
-	
+
+
 	/**
 	 * Restores the lost contents of the unit focus image.
 	 * 
@@ -486,7 +630,7 @@ public class PrimaryView extends JPanel {
 
 			try {
 				g = unitFocusImages[0].createGraphics();
-				
+
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
 						.getResource("images/Units/" + resKey + "/Focus/" + 0 + "/U_" + i + "_F.jpg"))).getImage(), 0,
 						0, null);
@@ -496,8 +640,9 @@ public class PrimaryView extends JPanel {
 		} while (unitImages[0].contentsLost());
 	}
 
+
 	/**
-	 * Restores the lost contents of the information panel image.
+	 * Restores the lost contents of the unit information panel image.
 	 * 
 	 * <p>
 	 * <b>Called By</b> -
@@ -506,17 +651,17 @@ public class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 */
-	private void restoreInformationPanel() {
+	private void restoreUnitIP() {
 		Graphics2D g = null;
 
 		do {
 
-			if (informationPanel.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				informationPanel = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
+			if (unitIP.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
+				unitIP = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
 			}
 
 			try {
-				g = informationPanel.createGraphics();
+				g = unitIP.createGraphics();
 
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
 						.getResource("images/Information Panel/" + resKey + "/I_0.jpg"))).getImage(), 0,
@@ -524,8 +669,40 @@ public class PrimaryView extends JPanel {
 			} finally {
 				g.dispose();
 			}
-		} while (informationPanel.contentsLost());
+		} while (unitIP.contentsLost());
 	}
+	
+	/**
+	 * Restores the lost contents of the terrain information panel image.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
+	 * </ul>
+	 * </p>
+	 */
+	private void restoreTerrainIP() {
+		Graphics2D g = null;
+
+		do {
+
+			if (terrainIP.validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
+				terrainIP = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
+			}
+
+			try {
+				g = terrainIP.createGraphics();
+
+				g.drawImage((new ImageIcon(getClass().getClassLoader()
+						.getResource("images/Information Panel/" + resKey + "/I_1.jpg"))).getImage(), 0,
+						0, null);
+			} finally {
+				g.dispose();
+			}
+		} while (terrainIP.contentsLost());
+	}
+
 
 	/**
 	 * Restores the lost contents of the terrain tile image.
@@ -558,6 +735,7 @@ public class PrimaryView extends JPanel {
 		} while (terrainImages[i].contentsLost());
 	}
 
+
 	/**
 	 * Scrolls the display to the west.
 	 * 
@@ -572,6 +750,7 @@ public class PrimaryView extends JPanel {
 			visX -= 10;
 		}
 	}
+
 
 	/**
 	 * Scrolls the display to the north-west.
@@ -591,6 +770,7 @@ public class PrimaryView extends JPanel {
 		}
 	}
 
+
 	/**
 	 * Scrolls the display to the north.
 	 * 
@@ -605,6 +785,7 @@ public class PrimaryView extends JPanel {
 			visY -= 10;
 		}
 	}
+
 
 	/**
 	 * Scrolls the display to the north-east.
@@ -624,6 +805,7 @@ public class PrimaryView extends JPanel {
 		}
 	}
 
+
 	/**
 	 * Scrolls the display to the east.
 	 * 
@@ -638,6 +820,7 @@ public class PrimaryView extends JPanel {
 			visX += 10;
 		}
 	}
+
 
 	/**
 	 * Scrolls the display to the south-east.
@@ -657,6 +840,7 @@ public class PrimaryView extends JPanel {
 		}
 	}
 
+
 	/**
 	 * Scrolls the display to the south.
 	 * 
@@ -671,6 +855,7 @@ public class PrimaryView extends JPanel {
 			visY += 10;
 		}
 	}
+
 
 	/**
 	 * Scrolls the display to the south-west.
@@ -690,6 +875,7 @@ public class PrimaryView extends JPanel {
 		}
 	}
 
+
 	/**
 	 * Returns the upper-left-most visible pixel's x coordinate relative to the entire graphics space.
 	 * 
@@ -707,6 +893,7 @@ public class PrimaryView extends JPanel {
 		return visX;
 	}
 
+
 	/**
 	 * Returns the upper-left-most visible pixel's y coordinate relative to the entire graphics space.
 	 * 
@@ -723,6 +910,7 @@ public class PrimaryView extends JPanel {
 	public int getVisY() {
 		return visY;
 	}
+
 
 	/**
 	 * Identifies a selected unit.
@@ -746,7 +934,8 @@ public class PrimaryView extends JPanel {
 		focusRad = rad;
 		focusDescriptor = descriptor;
 	}
-	
+
+
 	/**
 	 * Identifies a selected terrain tile.
 	 * 
@@ -768,6 +957,7 @@ public class PrimaryView extends JPanel {
 		focusingTerrain = true;
 	}
 
+
 	/**
 	 * Replaces the clock face in order to keep it up to date.
 	 * 
@@ -783,6 +973,7 @@ public class PrimaryView extends JPanel {
 	public void updateClock(int face) {
 		clockFace = face;
 	}
+
 
 	/**
 	 * Returns the current focus target.
@@ -800,6 +991,7 @@ public class PrimaryView extends JPanel {
 		return new Point(focusR, focusC);
 	}
 
+
 	/**
 	 * Returns the information panel height.
 	 * 
@@ -816,7 +1008,8 @@ public class PrimaryView extends JPanel {
 	public int getIPaneHeight() {
 		return iPaneHeight;
 	}
-	
+
+
 	/**
 	 * Returns the x dimension offset.
 	 * 
@@ -833,6 +1026,7 @@ public class PrimaryView extends JPanel {
 	public int getXOffset() {
 		return xOffset;
 	}
+
 
 	/**
 	 * Returns the y dimension offset.
@@ -851,6 +1045,7 @@ public class PrimaryView extends JPanel {
 		return yOffset;
 	}
 
+
 	/**
 	 * Returns the unit length.
 	 * 
@@ -867,7 +1062,8 @@ public class PrimaryView extends JPanel {
 	public int getUnitLength() {
 		return unitLength;
 	}
-	
+
+
 	/**
 	 * Returns the x coordinate of the end turn button.
 	 * 
@@ -883,7 +1079,8 @@ public class PrimaryView extends JPanel {
 	public int getEndTurnX() {
 		return endTurnX;
 	}
-	
+
+
 	/**
 	 * Returns the y coordinate of the end turn button.
 	 * 
@@ -899,7 +1096,8 @@ public class PrimaryView extends JPanel {
 	public int getEndTurnY() {
 		return endTurnY;
 	}
-	
+
+
 	/**
 	 * Returns the width of the end turn button.
 	 * 
@@ -915,7 +1113,8 @@ public class PrimaryView extends JPanel {
 	public int getEndTurnWidth() {
 		return endTurnWidth;
 	}
-	
+
+
 	/**
 	 * Returns the height of the end turn button.
 	 * 
@@ -931,7 +1130,8 @@ public class PrimaryView extends JPanel {
 	public int getEndTurnHeight() {
 		return endTurnHeight;
 	}
-	
+
+
 	/**
 	 * Clears the focus target.
 	 * 
@@ -947,6 +1147,7 @@ public class PrimaryView extends JPanel {
 		focusingUnit = false;
 		focusingTerrain = false;
 	}
+
 
 	/**
 	 * Returns the on-screen coordinates of the unit focus box.
