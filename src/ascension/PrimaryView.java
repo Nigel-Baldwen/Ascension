@@ -88,9 +88,11 @@ public class PrimaryView extends JPanel {
 	private VolatileImage unitIP, terrainIP, clockImage, portrait;
 	private GraphicsConfiguration gC;
 	private int unitLength, visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
-	iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitSize, portraitOffset, focusC, focusR, focusRad, focusBoxX, focusBoxY, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
+		iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitSize, portraitOffset, statsOffsetX, statsOffsetY, statsSeperatorX, statsSeperatorY, 
+		focusC, focusR, focusBoxX, focusBoxY, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
 	private boolean focusingUnit, focusingTerrain;
-	private String focusDescriptor;
+	private String terDescriptor;
+	private String[] unitDescriptor;
 	private Font basicText;
 
 	/**
@@ -124,6 +126,10 @@ public class PrimaryView extends JPanel {
 			clockOffset = 4;
 			portraitSize = 132;
 			portraitOffset = 141;
+			statsOffsetX = 315;
+			statsOffsetY =  30;
+			statsSeperatorX = 64;
+			statsSeperatorY = 33;
 			endTurnX = xOffset + 12;
 			endTurnY = screenHeight - yOffset - iPaneHeight + 196;
 			endTurnWidth = 174;
@@ -378,6 +384,7 @@ public class PrimaryView extends JPanel {
 
 			g.setColor(Color.GREEN);
 			int stroke = unitLength * 5 / 100;
+			int focusRad = Integer.parseInt(unitDescriptor[3]);
 			for (int r = focusR - focusRad; r < focusR + focusRad + 1; r++)
 				for (int c = focusC - focusRad; c < focusC + focusRad + 1; c++) {
 					// Upper Stroke
@@ -415,6 +422,18 @@ public class PrimaryView extends JPanel {
 					unitIP = gC.createCompatibleVolatileImage(iPaneWidth, iPaneHeight);
 				} else if (valCode == VolatileImage.IMAGE_OK) {
 					g.drawImage(unitIP, xOffset, screenHeight - yOffset - iPaneHeight, null);
+					// Fill in the stats for the unit starting at health and finishing at reinforcement
+					g.setColor(Color.BLACK);
+					g.setFont(basicText);
+					int statIterator = 0;
+					for (int c = 0; c < 15; c++) {
+						for (int r = 0; r < 4; r++) {
+							g.drawString(unitDescriptor[statIterator],
+									xOffset + statsOffsetX + c * statsSeperatorX,
+									screenHeight - yOffset - iPaneHeight + statsOffsetY + r * statsSeperatorY);
+							statIterator++;
+						}
+					}
 				}
 			} while (unitIP.contentsLost());
 		} else if(focusingTerrain) {
@@ -429,7 +448,7 @@ public class PrimaryView extends JPanel {
 					g.drawImage(terrainIP, xOffset, screenHeight - yOffset - iPaneHeight, null);
 					g.setColor(Color.WHITE);
 					g.setFont(basicText);
-					g.drawString(focusDescriptor, xOffset + portraitOffset + clockLength / 4, (int) (screenHeight - yOffset - iPaneHeight + clockOffset + clockLength / 2));
+					g.drawString(terDescriptor, xOffset + portraitOffset + clockLength / 4, (int) (screenHeight - yOffset - iPaneHeight + clockOffset + clockLength / 2));
 				}
 			} while (terrainIP.contentsLost());
 		}
@@ -924,15 +943,13 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @param r - the abstract row coordinate of the unit
 	 * @param c - the abstract column coordinate of the unit
-	 * @param rad - the unit's movement radius
 	 * @param name - the unit's name
 	 */
-	public void setFocusTarget(int r, int c, int rad, String descriptor) {
+	public void setUnitFocusTarget(int r, int c, String descriptor) {
 		focusingUnit = true;
 		focusR = r;
 		focusC = c;
-		focusRad = rad;
-		focusDescriptor = descriptor;
+		unitDescriptor = descriptor.split(":");
 	}
 
 
@@ -953,7 +970,7 @@ public class PrimaryView extends JPanel {
 	public void setTerrainFocusTarget(int c, int r, String descriptor) {
 		focusC = c;
 		focusR = r;
-		focusDescriptor = descriptor;
+		terDescriptor = descriptor;
 		focusingTerrain = true;
 	}
 

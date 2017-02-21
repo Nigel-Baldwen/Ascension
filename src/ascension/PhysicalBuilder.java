@@ -83,4 +83,30 @@ public class PhysicalBuilder extends AbstractUnit {
 			return - 1;
 		}
 	}
+
+	/**
+	 * Returns the stats of the unit plus potentially some misc info.
+	 */
+	@Override
+	public String getDescriptor() {
+		String descriptor = health + ":" + magPnt + ":" + engPnt + ":" + 
+				movSpd + ":" + sihtRd + ":" + numAtk + ":" + atkSpd + ":" + 
+				ranged + ":" + sqrOcu + ":" + dthEXP + ":" + levels + ":" + 
+				curLoc + ":" + player + ":" +
+				/* Null value for the spacer */
+				-1 + ":" +
+				prdCst + ":" + trnPld + ":" + 
+				intAtk + ":" + intDef + ":" + solInv + ":" + solAff + ":" + 
+				symbio + ":" + hordAp + ":" + poison + ":" + hltReg + ":" + 
+				kenisi + ":" + calmAu + ":" + illusi + ":" + disIll + ":" + 
+				hlyAtk + ":" + hlyDef + ":" + drkAtk + ":" + drkDef + ":" + 
+				dispel + ":" + splStr + ":" + sumStr + ":" + plnAff + ":" + 
+				threat + ":" + bravry + ":" + dthBlw + ":" + nullif + ":" +
+				ethAtk + ":" + ethDef + ":" + wndAtk + ":" + wndDef + ":" + 
+				firAtk + ":" + firDef + ":" + wtrAtk + ":" + wtrDef + ":" + 
+				charge + ":" + stabil + ":" + aglAtk + ":" + aglDef + ":" + 
+				unarmd + ":" + strnth + ":" + blunts + ":" + paddin + ":" + 
+				blades + ":" + shells + ":" + pierce + ":" + rnfrcm;
+		return descriptor;
+	}
 }
