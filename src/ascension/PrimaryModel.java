@@ -106,7 +106,7 @@ public class PrimaryModel {
 		unitsP1  = new AbstractUnit[size][size];
 		int c = 10; // (int) (Math.random() * size / 4);
 		int r = 10; // (int) (Math.random() * size / 4);
-		unitsP1[c][r] = new PhysicalBuilder(1, size * c + r);
+		unitsP1[c][r] = new PhysicalBuilder(1, r, c);
 		unitsP1[c][r].setVisible(true);
 		unitsP1[c][r].setActive(true);
 		visualModelP1 = new int[size][size * 2];
@@ -117,7 +117,7 @@ public class PrimaryModel {
 		unitsP2  = new AbstractUnit[size][size];
 		c = (int) (Math.random() * size / 4 + size * 3 / 4);
 		r = (int) (Math.random() * size / 4 + size * 3 / 4);
-		unitsP2[c][r] = new PhysicalBuilder(2, size * c + r);
+		unitsP2[c][r] = new PhysicalBuilder(2, r, c);
 		unitsP2[c][r].setVisible(true);
 		unitsP2[c][r].setActive(true);
 		visualModelP2 = new int[size][size * 2];
@@ -129,7 +129,7 @@ public class PrimaryModel {
 			unitsP3  = new AbstractUnit[size][size];
 			c = (int) (Math.random() * size / 4);
 			r = (int) (Math.random() * size / 4 + size * 3 / 4);
-			unitsP3[c][r] = new PhysicalBuilder(3, size * c + r);
+			unitsP3[c][r] = new PhysicalBuilder(3, r, c);
 			unitsP3[c][r].setVisible(true);
 			unitsP3[c][r].setActive(true);
 			visualModelP3 = new int[size][size * 2];
@@ -142,7 +142,7 @@ public class PrimaryModel {
 			unitsP4  = new AbstractUnit[size][size];
 			c = (int) (Math.random() * size / 4 + size * 3 / 4);
 			r = (int) (Math.random() * size / 4);
-			unitsP4[c][r] = new PhysicalBuilder(4, size * c + r);
+			unitsP4[c][r] = new PhysicalBuilder(4, r, c);
 			unitsP4[c][r].setVisible(true);
 			unitsP4[c][r].setActive(true);
 			visualModelP4 = new int[size][size * 2];

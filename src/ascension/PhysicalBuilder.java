@@ -20,7 +20,7 @@ public class PhysicalBuilder extends AbstractUnit {
 	 * @param player - the owner
 	 * @param location - the location in the grid
 	 */
-	public PhysicalBuilder(int player, int location) {
+	public PhysicalBuilder(int player, int locR, int locC) {
 		intAtk = 3; intDef = 6;
 		solInv = -1; solAff = 3;
 		symbio = -1; hordAp = 3;
@@ -64,7 +64,8 @@ public class PhysicalBuilder extends AbstractUnit {
 		levels = 0;
 		dthEXP = 6;
 		this.player = player;
-		curLoc = location;
+		curLocR = locR;
+		curLocC = locC;
 		chnTim = 0;
 		trnPld = 0;
 		idValu = 0;
@@ -92,10 +93,12 @@ public class PhysicalBuilder extends AbstractUnit {
 		String descriptor = health + ":" + magPnt + ":" + engPnt + ":" + 
 				movSpd + ":" + sihtRd + ":" + numAtk + ":" + atkSpd + ":" + 
 				ranged + ":" + sqrOcu + ":" + dthEXP + ":" + levels + ":" + 
-				curLoc + ":" + player + ":" +
-				/* Null value for the spacer */
-				-1 + ":" +
+				// X coordinate for current location.
+				curLocR + ":" + 
+				player + ":" +
 				prdCst + ":" + trnPld + ":" + 
+				// Y coordinate for current location.
+				curLocC + ":" +
 				intAtk + ":" + intDef + ":" + solInv + ":" + solAff + ":" + 
 				symbio + ":" + hordAp + ":" + poison + ":" + hltReg + ":" + 
 				kenisi + ":" + calmAu + ":" + illusi + ":" + disIll + ":" + 

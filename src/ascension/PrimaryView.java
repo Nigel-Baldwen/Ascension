@@ -88,8 +88,8 @@ public class PrimaryView extends JPanel {
 	private VolatileImage unitIP, terrainIP, clockImage, portrait;
 	private GraphicsConfiguration gC;
 	private int unitLength, visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
-		iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitSize, portraitOffset, statsOffsetX, statsOffsetY, statsSeperatorX, statsSeperatorY, 
-		focusC, focusR, focusBoxX, focusBoxY, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
+	iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitSize, portraitOffset, statsOffsetX, statsOffsetY, statsSeperatorX, statsSeperatorY, 
+	focusC, focusR, focusBoxX, focusBoxY, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
 	private boolean focusingUnit, focusingTerrain;
 	private String terDescriptor;
 	private String[] unitDescriptor;
@@ -428,9 +428,11 @@ public class PrimaryView extends JPanel {
 					int statIterator = 0;
 					for (int c = 0; c < 15; c++) {
 						for (int r = 0; r < 4; r++) {
-							g.drawString(unitDescriptor[statIterator],
-									xOffset + statsOffsetX + c * statsSeperatorX,
-									screenHeight - yOffset - iPaneHeight + statsOffsetY + r * statsSeperatorY);
+							if (Integer.parseInt(unitDescriptor[statIterator]) > 0) {
+								g.drawString(unitDescriptor[statIterator],
+										xOffset + statsOffsetX + c * statsSeperatorX,
+										screenHeight - yOffset - iPaneHeight + statsOffsetY + r * statsSeperatorY);
+							}
 							statIterator++;
 						}
 					}
@@ -690,7 +692,7 @@ public class PrimaryView extends JPanel {
 			}
 		} while (unitIP.contentsLost());
 	}
-	
+
 	/**
 	 * Restores the lost contents of the terrain information panel image.
 	 * 

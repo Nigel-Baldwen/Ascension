@@ -63,7 +63,8 @@ public class AbstractUnit {
 				levels,
 				dthEXP,
 				player,
-				curLoc,
+				curLocR,
+				curLocC,
 				chnTim,
 				trnPld,
 				idValu;
@@ -734,7 +735,7 @@ public class AbstractUnit {
 	 * @return the unit's Current Location.
 	 */
 	public int getCurLoc() {
-		return curLoc;
+		return curLocR;
 	}
 
 	/**
