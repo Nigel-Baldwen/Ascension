@@ -300,7 +300,10 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 					gameView.setUnitFocusTarget(row, column, gameModel.getDescriptor(row, column));
 				}
 			} else {
-				
+				if (idTag < 0) {
+					unitIsSelected = false;
+					gameView.setTerrainFocusTarget(row, column + gridSize, gameModel.getDescriptor(row, column + gridSize));
+				}
 			}
 		} else if (y > boundY - gameView.getIPaneHeight() - gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
 			// The Information Panel
