@@ -300,9 +300,18 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 					gameView.setUnitFocusTarget(row, column, gameModel.getDescriptor(row, column));
 				}
 			} else {
-				if (idTag < 0) {
+				if (idTag < 0 && terrainIsSelected) {
+					gameView.setTerrainFocusTarget(row, column + gridSize, gameModel.getDescriptor(row, column + gridSize));
+				} else if (idTag < 0 && unitIsSelected) {
+					terrainIsSelected = true;
+					gameView.clearFocusTarget();
 					unitIsSelected = false;
 					gameView.setTerrainFocusTarget(row, column + gridSize, gameModel.getDescriptor(row, column + gridSize));
+				} else if (idTag >= 0 && terrainIsSelected) {
+					unitIsSelected = true;
+					gameView.clearFocusTarget();
+					terrainIsSelected = false;
+					gameView.setUnitFocusTarget(row, column, gameModel.getDescriptor(row, column));
 				}
 			}
 		} else if (y > boundY - gameView.getIPaneHeight() - gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {

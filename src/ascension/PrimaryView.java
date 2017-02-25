@@ -1163,7 +1163,6 @@ public class PrimaryView extends JPanel {
 	 * </p>
 	 */
 	public void clearFocusTarget() {
-		System.out.println("made it here");
 		focusingUnit = false;
 		focusingTerrain = false;
 	}
