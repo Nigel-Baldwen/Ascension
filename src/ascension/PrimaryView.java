@@ -354,6 +354,21 @@ public class PrimaryView extends JPanel {
 	 */
 	private void drawUnitFocus(Graphics g) {
 		if (focusingUnit) {
+			g.setColor(Color.GREEN);
+			int stroke = 1; // A more complex stroke may be appropriate such as unitLength * 5 / 100
+			int focusRad = Integer.parseInt(unitDescriptor[3]);
+			for (int r = focusR - focusRad; r < focusR + focusRad + 1; r++)
+				for (int c = focusC - focusRad; c < focusC + focusRad + 1; c++) {
+					// Upper Stroke
+					g.fillRect(c * unitLength - visX + xOffset - stroke, r * unitLength - visY + yOffset - stroke, unitLength + stroke * 2, stroke);
+					// Left Stroke
+					g.fillRect(c * unitLength - visX + xOffset - stroke, r * unitLength - visY + yOffset - stroke, stroke, unitLength + stroke * 2);
+					// Bottom Stroke
+					g.fillRect(c * unitLength - visX + xOffset - stroke, r * unitLength - visY + yOffset + unitLength, unitLength + stroke * 2, stroke);
+					// Right Stroke
+					g.fillRect(c * unitLength - visX + xOffset + unitLength, r * unitLength - visY + yOffset - stroke, stroke, unitLength + stroke * 2);
+				}
+			
 			focusBoxX = focusC * unitLength - unitLength - visX;
 			focusBoxY = focusR * unitLength - unitLength - visY;
 			if (focusC * unitLength < visX + unitLength) {
@@ -382,20 +397,6 @@ public class PrimaryView extends JPanel {
 				}
 			} while (unitFocusImages[0].contentsLost());
 
-			g.setColor(Color.GREEN);
-			int stroke = unitLength * 5 / 100;
-			int focusRad = Integer.parseInt(unitDescriptor[3]);
-			for (int r = focusR - focusRad; r < focusR + focusRad + 1; r++)
-				for (int c = focusC - focusRad; c < focusC + focusRad + 1; c++) {
-					// Upper Stroke
-					g.fillRect(c * unitLength - visX + xOffset - stroke, r * unitLength - visY + yOffset - stroke, unitLength + stroke * 2, stroke);
-					// Left Stroke
-					g.fillRect(c * unitLength - visX + xOffset - stroke, r * unitLength - visY + yOffset - stroke, stroke, unitLength + stroke * 2);
-					// Bottom Stroke
-					g.fillRect(c * unitLength - visX + xOffset - stroke, r * unitLength - visY + yOffset + unitLength, unitLength + stroke * 2, stroke);
-					// Right Stroke
-					g.fillRect(c * unitLength - visX + xOffset + unitLength, r * unitLength - visY + yOffset - stroke, stroke, unitLength + stroke * 2);
-				}
 		}
 	}
 
