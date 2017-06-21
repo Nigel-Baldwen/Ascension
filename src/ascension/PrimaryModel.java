@@ -2,7 +2,6 @@ package ascension;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
@@ -44,6 +43,7 @@ public class PrimaryModel {
 	 */
 	private Timer turnTimer;
 	private AbstractUnit[][] unitsP1, unitsP2, unitsP3, unitsP4;
+	private AbstractUnit focusTarget = null;
 	private Terrain[][] terrainP1, terrainP2, terrainP3, terrainP4;
 	private int[][] visualModelP1, visualModelP2, visualModelP3, visualModelP4;
 	private int turnLength, percent, currentTurn, playerCount, waitingState, gridSize;
@@ -98,7 +98,7 @@ public class PrimaryModel {
 		});
 		turnTimer.setDelay(turnLength / 10);
 		turnTimer.setRepeats(true);
-		
+
 		// Creates 2d arrays for terrain, units, and model.
 		// Initializes them.
 		terrainP1 = new Terrain[size][size];
@@ -148,7 +148,7 @@ public class PrimaryModel {
 			visualModelP4 = new int[size][size * 2];
 			generateVisualModel(visualModelP4, unitsP4, terrainP4);
 		}
-		
+
 		// TODO Think about moving the start of the turn to somewhere more practical.
 		// Maybe a "Start Game" screen or something. Probably something similar to the turn rotations.
 		turnTimer.start();
@@ -218,17 +218,17 @@ public class PrimaryModel {
 		// Divide the map into 10-20% width and length seed zones.
 		int zonePercent = ((int) (11 * Math.random())) + 10, zoneLength = gridSize / zonePercent;
 		int seedType;
-		
+
 		for (int x = 0; x < zonePercent; x++) {
 			for (int y = 0; y < zonePercent; y++) {
 				int seedC = zoneLength * x + zoneLength / 2;
 				int seedR = zoneLength * y + zoneLength / 2;
 				seedType = (int) (5 * Math.random());
 				dest[seedR][seedC] = new Terrain(seedType, seedType * 9 + ((int) (9 * Math.random())));
-				
+
 				for (int i = 1; i <= zoneLength / 2; i++) {
 					double chanceTarget = (double) i / (zoneLength / 2) - (double) 1 / (zoneLength / 2);
-					
+
 					for (int c = seedC - i; c <= seedC + i; c++) {
 						if (Math.random() >= chanceTarget && seedR - i > -1 && c > -1 && c < gridSize)
 							dest[seedR - i][c] = new Terrain(seedType, seedType * 9 + ((int) (9 * Math.random())));
@@ -244,7 +244,7 @@ public class PrimaryModel {
 				}
 			}
 		}
-		
+
 		for (int r = 0; r < gridSize; r++) {
 			for (int c = 0; c < gridSize; c++) {
 				if (dest[r][c] == null) {
@@ -299,7 +299,7 @@ public class PrimaryModel {
 					}
 				}
 			}
-			
+
 			activityQueue.process();
 			// Consider how to implement the chain of activities
 			currentTurn = 1;
@@ -433,5 +433,26 @@ public class PrimaryModel {
 			else
 				return terrainP4[r][c - unitsP4.length].getDescriptor();
 		}
+	}
+
+	public void setUnitFocusTarget(int r, int c) {
+		switch (currentTurn) {
+		case 1:
+			focusTarget = unitsP1[r][c];
+			break;
+		case 2:
+			focusTarget = unitsP2[r][c];
+			break;
+		case 3:
+			focusTarget = unitsP3[r][c];
+			break;
+		default:
+			focusTarget = unitsP4[r][c];
+			break;
+		}
+	}
+
+	public void requestMoveTo(int row, int column) {
+		focusTarget.generateMoveActivityTo(row, column);
 	}
 }

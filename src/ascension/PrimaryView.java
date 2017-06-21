@@ -88,7 +88,7 @@ public class PrimaryView extends JPanel {
 	private VolatileImage unitIP, terrainIP, clockImage, portrait;
 	private GraphicsConfiguration gC;
 	private int unitLength, visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
-	iPaneWidth, iPaneHeight, resKey, clockLength, clockOffset, portraitSize, portraitOffset, statsOffsetX, statsOffsetY, statsSeperatorX, statsSeperatorY, 
+	iPaneWidth, iPaneHeight, iPaneButtonSize, iPaneButtonX, iPaneButtonY, resKey, clockLength, clockOffset, portraitSize, portraitOffset, statsOffsetX, statsOffsetY, statsSeperatorX, statsSeperatorY, 
 	focusC, focusR, focusBoxX, focusBoxY, clockFace, endTurnX, endTurnY, endTurnWidth, endTurnHeight;
 	private boolean focusingUnit, focusingTerrain;
 	private String terDescriptor;
@@ -121,6 +121,9 @@ public class PrimaryView extends JPanel {
 			yOffset = (screenHeight - 1440) / 2;
 			iPaneWidth = 2560;
 			iPaneHeight = 140;
+			iPaneButtonSize = 64;
+			iPaneButtonX = xOffset + 2425;
+			iPaneButtonY = screenHeight - yOffset - iPaneHeight + 5;
 			unitLength = 52;
 			clockLength = 132;
 			clockOffset = 4;
@@ -1029,7 +1032,56 @@ public class PrimaryView extends JPanel {
 		return iPaneHeight;
 	}
 
+	/**
+	 * Returns the size of the buttons found on the right-hand side of the information panel.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mouseClicked(java.awt.event.MouseEvent) mouseClicked(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the information panel button size.
+	 */
+	public int getIPaneButtonSize() {
+		return iPaneButtonSize;
+	}
 
+	/**
+	 * Returns the upper-left X coordinate of the the buttons found on the right-hand
+	 * side of the information panel.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mouseClicked(java.awt.event.MouseEvent) mouseClicked(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the information upper-left X coordinate of the information panel buttons.
+	 */
+	public int getIPaneButtonX() {
+		return iPaneButtonX;
+	}
+	
+	/**
+	 * Returns the upper-left Y coordinate of the the buttons found on the right-hand
+	 * side of the information panel.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryController#mouseClicked(java.awt.event.MouseEvent) mouseClicked(java.awt.event.MouseEvent)}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return the information upper-left Y coordinate of the information panel buttons.
+	 */
+	public int getIPaneButtonY() {
+		return iPaneButtonY;
+	}
+	
 	/**
 	 * Returns the x dimension offset.
 	 * 

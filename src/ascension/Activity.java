@@ -7,7 +7,7 @@ package ascension;
 
 public class Activity {
 
-	private int[] activityKeys = new int[6];
+	private int[] activityKeys = new int[8];
 
 	/**
 	 * Makes a new activity.
@@ -15,17 +15,21 @@ public class Activity {
 	 * @param tier - absolute priority
 	 * @param rP - relative priority
 	 * @param aT - activity type
-	 * @param pI - position index
-	 * @param aD - activity destination
+	 * @param rowS - the row of the source unit
+	 * @param colS - the column of the source unit
+	 * @param rowT - the row of the target
+	 * @param colT - the column of the target
 	 * @param aR - activity riders and effects
 	 */
-	public Activity (int tier, int rP, int aT, int pI, int aD, int aR) {
+	public Activity (int tier, int rP, int aT, int rowS, int colS, int rowT, int colT, int aR) {
 		activityKeys[0] = tier;
 		activityKeys[1] = rP;
 		activityKeys[2] = aT;
-		activityKeys[3] = pI;
-		activityKeys[4] = aD;
-		activityKeys[5] = aR;
+		activityKeys[3] = rowS;
+		activityKeys[4] = colS;
+		activityKeys[5] = rowT;
+		activityKeys[6] = colT;
+		activityKeys[7] = aR;
 	}
 
 	/*
@@ -40,10 +44,11 @@ public class Activity {
 	 * 			0 : Movement
 	 * 			1 : Attack
 	 * 			3 : Use Ability
-	 * activityKeys[3] : position index of calling unit
-	 * activityKeys[4] : movement destination of calling unit
-	 * 		|| attack target of calling unit
-	 * activityKeys[5] : special riders or effects to be applied
+	 * activityKeys[3] : row of source unit
+	 * activityKeys[4] : column of source unit
+	 * activityKeys[5] : row of target
+	 * activityKeys[6] : column of target
+	 * activityKeys[7] : special riders or effects to be applied
 	 * 		by an ability
 	 */
 

@@ -67,7 +67,11 @@ public class AbstractUnit {
 				curLocC,
 				chnTim,
 				trnPld,
-				idValu;
+				idValu,
+				// commandCount indicates how many commands have been issued to the unit.
+				// This assists with prioritizing issued commands per unit.
+				commandCount; 
+							
 	protected ActivityList activityList = new ActivityList();
 	private int[] visibleBy = new int[4];
 	protected boolean visible = false, active = false, disabled;
@@ -813,5 +817,10 @@ public class AbstractUnit {
 	public String getDescriptor() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	public void generateMoveActivityTo(int row, int column) {
+		// TODO Auto-generated method stub
+		
 	}
 }

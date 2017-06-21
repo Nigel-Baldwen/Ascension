@@ -69,6 +69,7 @@ public class PhysicalBuilder extends AbstractUnit {
 		chnTim = 0;
 		trnPld = 0;
 		idValu = 0;
+		commandCount = 0;
 	}
 
 	/**
@@ -111,5 +112,13 @@ public class PhysicalBuilder extends AbstractUnit {
 				unarmd + ":" + strnth + ":" + blunts + ":" + paddin + ":" + 
 				blades + ":" + shells + ":" + pierce + ":" + rnfrcm;
 		return descriptor;
+	}
+	
+	@Override
+	public void generateMoveActivityTo(int row, int column) {
+		// I need a pathfinding algorithm to set out the proposed movement path from start to finish.
+		// Following that, I need to break that path down into frames according to the speed traveled.
+		// I'll be using A* ... time to go research how to implement that. lol.
+		this.addActivity(new Activity(0, ++commandCount, 0, curLocR, curLocC, row, column, -1));
 	}
 }
