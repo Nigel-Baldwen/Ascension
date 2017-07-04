@@ -21,6 +21,7 @@ public class PhysicalBuilder extends AbstractUnit {
 	 * @param location - the location in the grid
 	 */
 	public PhysicalBuilder(int player, int locR, int locC) {
+		locomotion = Locomotion.GROUND;
 		intAtk = 3; intDef = 6;
 		solInv = -1; solAff = 3;
 		symbio = -1; hordAp = 3;
@@ -116,9 +117,6 @@ public class PhysicalBuilder extends AbstractUnit {
 	
 	@Override
 	public void generateMoveActivityTo(int row, int column) {
-		// I need a pathfinding algorithm to set out the proposed movement path from start to finish.
-		// Following that, I need to break that path down into frames according to the speed traveled.
-		// I'll be using A* ... time to go research how to implement that. lol.
 		this.addActivity(new Activity(0, ++commandCount, 0, curLocR, curLocC, row, column, -1));
 	}
 }

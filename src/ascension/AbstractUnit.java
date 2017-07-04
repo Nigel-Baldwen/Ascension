@@ -71,7 +71,9 @@ public class AbstractUnit {
 				// commandCount indicates how many commands have been issued to the unit.
 				// This assists with prioritizing issued commands per unit.
 				commandCount; 
-							
+	
+	protected enum Locomotion { GROUND, AIR } // Potentially burrowing, tree-walking, etc.
+	protected Locomotion locomotion;
 	protected ActivityList activityList = new ActivityList();
 	private int[] visibleBy = new int[4];
 	protected boolean visible = false, active = false, disabled;
