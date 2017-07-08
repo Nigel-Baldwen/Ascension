@@ -20,13 +20,13 @@ import ascension.AbstractUnit.Locomotion;
 
 public class PathFinder {
 
-	/* Values of zero indicate impassable terrain.
-	 * Values of one indicate enemies.
-	 * Values of two indicate allied structures.
-	 * Values of three indicate allied units.
-	 * Values of four indicate ground passable terrain.
-	 * Values of five indicate flight passable terrain.
-	 * Values of X indicate other passable terrain.
+	/* Values of A indicate impassable terrain.
+	 * Values of B indicate enemies.
+	 * Values of C indicate allied structures.
+	 * Values of W indicate allied units.
+	 * Values of X indicate ground passable terrain.
+	 * Values of Y indicate flight passable terrain.
+	 * Values of Z indicate other passable terrain.
 	 * Maybe eventually there will be burrowing and the like.
 	 * Tree walking, that sort of stuff. Might end up needing a
 	 * G-cost in light of that in addition to the F-cost.
@@ -78,16 +78,16 @@ public class PathFinder {
 						|| sColumn - speed + c < 0 || sColumn - speed + c >= navigableTerrain.length) {
 					continue;
 				}
-				switch (navigableTerrain[sRow - speed + r][sColumn - speed + c]) {
-				case 1: // Flying only
+				switch (navigableTerrain[sRow - speed + r][sColumn - speed + c] % 9) { // TODO This will have to change as we go forward.
+				case 0: // Completely impassable terrain
+					closedSet[r][c] = 1;
+					break;
+				case 8: // Flying only
 					if (locomotion != Locomotion.AIR) { // Unit can't fly
 						closedSet[r][c] = 1;
 					}
 					break;
-				case 2: // Completely impassable terrain
-					closedSet[r][c] = 1;
-					break;
-				default: // Must be open
+				default: // 0 - Must be open
 					break;
 				}
 			}
@@ -99,30 +99,27 @@ public class PathFinder {
 		start.setFCost(calculateHCost(start, destination));
 
 		// We're going to assume the longest travel.
-		// This merely sets the initial size of the container though.
-		// We'll trim it down to size once we return it.
+		// This merely sets the initial memory capacity of the container though.
 		ArrayList<Point> bestPath = new ArrayList<Point>(speed);
-
+		
 		while (!openSet.isEmpty()) {
 			Node current = openSet.poll();
 
 			// We found the shortest path!
 			if (current.equals(destination)) {
-				// We'll add the points in last to first
-				// We start at the back of the list so that the recipient can iterate easily.
-				int index = speed;
+				// We'll add the points in last to first always inserting left of the
+				// previous inserts so that the recipient can iterate easily.
 				// Loop backwards through the parents until you hit the start.
 				// The points are added according to the locations under consideration by the caller.
 				while (!current.equals(start)) {
 					int rMovement = current.getRow() - current.getParent().getRow();
 					int cMovement = current.getColumn() - current.getParent().getColumn();
+					bestPath.add(0, new Point(dRow, dColumn));
 					dRow -= rMovement;
 					dColumn -= cMovement;
-					bestPath.add(--index, new Point(dRow, dColumn));
+					current = current.getParent();
 				}
 
-				bestPath.trimToSize();
-				System.out.println("WE DID IT TEAM!!!");
 				return bestPath;
 			}
 

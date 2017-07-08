@@ -1,5 +1,8 @@
 package ascension;
 
+import java.awt.Point;
+import java.util.ArrayList;
+
 /**
  * @author Nigel_Baldwen - nigelbaldwen@gmail.com
  * @version 1.0
@@ -22,54 +25,55 @@ public class PhysicalBuilder extends AbstractUnit {
 	 */
 	public PhysicalBuilder(int player, int locR, int locC) {
 		locomotion = Locomotion.GROUND;
-		intAtk = 3; intDef = 6;
-		solInv = -1; solAff = 3;
-		symbio = -1; hordAp = 3;
-		poison = -1; hltReg = 3;
-		kenisi = -1; calmAu = 3;
-		illusi = -1; disIll = 4;
-		hlyAtk = -1; hlyDef = 5;
-		drkAtk = -1; drkDef = 4;
-		dispel = -1; splStr = 4;
-		sumStr = -1; plnAff = 3;
-		threat = -1; bravry = 3;
-		ethAtk = -1; ethDef = 3;
-		wndAtk = -1; wndDef = 3;
-		firAtk = -1; firDef = 4;
-		wtrAtk = -1; wtrDef = 5;
-		dthBlw = -1; nullif = 4;
-		unarmd = -1; strnth = 3;
-		aglAtk = -1; aglDef = 3;
-		charge = -1; stabil = 3;
-		blunts = -1; paddin = 3;
-		blades = -1; shells = 4;
-		pierce = 6; rnfrcm = 5;
-		dmgMel = 3; 
-		dmgRng = -1;
-		dmgOne = 0;
-		dmgTwo = 0;
-		dmgThr = 0;
-		dmgFor = 0;
-		health = 12;
-		magPnt = 6;
-		magRgn = 3;
-		engPnt = -1;
-		engRgn = -1;
-		atkSpd = 0;
-		numAtk = 4;
-		sihtRd = 6;
-		movSpd = 6;
-		prdCst = 4;
-		ranged = -1;
-		sqrOcu = 1;
-		levels = 0;
-		dthEXP = 6;
+		intelligenceAttack = 3; intelligenceDefense = 6;
+		soulInvestment = -1; soulAffinity = 3;
+		symbiosis = -1; hoardingAptitude = 3;
+		poison = -1; healthRegeneration = 3;
+		kenisis = -1; calmingAura = 3;
+		illusion = -1; disillusion = 4;
+		holyAttack = -1; holyDefense = 5;
+		darkAttack = -1; darkDefense = 4;
+		dispel = -1; spellStrength = 4;
+		summonStrength = -1; planarAffinity = 3;
+		threat = -1; bravery = 3;
+		earthAttack = -1; earthDefense = 3;
+		windAttack = -1; windDefense = 3;
+		fireAttack = -1; fireDefense = 4;
+		waterAttack = -1; waterDefense = 5;
+		deathBlow = -1; nullification = 4;
+		unarmed = -1; strength = 3;
+		agilityAttack = -1; agilityDefense = 3;
+		charge = -1; stability = 3;
+		bluntAttack = -1; paddingDefense = 3;
+		bladeAttack = -1; shellDefense = 4;
+		pierceAttack = 6; reinforcementDefense = 5;
+		damageMelee = 3; 
+		damageRanged = -1;
+		damageAbilityOne = 0;
+		damageAbilityTwo = 0;
+		damageAbilityThree = 0;
+		damageAbilityFour = 0;
+		healthPoints = 12;
+		magicPoints = 6;
+		magicRegeneration = 3;
+		energyPoints = -1;
+		energyRegeneration = -1;
+		attackSpeed = 0;
+		numberOfAttacks = 4;
+		sightRadius = 6;
+		moveSpeed = 12;
+		productionCost = 4;
+		range = -1;
+		squaresOccupied = 1;
+		level = 0;
+		deathEXP = 6;
 		this.player = player;
 		curLocR = locR;
 		curLocC = locC;
-		chnTim = 0;
-		trnPld = 0;
-		idValu = 0;
+		curLoc = new Point(locR, locC);
+		channelTime = 0;
+		turnsPlayed = 0;
+		idValue = 0;
 		commandCount = 0;
 	}
 
@@ -92,31 +96,26 @@ public class PhysicalBuilder extends AbstractUnit {
 	 */
 	@Override
 	public String getDescriptor() {
-		String descriptor = health + ":" + magPnt + ":" + engPnt + ":" + 
-				movSpd + ":" + sihtRd + ":" + numAtk + ":" + atkSpd + ":" + 
-				ranged + ":" + sqrOcu + ":" + dthEXP + ":" + levels + ":" + 
+		String descriptor = healthPoints + ":" + magicPoints + ":" + energyPoints + ":" + 
+				moveSpeed + ":" + sightRadius + ":" + numberOfAttacks + ":" + attackSpeed + ":" + 
+				range + ":" + squaresOccupied + ":" + deathEXP + ":" + level + ":" + 
 				// X coordinate for current location.
 				curLocR + ":" + 
 				player + ":" +
-				prdCst + ":" + trnPld + ":" + 
+				productionCost + ":" + turnsPlayed + ":" + 
 				// Y coordinate for current location.
 				curLocC + ":" +
-				intAtk + ":" + intDef + ":" + solInv + ":" + solAff + ":" + 
-				symbio + ":" + hordAp + ":" + poison + ":" + hltReg + ":" + 
-				kenisi + ":" + calmAu + ":" + illusi + ":" + disIll + ":" + 
-				hlyAtk + ":" + hlyDef + ":" + drkAtk + ":" + drkDef + ":" + 
-				dispel + ":" + splStr + ":" + sumStr + ":" + plnAff + ":" + 
-				threat + ":" + bravry + ":" + dthBlw + ":" + nullif + ":" +
-				ethAtk + ":" + ethDef + ":" + wndAtk + ":" + wndDef + ":" + 
-				firAtk + ":" + firDef + ":" + wtrAtk + ":" + wtrDef + ":" + 
-				charge + ":" + stabil + ":" + aglAtk + ":" + aglDef + ":" + 
-				unarmd + ":" + strnth + ":" + blunts + ":" + paddin + ":" + 
-				blades + ":" + shells + ":" + pierce + ":" + rnfrcm;
+				intelligenceAttack + ":" + intelligenceDefense + ":" + soulInvestment + ":" + soulAffinity + ":" + 
+				symbiosis + ":" + hoardingAptitude + ":" + poison + ":" + healthRegeneration + ":" + 
+				kenisis + ":" + calmingAura + ":" + illusion + ":" + disillusion + ":" + 
+				holyAttack + ":" + holyDefense + ":" + darkAttack + ":" + darkDefense + ":" + 
+				dispel + ":" + spellStrength + ":" + summonStrength + ":" + planarAffinity + ":" + 
+				threat + ":" + bravery + ":" + deathBlow + ":" + nullification + ":" +
+				earthAttack + ":" + earthDefense + ":" + windAttack + ":" + windDefense + ":" + 
+				fireAttack + ":" + fireDefense + ":" + waterAttack + ":" + waterDefense + ":" + 
+				charge + ":" + stability + ":" + agilityAttack + ":" + agilityDefense + ":" + 
+				unarmed + ":" + strength + ":" + bluntAttack + ":" + paddingDefense + ":" + 
+				bladeAttack + ":" + shellDefense + ":" + pierceAttack + ":" + reinforcementDefense;
 		return descriptor;
-	}
-	
-	@Override
-	public void generateMoveActivityTo(int row, int column) {
-		this.addActivity(new Activity(0, ++commandCount, 0, curLocR, curLocC, row, column, -1));
 	}
 }

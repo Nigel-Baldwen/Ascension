@@ -47,6 +47,7 @@ public class PrimaryModel {
 	private Terrain[][] terrainP1, terrainP2, terrainP3, terrainP4;
 	private int[][] visualModelP1, visualModelP2, visualModelP3, visualModelP4;
 	private int turnLength, percent, currentTurn, playerCount, waitingState, gridSize;
+	private PathFinder pathFinderP1, pathFinderP2, pathFinderP3, pathFinderP4;
 	private ActivityQueue activityQueue;
 
 	/**
@@ -111,6 +112,13 @@ public class PrimaryModel {
 		unitsP1[c][r].setActive(true);
 		visualModelP1 = new int[size][size * 2];
 		generateVisualModel(visualModelP1, unitsP1, terrainP1);
+		pathFinderP1 = new PathFinder(visualModelP1); // This is a fairly rudimentary solution TODO
+		/*
+		 * Each player uses their own path finder because each player
+		 * has a particular view of terrain, enemy, and other information on any
+		 * given turn. It remains to be seen what ought to be done from here.
+		 * The problem seems rather larger than I confidently grasp at the moment.
+		 */
 
 		terrainP2 = new Terrain[size][size];
 		copyMap(terrainP1, terrainP2);
@@ -122,6 +130,7 @@ public class PrimaryModel {
 		unitsP2[c][r].setActive(true);
 		visualModelP2 = new int[size][size * 2];
 		generateVisualModel(visualModelP2, unitsP2, terrainP2);
+		pathFinderP2 = new PathFinder(visualModelP2);
 
 		if (playerCount > 2) {
 			terrainP3 = new Terrain[size][size];
@@ -134,6 +143,7 @@ public class PrimaryModel {
 			unitsP3[c][r].setActive(true);
 			visualModelP3 = new int[size][size * 2];
 			generateVisualModel(visualModelP3, unitsP3, terrainP3);
+			pathFinderP3 = new PathFinder(visualModelP3);
 		}
 
 		if (playerCount > 3) {
@@ -147,6 +157,7 @@ public class PrimaryModel {
 			unitsP4[c][r].setActive(true);
 			visualModelP4 = new int[size][size * 2];
 			generateVisualModel(visualModelP4, unitsP4, terrainP4);
+			pathFinderP4 = new PathFinder(visualModelP4);
 		}
 
 		// TODO Think about moving the start of the turn to somewhere more practical.
@@ -453,6 +464,24 @@ public class PrimaryModel {
 	}
 
 	public void requestMoveTo(int row, int column) {
-		focusTarget.generateMoveActivityTo(row, column);
+		switch (currentTurn) {
+		case 1:
+			focusTarget.generateMoveActivityWithPath(
+					pathFinderP1.getPassivePath(focusTarget.getCurLocR(), focusTarget.getCurLocC(), row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion()));
+			break;
+		case 2:
+			focusTarget.generateMoveActivityWithPath(
+					pathFinderP2.getPassivePath(focusTarget.getCurLocR(), focusTarget.getCurLocC(), row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion()));
+			break;
+		case 3:
+			focusTarget.generateMoveActivityWithPath(
+					pathFinderP3.getPassivePath(focusTarget.getCurLocR(), focusTarget.getCurLocC(), row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion()));
+			break;
+		default:
+			focusTarget.generateMoveActivityWithPath(
+					pathFinderP4.getPassivePath(focusTarget.getCurLocR(), focusTarget.getCurLocC(), row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion()));
+			break;
+		}
+		
 	}
 }
