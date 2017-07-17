@@ -101,7 +101,7 @@ public class PathFinder {
 		// We're going to assume the longest travel.
 		// This merely sets the initial memory capacity of the container though.
 		ArrayList<Point> bestPath = new ArrayList<Point>(speed);
-		
+
 		while (!openSet.isEmpty()) {
 			Node current = openSet.poll();
 
@@ -150,67 +150,69 @@ public class PathFinder {
 			}
 		}
 		return null; // Exiting the while loop signifies failure.
+		// TODO Consider a throws declaration here so that it is clear that nothing can actually end up returning null here.
+		// TODO Effective Java - Book
 	}
 
-			private int calculateHCost(Node start, Node destination) {
-				return Math.max(Math.abs(start.getRow() - destination.getRow()), Math.abs(start.getColumn() - destination.getColumn()));
-			}
+	private int calculateHCost(Node start, Node destination) {
+		return Math.max(Math.abs(start.getRow() - destination.getRow()), Math.abs(start.getColumn() - destination.getColumn()));
+	}
 
-			/*
-			 * Nodes track their most efficient ancestor as well as various costs.
-			 */
-			private class Node  implements Comparable<Node>{
-				private int gCost, // Cost of getting from start to this. 
-				fCost, // Cost, partly heuristic, of getting to goal through this node. f = h + g.
-				row, column; // The location of the node on the grid relative to other nodes.
-				Node parent; // Most efficient prior node.
+	/*
+	 * Nodes track their most efficient ancestor as well as various costs.
+	 */
+	private class Node  implements Comparable<Node>{
+		private int gCost, // Cost of getting from start to this. 
+		fCost, // Cost, partly heuristic, of getting to goal through this node. f = h + g.
+		row, column; // The location of the node on the grid relative to other nodes.
+		Node parent; // Most efficient prior node.
 
-				public Node(int _row, int _column) {
-					fCost = 9999;
-					gCost = 9999;
-					row = _row;
-					column = _column;
-					parent = null;
-				}
-
-				public void setParent(Node _parent) {
-					parent = _parent;
-				}
-
-				public int getGCost() {
-					return gCost;
-				}
-
-				public void setGCost(int _gCost) {
-					gCost = _gCost;
-				}
-
-				public void setFCost(int _fCost) {
-					fCost = _fCost;
-				}
-
-				public int getRow() {
-					return row;
-				}
-
-				public int getColumn() {
-					return column;
-				}
-
-				public Node getParent() {
-					return parent;
-				}
-
-				/**
-				 * This particular implementation returns negative iff
-				 * this F cost is less than that F cost, zero iff equal,
-				 * positive iff greater than.
-				 * 
-				 * @see java.lang.Comparable#compareTo(java.lang.Object)
-				 */
-				@Override
-				public int compareTo(Node other) {
-					return this.fCost - other.fCost;
-				}
-			}
+		public Node(int _row, int _column) {
+			fCost = 9999;
+			gCost = 9999;
+			row = _row;
+			column = _column;
+			parent = null;
 		}
+
+		public void setParent(Node _parent) {
+			parent = _parent;
+		}
+
+		public int getGCost() {
+			return gCost;
+		}
+
+		public void setGCost(int _gCost) {
+			gCost = _gCost;
+		}
+
+		public void setFCost(int _fCost) {
+			fCost = _fCost;
+		}
+
+		public int getRow() {
+			return row;
+		}
+
+		public int getColumn() {
+			return column;
+		}
+
+		public Node getParent() {
+			return parent;
+		}
+
+		/**
+		 * This particular implementation returns negative iff
+		 * this F cost is less than that F cost, zero iff equal,
+		 * positive iff greater than.
+		 * 
+		 * @see java.lang.Comparable#compareTo(java.lang.Object)
+		 */
+		@Override
+		public int compareTo(Node other) {
+			return this.fCost - other.fCost;
+		}
+	}
+}

@@ -853,7 +853,8 @@ public class AbstractUnit {
 		System.out.println("Squares Traveled: " + squaresTraveled);
 		// Now we find out how fast we're going to get there.
 		// This is added to each step along the path.
-		double travelModifier = 1 - (squaresTraveled / moveSpeed);
+		double travelModifier = 1 - (squaresTraveled / moveSpeed); // TODO keep in mind rational numbers for future implementation since you may lose functionality to double prec
+		// Maybe Math.fractions
 		System.out.println("Travel Modifier: " + travelModifier);
 		// We'll keep another variable to track the stacks of the travel modifier.
 		// For a step in which this rolling number is over 1, the unit takes a double step.
