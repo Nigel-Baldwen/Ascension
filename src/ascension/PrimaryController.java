@@ -20,6 +20,8 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
+import ascension.AbstractUnit.UnitType;
+
 /**
  * <p>
  * <code>PrimaryController</code> is the <i>controller</i> component
@@ -60,7 +62,7 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 	private BufferStrategy bufferStrategy;
 	private Graphics graphicsPlaceHolder = null;
 	private int boundX, boundY, gridSize;
-	private boolean unitIsSelected = false, unitMoving = false, unitAttacking =false, 
+	private boolean unitIsSelected = false, unitMoving = false, unitAttacking = false, 
 			unitAbilityOne = false, unitAbilityTwo = false, unitAbilityThree = false, 
 			unitAbilityFour = false, terrainIsSelected = false, awaitingMoveTarget = false;
 
@@ -288,11 +290,11 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 		if (y <= boundY - gameView.getIPaneHeight() - gameView.getYOffset() && y > gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
 			// Identify the target of the click.
 			int c = gameView.getVisX(), r = gameView.getVisY(),
-					row = (r + y - gameView.getYOffset()) / gameView.getUnitLength(), column = (c + x - gameView.getXOffset()) / gameView.getUnitLength(),
-					idTag = gameModel.getVisualModel()[row][column];
+					row = (r + y - gameView.getYOffset()) / gameView.getUnitLength(), column = (c + x - gameView.getXOffset()) / gameView.getUnitLength();
+			UnitType idTag = gameModel.getVisualModel()[row][column].occupyingUnitType;
 
 			if (!unitIsSelected && !terrainIsSelected) {
-				if (idTag < 0) {
+				if (idTag == UnitType.EMPTY) {
 					terrainIsSelected = true;
 					gameView.setTerrainFocusTarget(row, column + gridSize, gameModel.getDescriptor(row, column + gridSize));
 				} else {
@@ -301,9 +303,9 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 					gameView.setUnitFocusTarget(row, column, gameModel.getDescriptor(row, column));
 				}
 			} else {
-				if (terrainIsSelected && idTag < 0) {
+				if (terrainIsSelected && idTag == UnitType.EMPTY) {
 					gameView.setTerrainFocusTarget(row, column + gridSize, gameModel.getDescriptor(row, column + gridSize));
-				} else if (unitIsSelected && idTag < 0) {
+				} else if (unitIsSelected && idTag == UnitType.EMPTY) {
 					if (awaitingMoveTarget) {
 						gameModel.requestMoveTo(row, column);
 						awaitingMoveTarget = false;
@@ -312,7 +314,7 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 					gameView.clearFocusTarget();
 					unitIsSelected = false;
 					gameView.setTerrainFocusTarget(row, column + gridSize, gameModel.getDescriptor(row, column + gridSize));
-				} else if (idTag >= 0 && terrainIsSelected) {
+				} else if (idTag != UnitType.EMPTY && terrainIsSelected) {
 					unitIsSelected = true;
 					gameView.clearFocusTarget();
 					terrainIsSelected = false;

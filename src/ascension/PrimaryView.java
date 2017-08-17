@@ -12,10 +12,15 @@ import java.awt.image.BufferedImage;
 import java.awt.image.VolatileImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Iterator;
 
 import javax.imageio.*;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
+
+import ascension.AbstractUnit.UnitType;
+import ascension.Terrain.TerrainSubType;
+import ascension.Terrain.TerrainType;
 
 /**
  * <p>
@@ -84,7 +89,7 @@ public class PrimaryView extends JPanel {
 	 */
 	// @formatter:on
 
-	private VolatileImage[] terrainImages, unitImages, unitFocusImages;
+	private VolatileImage[] terrainImages, unitImages, unitHalfTransparencyImages, unitSeventyFiveTransparencyImages, unitFocusImages;
 	private VolatileImage unitIP, terrainIP, clockImage, portrait;
 	private GraphicsConfiguration gC;
 	private int unitLength, visX, visY, boundX, boundY, pixelLength, screenWidth, screenHeight, xOffset, yOffset, 
@@ -203,6 +208,18 @@ public class PrimaryView extends JPanel {
 			unitImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
 		}
 
+		unitHalfTransparencyImages = new VolatileImage[40];
+
+		for (int i = 0; i < unitHalfTransparencyImages.length; i++) {
+			unitHalfTransparencyImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+		}
+
+		unitSeventyFiveTransparencyImages = new VolatileImage[40];
+
+		for (int i = 0; i < unitSeventyFiveTransparencyImages.length; i++) {
+			unitSeventyFiveTransparencyImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+		}
+
 		unitFocusImages = new VolatileImage[40];
 
 		for (int i = 0; i < unitFocusImages.length; i++) {
@@ -231,21 +248,27 @@ public class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 * 
-	 * @param gameState - the currently active player's visible information
+	 * @param visibilityState - the currently active player's visible information
 	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
 	 */
-	public void render(Graphics g, int[][] gameState) {
+	public void render(Graphics g, VisibilityState[][] visibilityState) {
 		// Calculate drawn squares
-		int cStart = visX / unitLength + gameState.length;
+		int cStart = visX / unitLength;
 		int rStart = visY / unitLength;
 		int cEnd = cStart + (screenWidth - 2 * xOffset) / unitLength + 1;
 		int rEnd = rStart + (screenHeight - 2 * yOffset) / unitLength + 1;
+		// TODO Consider Draw Ordering
+		// Traversing the visibilityState array to draw terrain tiles.
+		drawTerrainTiles(rStart, rEnd, cStart, cEnd, visibilityState, g);
 
-		// Traversing the 2D gameState array to draw terrain tiles.
-		drawTerrainTiles(rStart, rEnd, cStart, cEnd, gameState, g);
+		// Traversing the visibilityState array to draw in motion units.
+		drawInMotionUnits(rStart, rEnd, cStart, cEnd, visibilityState, g);
 
-		// Traversing the 2D gameState array to draw unit tiles.
-		drawUnitTiles(rStart, rEnd, cStart, cEnd, gameState, g);
+		// Traversing the visibilityState array to draw unit destinations.
+		drawDestinationUnits(rStart, rEnd, cStart, cEnd, visibilityState, g);
+
+		// Traversing the visibilityState array to draw unit tiles.
+		drawUnitTiles(rStart, rEnd, cStart, cEnd, visibilityState, g);
 
 		// Draw the highlight boxes and focus for a focused unit.
 		drawUnitFocus(g);		
@@ -277,27 +300,117 @@ public class PrimaryView extends JPanel {
 	 * @param rEnd - the abstract row coordinate of the lower-right-most unit
 	 * @param cStart - the abstract column coordinate of the upper-left-most unit
 	 * @param cEnd - the abstract column coordinate of the lower-right-most unit
-	 * @param gameState - the currently active player's visible information
+	 * @param visibilityState - the currently active player's visible information
 	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
 	 */
-	private void drawTerrainTiles(int rStart, int rEnd, int cStart, int cEnd, int[][] gameState, Graphics g){
-		for (int r = rStart; r < rEnd && r < gameState.length; r++) {
-			for (int c = cStart; c < cEnd && c < gameState.length * 2; c++) {
+	private void drawInMotionUnits(int rStart, int rEnd, int cStart, int cEnd, VisibilityState[][] visibilityState, Graphics g) {
+		for (int r = rStart; r < rEnd && r < visibilityState.length; r++) {
+			for (int c = cStart; c < cEnd && c < visibilityState.length; c++) {
 
-				int i = gameState[r][c];
+				VisibilityState visState = visibilityState[r][c];
+				if (visState.halfTransparencyUnits.isEmpty()) {
+					continue;
+				}
+				
+				for (Iterator<UnitType> iterator = visState.halfTransparencyUnits.iterator(); iterator.hasNext();) {
+					UnitType mover = (UnitType) iterator.next();
+					do {
+						int valCode = unitHalfTransparencyImages[mover.ordinal()].validate(gC);
+
+						if (valCode == VolatileImage.IMAGE_RESTORED) {
+							restoreHalfTransparencyUnitTile(mover);
+						} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+							unitHalfTransparencyImages[mover.ordinal()] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+						} else if (valCode == VolatileImage.IMAGE_OK) {
+							g.drawImage(unitHalfTransparencyImages[mover.ordinal()], (c * unitLength) - visX + xOffset,
+									(r * unitLength) - visY + yOffset, null);
+						}
+					} while (unitHalfTransparencyImages[mover.ordinal()].contentsLost());
+				}
+			}
+		}
+	}
+
+
+
+	/**
+	 * A helper method for render to factor out code.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param rStart - the abstract row coordinate of the upper-left-most unit
+	 * @param rEnd - the abstract row coordinate of the lower-right-most unit
+	 * @param cStart - the abstract column coordinate of the upper-left-most unit
+	 * @param cEnd - the abstract column coordinate of the lower-right-most unit
+	 * @param visibilityState - the currently active player's visible information
+	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
+	 */
+	private void drawDestinationUnits(int rStart, int rEnd, int cStart, int cEnd, VisibilityState[][] visibilityState, Graphics g) {
+		for (int r = rStart; r < rEnd && r < visibilityState.length; r++) {
+			for (int c = cStart; c < cEnd && c < visibilityState.length; c++) {
+
+				VisibilityState visState = visibilityState[r][c];
+				if (visState.destinationUnit == null) {
+					continue;
+				}
 
 				do {
-					int valCode = terrainImages[i].validate(gC);
+					int valCode = unitSeventyFiveTransparencyImages[visState.destinationUnit.ordinal()].validate(gC);
 
 					if (valCode == VolatileImage.IMAGE_RESTORED) {
-						restoreTerrainTile(i);
+						restoreSeventyFiveTransparencyUnitTile(visState.destinationUnit);
 					} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-						terrainImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength);
+						unitSeventyFiveTransparencyImages[visState.destinationUnit.ordinal()] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
 					} else if (valCode == VolatileImage.IMAGE_OK) {
-						g.drawImage(terrainImages[i], ((c - gameState.length) * unitLength) - visX + xOffset,
+						g.drawImage(unitSeventyFiveTransparencyImages[visState.destinationUnit.ordinal()], (c * unitLength) - visX + xOffset,
 								(r * unitLength) - visY + yOffset, null);
 					}
-				} while (terrainImages[i].contentsLost());
+				} while (unitSeventyFiveTransparencyImages[visState.destinationUnit.ordinal()].contentsLost());
+			}
+		}
+	}
+
+	/**
+	 * A helper method for render to factor out code.
+	 * 
+	 * <p>
+	 * <b>Called By</b> -
+	 * <ul>
+	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
+	 * </ul>
+	 * </p>
+	 * 
+	 * @param rStart - the abstract row coordinate of the upper-left-most unit
+	 * @param rEnd - the abstract row coordinate of the lower-right-most unit
+	 * @param cStart - the abstract column coordinate of the upper-left-most unit
+	 * @param cEnd - the abstract column coordinate of the lower-right-most unit
+	 * @param visibilityState - the currently active player's visible information
+	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
+	 */
+	private void drawTerrainTiles(int rStart, int rEnd, int cStart, int cEnd, VisibilityState[][] visibilityState, Graphics g){
+		for (int r = rStart; r < rEnd && r < visibilityState.length; r++) {
+			for (int c = cStart; c < cEnd && c < visibilityState.length; c++) {
+
+				VisibilityState visState = visibilityState[r][c];
+				int arrayIndex = visState.terrainType.ordinal() * 9 + visState.terrainSubType.ordinal();
+
+				do {
+					int valCode = terrainImages[arrayIndex].validate(gC);
+
+					if (valCode == VolatileImage.IMAGE_RESTORED) {
+						restoreTerrainTile(visState.terrainType, visState.terrainSubType);
+					} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+						terrainImages[arrayIndex] = gC.createCompatibleVolatileImage(unitLength, unitLength);
+					} else if (valCode == VolatileImage.IMAGE_OK) {
+						g.drawImage(terrainImages[arrayIndex], (c * unitLength) - visX + xOffset,
+								(r * unitLength) - visY + yOffset, null);
+					}
+				} while (terrainImages[arrayIndex].contentsLost());
 			}
 		}
 	}
@@ -316,28 +429,29 @@ public class PrimaryView extends JPanel {
 	 * @param rEnd - the abstract row coordinate of the lower-right-most unit
 	 * @param cStart - the abstract column coordinate of the upper-left-most unit
 	 * @param cEnd - the abstract column coordinate of the lower-right-most unit
-	 * @param gameState - the currently active player's visible information
+	 * @param visibilityState - the currently active player's visible information
 	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
 	 */
-	private void drawUnitTiles(int rStart, int rEnd, int cStart, int cEnd, int[][] gameState, Graphics g){
-		for (int r = rStart; r < rEnd && r < gameState.length; r++) {
-			for (int c = cStart - gameState.length; c < cEnd - gameState.length && c < gameState.length * 2; c++) {
+	private void drawUnitTiles(int rStart, int rEnd, int cStart, int cEnd, VisibilityState[][] visibilityState, Graphics g){
+		for (int r = rStart; r < rEnd && r < visibilityState.length; r++) {
+			for (int c = cStart; c < cEnd && c < visibilityState.length; c++) {
 
-				int i = gameState[r][c];
+				VisibilityState visState = visibilityState[r][c];
+				int arrayIndex = visState.occupyingUnitType.ordinal();
 
-				if (i > -1) {
+				if (arrayIndex != 0) { // Zero would signify an unoccupied square.
 					do {
-						int valCode = unitImages[i].validate(gC);
+						int valCode = unitImages[arrayIndex].validate(gC);
 
 						if (valCode == VolatileImage.IMAGE_RESTORED) {
-							restoreUnitTile(i);
+							restoreUnitTile(visState.occupyingUnitType);
 						} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-							unitImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+							unitImages[arrayIndex] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
 						} else if (valCode == VolatileImage.IMAGE_OK) {
-							g.drawImage(unitImages[i], (c * unitLength) - visX + xOffset,
+							g.drawImage(unitImages[arrayIndex], (c * unitLength) - visX + xOffset,
 									(r * unitLength) - visY + yOffset, null);
 						}
-					} while (unitImages[i].contentsLost());
+					} while (unitImages[arrayIndex].contentsLost());
 				}
 			}
 		}
@@ -371,7 +485,7 @@ public class PrimaryView extends JPanel {
 					// Right Stroke
 					g.fillRect(c * unitLength - visX + xOffset + unitLength, r * unitLength - visY + yOffset - stroke, stroke, unitLength + stroke * 2);
 				}
-			
+
 			focusBoxX = focusC * unitLength - unitLength - visX;
 			focusBoxY = focusR * unitLength - unitLength - visY;
 			if (focusC * unitLength < visX + unitLength) {
@@ -386,20 +500,20 @@ public class PrimaryView extends JPanel {
 			if (focusR * unitLength > visY + screenHeight - yOffset - iPaneHeight - unitLength * 2) {
 				focusBoxY = screenWidth - 2 * yOffset - unitLength * 3;
 			}
-
+			int x = 0;
 			do {
 				int valCode = unitFocusImages[0].validate(gC);
 
 				if (valCode == VolatileImage.IMAGE_RESTORED) {
 					restoreUnitFocusImage(0);
 				} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-					unitFocusImages[0] = gC.createCompatibleVolatileImage(unitLength, unitLength);
+					unitFocusImages[0] = gC.createCompatibleVolatileImage(unitLength * 3, unitLength * 3);
 				} else if (valCode == VolatileImage.IMAGE_OK) {
 					g.drawImage(unitFocusImages[0], focusBoxX,
 							focusBoxY, null);
 				}
-			} while (unitFocusImages[0].contentsLost());
 
+			} while (unitFocusImages[0].contentsLost());
 		}
 	}
 
@@ -612,27 +726,74 @@ public class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 */
-	private void restoreUnitTile(int i) {
+	private void restoreUnitTile(UnitType unitType) {
 		Graphics2D g = null;
+
+		int arrayIndex = unitType.ordinal();
 
 		do {
 
-			if (unitImages[0].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				unitImages[0] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+			if (unitImages[arrayIndex].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
+				unitImages[arrayIndex] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
 			}
 
 			try {
-				g = unitImages[0].createGraphics();
+				g = unitImages[arrayIndex].createGraphics();
 				g.setComposite(AlphaComposite.Src);
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Units/" + resKey + "/Tile/" + 0 + "/U_" + i + ".png"))).getImage(), 0,
+						.getResource("images/Units/" + resKey + "/Tile/" + 0 /* TODO Active Player */ + "/" + unitType.toString() + ".png"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
 			}
-		} while (unitImages[0].contentsLost());
+		} while (unitImages[arrayIndex].contentsLost());
 	}
 
+	private void restoreHalfTransparencyUnitTile(UnitType unitType) {
+		Graphics2D g = null;
+
+		int arrayIndex = unitType.ordinal();
+
+		do {
+
+			if (unitHalfTransparencyImages[arrayIndex].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
+				unitHalfTransparencyImages[arrayIndex] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+			}
+
+			try {
+				g = unitHalfTransparencyImages[arrayIndex].createGraphics();
+				g.setComposite(AlphaComposite.Src);
+				g.drawImage((new ImageIcon(getClass().getClassLoader()
+						.getResource("images/Units/" + resKey + "/Tile/" + 0 /* TODO Active Player */ + "/" + unitType.toString() + "50.png"))).getImage(), 0,
+						0, null);
+			} finally {
+				g.dispose();
+			}
+		} while (unitHalfTransparencyImages[arrayIndex].contentsLost());
+	}
+
+	private void restoreSeventyFiveTransparencyUnitTile(UnitType unitType) {
+		Graphics2D g = null;
+
+		int arrayIndex = unitType.ordinal();
+
+		do {
+
+			if (unitSeventyFiveTransparencyImages[arrayIndex].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
+				unitSeventyFiveTransparencyImages[arrayIndex] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+			}
+
+			try {
+				g = unitSeventyFiveTransparencyImages[arrayIndex].createGraphics();
+				g.setComposite(AlphaComposite.Src);
+				g.drawImage((new ImageIcon(getClass().getClassLoader()
+						.getResource("images/Units/" + resKey + "/Tile/" + 0 /* TODO Active Player */ + "/" + unitType.toString() + "75.png"))).getImage(), 0,
+						0, null);
+			} finally {
+				g.dispose();
+			}
+		} while (unitSeventyFiveTransparencyImages[arrayIndex].contentsLost());
+	}
 
 	/**
 	 * Restores the lost contents of the unit focus image.
@@ -657,12 +818,12 @@ public class PrimaryView extends JPanel {
 				g = unitFocusImages[0].createGraphics();
 
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Units/" + resKey + "/Focus/" + 0 + "/U_" + i + "_F.jpg"))).getImage(), 0,
+						.getResource("images/Units/" + resKey + "/Focus/" + 0 + "/PHYSICALBUILDER_FOCUS.jpg"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
 			}
-		} while (unitImages[0].contentsLost());
+		} while (unitFocusImages[0].contentsLost());
 	}
 
 
@@ -739,25 +900,27 @@ public class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 */
-	private void restoreTerrainTile(int i) {
+	private void restoreTerrainTile(TerrainType terrainType, TerrainSubType terrainSubType) {
 		Graphics2D g = null;
+
+		int arrayIndex = terrainType.ordinal() * 9 + terrainSubType.ordinal();
 
 		do {
 
-			if (terrainImages[i].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
-				terrainImages[i] = gC.createCompatibleVolatileImage(unitLength, unitLength);
+			if (terrainImages[arrayIndex].validate(gC) == VolatileImage.IMAGE_INCOMPATIBLE) {
+				terrainImages[arrayIndex] = gC.createCompatibleVolatileImage(unitLength, unitLength);
 			}
 
 			try {
-				g = terrainImages[i].createGraphics();
+				g = terrainImages[arrayIndex].createGraphics();
 
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Terrain/" + resKey + "/Tile/T_" + i + ".jpg"))).getImage(), 0,
+						.getResource("images/Terrain/" + resKey + "/Tile/" + terrainType.toString() + "_" + terrainSubType.toString() + ".jpg"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
 			}
-		} while (terrainImages[i].contentsLost());
+		} while (terrainImages[arrayIndex].contentsLost());
 	}
 
 
@@ -1064,7 +1227,7 @@ public class PrimaryView extends JPanel {
 	public int getIPaneButtonX() {
 		return iPaneButtonX;
 	}
-	
+
 	/**
 	 * Returns the upper-left Y coordinate of the the buttons found on the right-hand
 	 * side of the information panel.
@@ -1081,7 +1244,7 @@ public class PrimaryView extends JPanel {
 	public int getIPaneButtonY() {
 		return iPaneButtonY;
 	}
-	
+
 	/**
 	 * Returns the x dimension offset.
 	 * 

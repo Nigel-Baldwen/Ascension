@@ -78,6 +78,8 @@ public class AbstractUnit {
 
 	protected enum Locomotion { GROUND, AIR } // Potentially burrowing, tree-walking, etc.
 	protected Locomotion locomotion;
+	protected enum UnitType { EMPTY, PHYSICALBUILDER };
+	protected UnitType unitType;
 	protected ActivityList activityList = new ActivityList();
 	private int[] visibleBy = new int[4];
 	protected boolean visible = false, active = false, disabled;
@@ -847,15 +849,15 @@ public class AbstractUnit {
 	 * @param path - the path the unit will try to take
 	 */
 	public void generateMoveActivityWithPath(ArrayList<Point> path) {
-		System.out.println("In the generateMoveActivityWithPath method now.");
+//		System.out.println("In the generateMoveActivityWithPath method now.");
 		// First, we find out how long we've got to travel.
 		double squaresTraveled = path.size();
-		System.out.println("Squares Traveled: " + squaresTraveled);
+//		System.out.println("Squares Traveled: " + squaresTraveled);
 		// Now we find out how fast we're going to get there.
 		// This is added to each step along the path.
 		double travelModifier = 1 - (squaresTraveled / moveSpeed); // TODO keep in mind rational numbers for future implementation since you may lose functionality to double prec
 		// Maybe Math.fractions
-		System.out.println("Travel Modifier: " + travelModifier);
+//		System.out.println("Travel Modifier: " + travelModifier);
 		// We'll keep another variable to track the stacks of the travel modifier.
 		// For a step in which this rolling number is over 1, the unit takes a double step.
 		double modSum = 0;
@@ -870,12 +872,12 @@ public class AbstractUnit {
 			modSum += travelModifier;
 			if (modSum < 1) {
 				// Since this is a normal step, we'll just move along to the next square.
-				System.out.println("\n= Taking a Normal Step =");
+//				System.out.println("\n= Taking a Normal Step =");
 				target.add(step);
 				squaresOccupied.add(step);
-				System.out.println("This is a move TO: < " + target.get(0).getX() + " , " + target.get(0).getY() + " >");
-				System.out.println("This move originates FROM: < " + origin.get(0).getX() + " , " + origin.get(0).getY() + " >");
-				System.out.println("Squares occupied during this move: < " + squaresOccupied.get(0).getX() + " , " + squaresOccupied.get(0).getY() + " >");
+//				System.out.println("This is a move TO: < " + target.get(0).getX() + " , " + target.get(0).getY() + " >");
+//				System.out.println("This move originates FROM: < " + origin.get(0).getX() + " , " + origin.get(0).getY() + " >");
+//				System.out.println("Squares occupied during this move: < " + squaresOccupied.get(0).getX() + " , " + squaresOccupied.get(0).getY() + " >");
 				this.addActivity(new Activity(0, commandCount++, 0, 0, origin, target, squaresOccupied));
 				origin.clear();
 				origin.add(step);
@@ -885,22 +887,22 @@ public class AbstractUnit {
 				// We're going to take a double step now and scale down the travelMultiplier
 				modSum -= 1;
 				if (i.hasNext()) {
-					System.out.println("\n== Taking a Double Step ==");
+//					System.out.println("\n== Taking a Double Step ==");
 					squaresOccupied.add(step); // Thinking. Want to test for a bit on the other cases.
 					step = i.next();
 					target.add(step);
 					squaresOccupied.add(step);
-					System.out.println("This is a move TO: < " + target.get(0).getX() + " , " + target.get(0).getY() + " >");
-					System.out.println("This move originates FROM: < " + origin.get(0).getX() + " , " + origin.get(0).getY() + " >");
-					System.out.println("Squares occupied during this move: < " + squaresOccupied.get(0).getX() + " , " + squaresOccupied.get(0).getY() + " >,"
-							+ " < " + squaresOccupied.get(1).getX() + " , " + squaresOccupied.get(1).getY()	+ " >");
+//					System.out.println("This is a move TO: < " + target.get(0).getX() + " , " + target.get(0).getY() + " >");
+//					System.out.println("This move originates FROM: < " + origin.get(0).getX() + " , " + origin.get(0).getY() + " >");
+//					System.out.println("Squares occupied during this move: < " + squaresOccupied.get(0).getX() + " , " + squaresOccupied.get(0).getY() + " >,"
+//							+ " < " + squaresOccupied.get(1).getX() + " , " + squaresOccupied.get(1).getY()	+ " >");
 					this.addActivity(new Activity(0, commandCount++, 0, 0, origin, target, squaresOccupied));
 					origin.clear();
 					origin.add(step);
 					target.clear();
 					squaresOccupied.clear();
 				} else { // Last step came before double step bonus
-					System.out.println("\n=== Out of Squares ===");
+//					System.out.println("\n=== Out of Squares ===");
 					target.add(step);
 					squaresOccupied.add(step);
 					this.addActivity(new Activity(0, commandCount++, 0, 0, origin, target, squaresOccupied));

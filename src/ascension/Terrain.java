@@ -1,30 +1,28 @@
 package ascension;
 
-public class Terrain {
+class Terrain {
 
-	private int type, pictureID;
+	protected enum TerrainType {
+		CRYSTAL, DIRT, GRASS, ROCK, SAND;
+		public static final TerrainType terrainTypeOrdinals[] = values();
+	}
+	protected TerrainType terrainType;
+	protected enum TerrainSubType {
+		ZERO, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT;
+		public static final TerrainSubType terrainSubTypeOrdinals[] = values();
+	}
+	protected TerrainSubType terrainSubType;
 	
-	public Terrain(int id, int picID) {
-		type = id;
-		pictureID = picID; // Think about whether or not pictureID should be mutable.
+	public Terrain(TerrainType type, TerrainSubType subType) {
+		terrainType = type;
+		terrainSubType = subType;
 	}
 
 	public int getPictureID() {
-		return pictureID;
+		return 0; // TODO REMOVE?
 	}
 
 	public String getDescriptor() {
-		switch (type) {
-		case 0:
-			return "Crystal";
-		case 1:
-			return "Dirt";
-		case 2:
-			return "Grass";
-		case 3:
-			return "Rock";
-		default:
-			return "Sand";
-		}
+		return terrainType.toString();
 	}
 }

@@ -25,6 +25,7 @@ public class PhysicalBuilder extends AbstractUnit {
 	 */
 	public PhysicalBuilder(int player, int locR, int locC) {
 		locomotion = Locomotion.GROUND;
+		unitType = UnitType.PHYSICALBUILDER;
 		intelligenceAttack = 3; intelligenceDefense = 6;
 		soulInvestment = -1; soulAffinity = 3;
 		symbiosis = -1; hoardingAptitude = 3;

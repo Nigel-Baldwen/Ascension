@@ -18,7 +18,7 @@ import ascension.AbstractUnit.Locomotion;
  * @version 1.0
  */
 
-public class PathFinder {
+class PathFinder {
 
 	/* Values of A indicate impassable terrain.
 	 * Values of B indicate enemies.
@@ -32,7 +32,7 @@ public class PathFinder {
 	 * G-cost in light of that in addition to the F-cost.
 	 */
 
-	int[][] navigableTerrain;
+	VisibilityState[][] navigableTerrain;
 
 	/**
 	 * Creates a new <code>PathFinder</code>.
@@ -47,7 +47,7 @@ public class PathFinder {
 	 * @param navigableTerrain
 	 */
 
-	public PathFinder(int[][] navigableTerrain) {
+	public PathFinder(VisibilityState[][] navigableTerrain) {
 		this.navigableTerrain = navigableTerrain;
 	}
 
@@ -78,11 +78,12 @@ public class PathFinder {
 						|| sColumn - speed + c < 0 || sColumn - speed + c >= navigableTerrain.length) {
 					continue;
 				}
-				switch (navigableTerrain[sRow - speed + r][sColumn - speed + c] % 9) { // TODO This will have to change as we go forward.
-				case 0: // Completely impassable terrain
+				switch (navigableTerrain[sRow - speed + r][sColumn - speed + c].terrainSubType) { // TODO This will have to change as we go forward.
+				// Some account of enemy units will need to be made. I'm just trying to avoid breaking code while I work on the view stuff.
+				case EIGHT: // Completely impassable terrain
 					closedSet[r][c] = 1;
 					break;
-				case 8: // Flying only
+				case SEVEN: // Flying only
 					if (locomotion != Locomotion.AIR) { // Unit can't fly
 						closedSet[r][c] = 1;
 					}
