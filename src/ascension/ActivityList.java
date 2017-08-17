@@ -8,7 +8,7 @@ import java.util.Collections;
  * @version 1.0
  */
 
-public class ActivityList extends ArrayList<Activity> {
+class ActivityList extends ArrayList<Activity> {
 
 	/**
 	 * Organizes this <code>ActivityList</code>.
@@ -18,10 +18,10 @@ public class ActivityList extends ArrayList<Activity> {
 	 * <li> {@link ActivityQueue#process() process()}
 	 * </ul>
 	 */
-	public void organize() {
+	void organize() {
 		if(size() < 2)
 			return;
-		
+
 		for(int i = 0; i < size() - 1; i++) {
 			for (int j = i + 1; j < size(); j++) {
 				if (!get(i).comparePriority(get(j))); {

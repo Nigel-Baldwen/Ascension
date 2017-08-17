@@ -54,9 +54,11 @@ class PrimaryModel {
 	private AbstractUnit focusTarget = null;
 	private Terrain[][] terrainP1, terrainP2, terrainP3, terrainP4;
 	private VisibilityState[][] visualModelP1, visualModelP2, visualModelP3, visualModelP4;
-	private int turnLength, percent, currentTurn, playerCount, waitingState, gridSize;
+	private int turnLength, percent, playerCount, waitingState, gridSize;
 	private PathFinder pathFinderP1, pathFinderP2, pathFinderP3, pathFinderP4;
 	private ActivityQueue activityQueue;
+	enum Player { PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4 };
+	private Player activePlayer;
 
 	/**
 	 * Takes in a set of values from the <i>model</i> in order
@@ -82,10 +84,10 @@ class PrimaryModel {
 	 * @param size - the number of squares in the square map
 	 * @param playerCount - the number of players in the match
 	 */
-	public void loadInitialModelState(int size, int playerCount) {
+	void loadInitialModelState(int size, int playerCount) {
 		gridSize = size;
 		waitingState = 0;
-		currentTurn = 1;
+		activePlayer = Player.PLAYER_1;
 		this.playerCount = playerCount;
 
 		// Clock instantiation
@@ -115,7 +117,7 @@ class PrimaryModel {
 		unitsP1  = new AbstractUnit[size][size];
 		int c = 10; // (int) (Math.random() * size / 4);
 		int r = 10; // (int) (Math.random() * size / 4);
-		unitsP1[c][r] = new PhysicalBuilder(1, r, c);
+		unitsP1[c][r] = new PhysicalBuilder(Player.PLAYER_1, r, c);
 		unitsP1[c][r].setVisible(true);
 		unitsP1[c][r].setActive(true);
 		visualModelP1 = new VisibilityState[size][size];
@@ -133,7 +135,7 @@ class PrimaryModel {
 		unitsP2  = new AbstractUnit[size][size];
 		c = (int) (Math.random() * size / 4 + size * 3 / 4);
 		r = (int) (Math.random() * size / 4 + size * 3 / 4);
-		unitsP2[c][r] = new PhysicalBuilder(2, r, c);
+		unitsP2[c][r] = new PhysicalBuilder(Player.PLAYER_2, r, c);
 		unitsP2[c][r].setVisible(true);
 		unitsP2[c][r].setActive(true);
 		visualModelP2 = new VisibilityState[size][size];
@@ -146,7 +148,7 @@ class PrimaryModel {
 			unitsP3  = new AbstractUnit[size][size];
 			c = (int) (Math.random() * size / 4);
 			r = (int) (Math.random() * size / 4 + size * 3 / 4);
-			unitsP3[c][r] = new PhysicalBuilder(3, r, c);
+			unitsP3[c][r] = new PhysicalBuilder(Player.PLAYER_3, r, c);
 			unitsP3[c][r].setVisible(true);
 			unitsP3[c][r].setActive(true);
 			visualModelP3 = new VisibilityState[size][size];
@@ -160,7 +162,7 @@ class PrimaryModel {
 			unitsP4  = new AbstractUnit[size][size];
 			c = (int) (Math.random() * size / 4 + size * 3 / 4);
 			r = (int) (Math.random() * size / 4);
-			unitsP4[c][r] = new PhysicalBuilder(4, r, c);
+			unitsP4[c][r] = new PhysicalBuilder(Player.PLAYER_4, r, c);
 			unitsP4[c][r].setVisible(true);
 			unitsP4[c][r].setActive(true);
 			visualModelP4 = new VisibilityState[size][size];
@@ -298,9 +300,9 @@ class PrimaryModel {
 	 * </p>
 	 */
 	protected void rotateTurn() {
-		if (currentTurn < playerCount) {
-			currentTurn += 1;
-			PrimaryController.generateNotification("Switching to Player " + currentTurn, 0);
+		if (activePlayer.ordinal() < playerCount - 1) {
+			activePlayer = Player.values()[activePlayer.ordinal() + 1]; // Select the next player in sequence.
+			PrimaryController.generateNotification("Switching to Player: " + activePlayer.toString(), 0);
 			turnTimer.setRepeats(true);
 			percent = 0;
 			turnTimer.start();
@@ -325,7 +327,7 @@ class PrimaryModel {
 
 			activityQueue.process();
 			// Consider how to implement the chain of activities
-			currentTurn = 1;
+			activePlayer = Player.PLAYER_1;
 		}
 		waitingState = 1;
 	}
@@ -344,15 +346,15 @@ class PrimaryModel {
 	 * 
 	 * @return the current visual model
 	 */
-	public VisibilityState[][] getVisualModel() {
-		switch (currentTurn) {
-		case 1:
+	VisibilityState[][] getVisualModel() {
+		switch (activePlayer) {
+		case PLAYER_1:
 			return visualModelP1;
 
-		case 2:
+		case PLAYER_2:
 			return visualModelP2;
 
-		case 3:
+		case PLAYER_3:
 			return visualModelP3;
 
 		default:
@@ -372,23 +374,23 @@ class PrimaryModel {
 	 * 
 	 * @return represents the current clock face
 	 */
-	public int getClockFace() {
+	int getClockFace() {
 		return percent;
 	}
 
-	public String getDescriptor(int r, int c) {
-		switch (currentTurn) {
-		case 1:
+	String getDescriptor(int r, int c) {
+		switch (activePlayer) {
+		case PLAYER_1:
 			if (c < unitsP1.length )
 				return unitsP1[r][c].getDescriptor();
 			else
 				return terrainP1[r][c - unitsP1.length].getDescriptor();
-		case 2:
+		case PLAYER_2:
 			if (c < unitsP2.length )
 				return unitsP2[r][c].getDescriptor();
 			else
 				return terrainP2[r][c - unitsP2.length].getDescriptor();
-		case 3:
+		case PLAYER_3:
 			if (c < unitsP3.length )
 				return unitsP3[r][c].getDescriptor();
 			else
@@ -401,15 +403,15 @@ class PrimaryModel {
 		}
 	}
 
-	public void setUnitFocusTarget(int r, int c) {
-		switch (currentTurn) {
-		case 1:
+	void setUnitFocusTarget(int r, int c) {
+		switch (activePlayer) {
+		case PLAYER_1:
 			focusTarget = unitsP1[r][c];
 			break;
-		case 2:
+		case PLAYER_2:
 			focusTarget = unitsP2[r][c];
 			break;
-		case 3:
+		case PLAYER_3:
 			focusTarget = unitsP3[r][c];
 			break;
 		default:
@@ -418,10 +420,10 @@ class PrimaryModel {
 		}
 	}
 
-	public void requestMoveTo(int row, int column) {
+	void requestMoveTo(int row, int column) {
 		ArrayList<Point> path;
-		switch (currentTurn) {
-		case 1:
+		switch (activePlayer) {
+		case PLAYER_1:
 			if ( terrainP1[row][column].terrainSubType == TerrainSubType.EIGHT ||
 			(terrainP1[row][column].terrainSubType == TerrainSubType.SEVEN && focusTarget.locomotion != Locomotion.AIR)) {
 				System.out.println("This is an invalid move target. Try again.");
@@ -439,7 +441,7 @@ class PrimaryModel {
 
 			focusTarget.generateMoveActivityWithPath(path);
 			break;
-		case 2:
+		case PLAYER_2:
 			if ( terrainP2[row][column].terrainSubType == TerrainSubType.EIGHT ||
 			(terrainP2[row][column].terrainSubType == TerrainSubType.SEVEN && focusTarget.locomotion != Locomotion.AIR)) {
 				System.out.println("This is an invalid move target. Try again.");
@@ -457,7 +459,7 @@ class PrimaryModel {
 
 			focusTarget.generateMoveActivityWithPath(path);
 			break;
-		case 3:
+		case PLAYER_3:
 			if ( terrainP3[row][column].terrainSubType == TerrainSubType.EIGHT ||
 			(terrainP3[row][column].terrainSubType == TerrainSubType.SEVEN && focusTarget.locomotion != Locomotion.AIR)) {
 				System.out.println("This is an invalid move target. Try again.");

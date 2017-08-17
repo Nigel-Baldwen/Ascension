@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * @version 1.0
  */
 
-public class ActivityQueue extends ArrayList<ActivityList> {
+class ActivityQueue extends ArrayList<ActivityList> {
 
 	/**
 	 * Processes the Queue and returns an ordered list.
@@ -25,7 +25,7 @@ public class ActivityQueue extends ArrayList<ActivityList> {
 	 * 
 	 * @return the processed list
 	 */
-	public ActivityList process() {
+	ActivityList process() {
 
 		ActivityList result = new ActivityList();
 

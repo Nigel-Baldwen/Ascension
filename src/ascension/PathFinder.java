@@ -47,11 +47,11 @@ class PathFinder {
 	 * @param navigableTerrain
 	 */
 
-	public PathFinder(VisibilityState[][] navigableTerrain) {
+	PathFinder(VisibilityState[][] navigableTerrain) {
 		this.navigableTerrain = navigableTerrain;
 	}
 
-	public ArrayList<Point> getPassivePath(int sRow, int sColumn, int dRow, int dColumn, int speed, Locomotion locomotion) {
+	ArrayList<Point> getPassivePath(int sRow, int sColumn, int dRow, int dColumn, int speed, Locomotion locomotion) {
 		// Create a nodeMap, then fill it with default nodes.
 		Node[][] nodeMap = new Node[speed * 2 + 1][speed * 2 + 1];
 		for (int r = 0; r < nodeMap.length; r++) {
@@ -168,7 +168,7 @@ class PathFinder {
 		row, column; // The location of the node on the grid relative to other nodes.
 		Node parent; // Most efficient prior node.
 
-		public Node(int _row, int _column) {
+		Node(int _row, int _column) {
 			fCost = 9999;
 			gCost = 9999;
 			row = _row;
@@ -176,31 +176,31 @@ class PathFinder {
 			parent = null;
 		}
 
-		public void setParent(Node _parent) {
+		void setParent(Node _parent) {
 			parent = _parent;
 		}
 
-		public int getGCost() {
+		int getGCost() {
 			return gCost;
 		}
 
-		public void setGCost(int _gCost) {
+		void setGCost(int _gCost) {
 			gCost = _gCost;
 		}
 
-		public void setFCost(int _fCost) {
+		void setFCost(int _fCost) {
 			fCost = _fCost;
 		}
 
-		public int getRow() {
+		int getRow() {
 			return row;
 		}
 
-		public int getColumn() {
+		int getColumn() {
 			return column;
 		}
 
-		public Node getParent() {
+		Node getParent() {
 			return parent;
 		}
 

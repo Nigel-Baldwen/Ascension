@@ -7,30 +7,31 @@ import ascension.Terrain.TerrainSubType;
 import ascension.Terrain.TerrainType;
 
 class VisibilityState {
-	protected UnitType occupyingUnitType, destinationUnit;
-	protected TerrainType terrainType;
-	protected TerrainSubType terrainSubType;
-	protected ArrayList<UnitType> halfTransparencyUnits;
+	UnitType occupyingUnitType, destinationUnit;
+	TerrainType terrainType;
+	TerrainSubType terrainSubType;
+	ArrayList<UnitType> halfTransparencyUnits;
 	
-	public VisibilityState () {
+	
+	VisibilityState () {
 		occupyingUnitType = UnitType.EMPTY;
 		halfTransparencyUnits = new ArrayList<UnitType>();
 	}
 
-	public void setOccupyingUnit(UnitType unitType) {
+	void setOccupyingUnit(UnitType unitType) {
 		occupyingUnitType = unitType;
 	}
 
-	public void setTerrainType(TerrainType _terrainType, TerrainSubType _terrainSubType) {
+	void setTerrainType(TerrainType _terrainType, TerrainSubType _terrainSubType) {
 		terrainType = _terrainType;
 		terrainSubType = _terrainSubType;
 	}
 
-	public void addInMotionUnit(UnitType unitType) {
+	void addInMotionUnit(UnitType unitType) {
 		halfTransparencyUnits.add(unitType);
 	}
 	
-	public void setDestinationUnit(UnitType unitType) {
+	void setDestinationUnit(UnitType unitType) {
 		destinationUnit = unitType;
 	}
 }

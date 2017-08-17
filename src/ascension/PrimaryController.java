@@ -37,7 +37,7 @@ import ascension.AbstractUnit.UnitType;
  * @version 1.0
  */
 
-public class PrimaryController extends JFrame implements MouseListener, MouseMotionListener, KeyListener {
+class PrimaryController extends JFrame implements MouseListener, MouseMotionListener, KeyListener {
 
 	/**
 	 * A timer, initialized in {@link PrimaryController#startGame() startGame()}, which
@@ -76,7 +76,7 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 	 * </ul>
 	 * </p>
 	 */
-	public PrimaryController() {
+	PrimaryController() {
 		super();
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		addMouseListener(this);
@@ -100,7 +100,7 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 	 * </ul>
 	 * </p>
 	 */
-	public void loadInitialGameState() {
+	void loadInitialGameState() {
 		gameModel = new PrimaryModel();
 		gridSize = 500;
 		gameModel.loadInitialModelState(gridSize, 4);
@@ -126,7 +126,7 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 	 * </ul>
 	 * </p>
 	 */
-	public void startGame() {
+	void startGame() {
 		gEnv = GraphicsEnvironment.getLocalGraphicsEnvironment();
 		primaryGDev  = gEnv.getDefaultScreenDevice();
 		isFSSupported = primaryGDev.isFullScreenSupported();
@@ -380,7 +380,7 @@ public class PrimaryController extends JFrame implements MouseListener, MouseMot
 	 * @param notification - a message describing the notification
 	 * @param type - the type of notification
 	 */
-	public static void generateNotification(String notification, int type) {
+	static void generateNotification(String notification, int type) {
 		switch (type) {
 		case 0:
 			actionDisabled = true;

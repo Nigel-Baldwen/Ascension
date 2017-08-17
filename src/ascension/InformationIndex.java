@@ -11,7 +11,7 @@ package ascension;
  * @version 1.0
  */
 
-public class InformationIndex {
+class InformationIndex {
 
 	/**
 	 * Returns a unit's sight radius.
@@ -19,7 +19,7 @@ public class InformationIndex {
 	 * @param idTag - the unit's type
 	 * @return the unit's sight radius
 	 */
-	public static int getSightRadius(int idTag) {
+	static int getSightRadius(int idTag) {
 		// For now, only one SR - 6
 		return 6;
 	}
@@ -36,7 +36,7 @@ public class InformationIndex {
 	 * @param idTag - the unit's type
 	 * @return the unit's movement radius
 	 */
-	public static int getMovementRadius(int idTag) {
+	static int getMovementRadius(int idTag) {
 		// For now, only one MR - 6
 		return 6;
 	}
@@ -53,7 +53,7 @@ public class InformationIndex {
 	 * @param idTag - the unit's type
 	 * @return the unit's name
 	 */
-	public static String getName(int idTag) {
+	static String getName(int idTag) {
 		// For now, only one name - Raeclarian Manus
 		return "Raeclarian Manus";
 	}

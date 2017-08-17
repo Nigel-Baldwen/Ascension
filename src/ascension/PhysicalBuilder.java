@@ -3,12 +3,14 @@ package ascension;
 import java.awt.Point;
 import java.util.ArrayList;
 
+import ascension.PrimaryModel.Player;
+
 /**
  * @author Nigel_Baldwen - nigelbaldwen@gmail.com
  * @version 1.0
  */
 
-public class PhysicalBuilder extends AbstractUnit {
+class PhysicalBuilder extends AbstractUnit {
 
 	/**
 	 * Creates a new PhysicalBuilder.
@@ -23,9 +25,9 @@ public class PhysicalBuilder extends AbstractUnit {
 	 * @param player - the owner
 	 * @param location - the location in the grid
 	 */
-	public PhysicalBuilder(int player, int locR, int locC) {
+	PhysicalBuilder(Player player, int locR, int locC) {
 		locomotion = Locomotion.GROUND;
-		unitType = UnitType.PHYSICALBUILDER;
+		unitType = UnitType.PHYSICAL_BUILDER;
 		intelligenceAttack = 3; intelligenceDefense = 6;
 		soulInvestment = -1; soulAffinity = 3;
 		symbiosis = -1; hoardingAptitude = 3;
@@ -83,7 +85,7 @@ public class PhysicalBuilder extends AbstractUnit {
 	 * 
 	 * @return - the current visual state
 	 */
-	public int toInt() {
+	int toInt() {
 		if (visible) {
 			return 0;
 		}
@@ -96,13 +98,13 @@ public class PhysicalBuilder extends AbstractUnit {
 	 * Returns the stats of the unit plus potentially some misc info.
 	 */
 	@Override
-	public String getDescriptor() {
+	String getDescriptor() {
 		String descriptor = healthPoints + ":" + magicPoints + ":" + energyPoints + ":" + 
 				moveSpeed + ":" + sightRadius + ":" + numberOfAttacks + ":" + attackSpeed + ":" + 
 				range + ":" + squaresOccupied + ":" + deathEXP + ":" + level + ":" + 
 				// X coordinate for current location.
 				curLocR + ":" + 
-				player + ":" +
+				player.ordinal() + ":" +
 				productionCost + ":" + turnsPlayed + ":" + 
 				// Y coordinate for current location.
 				curLocC + ":" +

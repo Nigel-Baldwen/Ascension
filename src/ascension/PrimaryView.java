@@ -39,7 +39,7 @@ import ascension.Terrain.TerrainType;
  * @version     1.0
  */
 
-public class PrimaryView extends JPanel {
+class PrimaryView extends JPanel {
 
 	// @formatter:off
 	/*
@@ -114,7 +114,7 @@ public class PrimaryView extends JPanel {
 	 * @param gC - the <code>GraphicsConfiguration</code> the view operates within
 	 * @param units - the number cells in one row of the square grid
 	 */
-	public void loadInitialViewState(GraphicsConfiguration gC, int units) {
+	void loadInitialViewState(GraphicsConfiguration gC, int units) {
 		this.gC = gC;
 		screenWidth = gC.getBounds().width;
 		screenHeight = gC.getBounds().height;
@@ -251,7 +251,7 @@ public class PrimaryView extends JPanel {
 	 * @param visibilityState - the currently active player's visible information
 	 * @param g - the <code>Graphics</code> object supplied by the <code>BufferStrategy</code>
 	 */
-	public void render(Graphics g, VisibilityState[][] visibilityState) {
+	void render(Graphics g, VisibilityState[][] visibilityState) {
 		// Calculate drawn squares
 		int cStart = visX / unitLength;
 		int rStart = visY / unitLength;
@@ -933,7 +933,7 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-	public void scrollWest() {
+	void scrollWest() {
 		if (visX > 9) {
 			visX -= 10;
 		}
@@ -949,7 +949,7 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-	public void scrollNorthWest() {
+	void scrollNorthWest() {
 		if (visY > 9) {
 			visY -= 10;
 		}
@@ -968,7 +968,7 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-	public void scrollNorth() {
+	void scrollNorth() {
 		if (visY > 9) {
 			visY -= 10;
 		}
@@ -984,7 +984,7 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-	public void scrollNorthEast() {
+	void scrollNorthEast() {
 		if (visY > 9) {
 			visY -= 10;
 		}
@@ -1003,7 +1003,7 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-	public void scrollEast() {
+	void scrollEast() {
 		if (visX < boundX - 9) {
 			visX += 10;
 		}
@@ -1019,7 +1019,7 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-	public void scrollSouthEast() {
+	void scrollSouthEast() {
 		if (visY < boundY - 9) {
 			visY += 10;
 		}
@@ -1038,7 +1038,7 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-	public void scrollSouth() {
+	void scrollSouth() {
 		if (visY < boundY - 9) {
 			visY += 10;
 		}
@@ -1054,7 +1054,7 @@ public class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryController#viewUpdateController viewUpdateController}
 	 * </ul>
 	 */
-	public void scrollSouthWest() {
+	void scrollSouthWest() {
 		if (visY < boundY - 9) {
 			visY += 10;
 		}
@@ -1077,7 +1077,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the upper-left-most visible pixel's x coordinate
 	 */
-	public int getVisX() {
+	int getVisX() {
 		return visX;
 	}
 
@@ -1095,7 +1095,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the upper-left-most visible pixel's y coordinate
 	 */
-	public int getVisY() {
+	int getVisY() {
 		return visY;
 	}
 
@@ -1114,7 +1114,7 @@ public class PrimaryView extends JPanel {
 	 * @param c - the abstract column coordinate of the unit
 	 * @param name - the unit's name
 	 */
-	public void setUnitFocusTarget(int r, int c, String descriptor) {
+	void setUnitFocusTarget(int r, int c, String descriptor) {
 		focusingUnit = true;
 		focusR = r;
 		focusC = c;
@@ -1136,7 +1136,7 @@ public class PrimaryView extends JPanel {
 	 * @param r = the abstract row coordinate of the terrain
 	 * @param id - the terrain image ID
 	 */
-	public void setTerrainFocusTarget(int c, int r, String descriptor) {
+	void setTerrainFocusTarget(int c, int r, String descriptor) {
 		focusC = c;
 		focusR = r;
 		terDescriptor = descriptor;
@@ -1156,7 +1156,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @param face - the current clock face
 	 */
-	public void updateClock(int face) {
+	void updateClock(int face) {
 		clockFace = face;
 	}
 
@@ -1173,7 +1173,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the focus target
 	 */
-	public Point getFocusTarget() {
+	Point getFocusTarget() {
 		return new Point(focusR, focusC);
 	}
 
@@ -1191,7 +1191,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the information panel height.
 	 */
-	public int getIPaneHeight() {
+	int getIPaneHeight() {
 		return iPaneHeight;
 	}
 
@@ -1207,7 +1207,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the information panel button size.
 	 */
-	public int getIPaneButtonSize() {
+	int getIPaneButtonSize() {
 		return iPaneButtonSize;
 	}
 
@@ -1224,7 +1224,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the information upper-left X coordinate of the information panel buttons.
 	 */
-	public int getIPaneButtonX() {
+	int getIPaneButtonX() {
 		return iPaneButtonX;
 	}
 
@@ -1241,7 +1241,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the information upper-left Y coordinate of the information panel buttons.
 	 */
-	public int getIPaneButtonY() {
+	int getIPaneButtonY() {
 		return iPaneButtonY;
 	}
 
@@ -1258,7 +1258,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the x dimension offset.
 	 */
-	public int getXOffset() {
+	int getXOffset() {
 		return xOffset;
 	}
 
@@ -1276,7 +1276,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the y dimension offset.
 	 */
-	public int getYOffset() {
+	int getYOffset() {
 		return yOffset;
 	}
 
@@ -1294,7 +1294,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the unit length.
 	 */
-	public int getUnitLength() {
+	int getUnitLength() {
 		return unitLength;
 	}
 
@@ -1311,7 +1311,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the end turn button x coordinate.
 	 */
-	public int getEndTurnX() {
+	int getEndTurnX() {
 		return endTurnX;
 	}
 
@@ -1328,7 +1328,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the end turn button y coordinate.
 	 */
-	public int getEndTurnY() {
+	int getEndTurnY() {
 		return endTurnY;
 	}
 
@@ -1345,7 +1345,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the end turn button width.
 	 */
-	public int getEndTurnWidth() {
+	int getEndTurnWidth() {
 		return endTurnWidth;
 	}
 
@@ -1362,7 +1362,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the end turn button height.
 	 */
-	public int getEndTurnHeight() {
+	int getEndTurnHeight() {
 		return endTurnHeight;
 	}
 
@@ -1377,7 +1377,7 @@ public class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 */
-	public void clearFocusTarget() {
+	void clearFocusTarget() {
 		focusingUnit = false;
 		focusingTerrain = false;
 	}
@@ -1395,7 +1395,7 @@ public class PrimaryView extends JPanel {
 	 * 
 	 * @return the unit focus box coordinates.
 	 */
-	public Point getFocusBoxCoords() {
+	Point getFocusBoxCoords() {
 		return new Point(focusBoxX, focusBoxY);
 	}
 }

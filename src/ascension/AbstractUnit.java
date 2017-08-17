@@ -4,6 +4,8 @@ import java.awt.Point;
 import java.util.ArrayList;
 import java.util.Iterator;
 
+import ascension.PrimaryModel.Player;
+
 /**
  * <code>AbstractUnit</code> serves as the basis for all units.
  * 
@@ -17,7 +19,7 @@ import java.util.Iterator;
  * @version 1.0
  */
 
-public class AbstractUnit {
+class AbstractUnit {
 
 	// @formatter:off
 	// All atk/def stats are paired left to right.
@@ -66,7 +68,6 @@ public class AbstractUnit {
 	squaresOccupied,
 	level,
 	deathEXP,
-	player,
 	curLocR,
 	curLocC,
 	channelTime,
@@ -74,16 +75,17 @@ public class AbstractUnit {
 	idValue,
 	// commandCount indicates how many commands have been issued to the unit.
 	// This assists with prioritizing issued commands per unit.
-	commandCount; 
+	commandCount;
 
-	protected enum Locomotion { GROUND, AIR } // Potentially burrowing, tree-walking, etc.
-	protected Locomotion locomotion;
-	protected enum UnitType { EMPTY, PHYSICALBUILDER };
-	protected UnitType unitType;
-	protected ActivityList activityList = new ActivityList();
+	Player player; 
+	enum Locomotion { GROUND, AIR } // Potentially burrowing, tree-walking, etc.
+	Locomotion locomotion;
+	enum UnitType { EMPTY, PHYSICAL_BUILDER };
+	UnitType unitType;
+	ActivityList activityList = new ActivityList();
 	private int[] visibleBy = new int[4];
-	protected boolean visible = false, active = false, disabled;
-	protected Point curLoc; //  TODO Probably need to shift curLoc to an ArrayList<Point> itself
+	boolean visible = false, active = false, disabled;
+	Point curLoc; //  TODO Probably need to shift curLoc to an ArrayList<Point> itself
 	// @formatter:on
 
 	/**
@@ -92,7 +94,7 @@ public class AbstractUnit {
 	 * 
 	 * @param activity - the <code>Activity</code> to be added
 	 */
-	public void addActivity(Activity activity) {
+	void addActivity(Activity activity) {
 		activityList.add(activity);
 	}
 
@@ -106,7 +108,7 @@ public class AbstractUnit {
 	 * <p>
 	 * @return the unit's <code>ActivityList</code>
 	 */
-	public ActivityList getActivityList() {
+	ActivityList getActivityList() {
 		return activityList;
 	}
 
@@ -125,7 +127,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's visual state
 	 */
-	public int toInt() {
+	int toInt() {
 		return 0;
 	}
 
@@ -134,7 +136,7 @@ public class AbstractUnit {
 	 * 
 	 * @param player - the player who sees the unit
 	 */
-	public void setVisibleBy(int player) {
+	void setVisibleBy(int player) {
 		visibleBy[player - 1] = player;
 	}
 
@@ -144,7 +146,7 @@ public class AbstractUnit {
 	 * @param player - the player checking for vision
 	 * @return true if the player can see the unit
 	 */
-	public boolean isVisibleBy(int player) {
+	boolean isVisibleBy(int player) {
 		return visibleBy[player - 1] == player;
 	}
 
@@ -153,7 +155,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's type
 	 */
-	public int getIdValu() {
+	int getIdValu() {
 		return idValue;
 	}
 
@@ -162,7 +164,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Intelligence Attack value.
 	 */
-	public int getIntAtk() {
+	int getIntAtk() {
 		return intelligenceAttack;
 	}
 
@@ -171,7 +173,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Intelligence Defense value.
 	 */
-	public int getIntDef() {
+	int getIntDef() {
 		return intelligenceDefense;
 	}
 
@@ -180,7 +182,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Soul Investment Attack value.
 	 */
-	public int getSolInv() {
+	int getSolInv() {
 		return soulInvestment;
 	}
 
@@ -189,7 +191,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Soul Affinity Defense value.
 	 */
-	public int getSolAff() {
+	int getSolAff() {
 		return soulAffinity;
 	}
 
@@ -198,7 +200,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Symbiosis Attack value.
 	 */
-	public int getSymbio() {
+	int getSymbio() {
 		return symbiosis;
 	}
 
@@ -207,7 +209,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Hoarding Aptitude Defense value.
 	 */
-	public int getHordAp() {
+	int getHordAp() {
 		return hoardingAptitude;
 	}
 
@@ -216,7 +218,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Poison Attack value.
 	 */
-	public int getPoison() {
+	int getPoison() {
 		return poison;
 	}
 
@@ -225,7 +227,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Health Regeneration Defense value.
 	 */
-	public int getHltReg() {
+	int getHltReg() {
 		return healthRegeneration;
 	}
 
@@ -234,7 +236,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Kinesis Attack value.
 	 */
-	public int getKenisi() {
+	int getKenisi() {
 		return kenisis;
 	}
 
@@ -243,7 +245,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Calming Aura Defense value.
 	 */
-	public int getCalmAu() {
+	int getCalmAu() {
 		return calmingAura;
 	}
 
@@ -252,7 +254,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Illusion Attack value.
 	 */
-	public int getIllusi() {
+	int getIllusi() {
 		return illusion;
 	}
 
@@ -261,7 +263,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Disillusionment Defense value.
 	 */
-	public int getDisIll() {
+	int getDisIll() {
 		return disillusion;
 	}
 
@@ -270,7 +272,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Holy Attack value.
 	 */
-	public int getHlyAtk() {
+	int getHlyAtk() {
 		return holyAttack;
 	}
 
@@ -279,7 +281,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Holy Defense value.
 	 */
-	public int getHlyDef() {
+	int getHlyDef() {
 		return holyDefense;
 	}
 
@@ -288,7 +290,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Dark Attack value.
 	 */
-	public int getDrkAtk() {
+	int getDrkAtk() {
 		return darkAttack;
 	}
 
@@ -297,7 +299,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Dark Defense value.
 	 */
-	public int getDrkDef() {
+	int getDrkDef() {
 		return darkDefense;
 	}
 
@@ -306,7 +308,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Dispel Attack value.
 	 */
-	public int getDispel() {
+	int getDispel() {
 		return dispel;
 	}
 
@@ -315,7 +317,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Spell Strength Defense value.
 	 */
-	public int getSplStr() {
+	int getSplStr() {
 		return spellStrength;
 	}
 
@@ -324,7 +326,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Summon Strength Attack value.
 	 */
-	public int getSumStr() {
+	int getSumStr() {
 		return summonStrength;
 	}
 
@@ -333,7 +335,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Planar Affinity Defense value.
 	 */
-	public int getPlnAff() {
+	int getPlnAff() {
 		return planarAffinity;
 	}
 
@@ -342,7 +344,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Threat Attack value.
 	 */
-	public int getThreat() {
+	int getThreat() {
 		return threat;
 	}
 
@@ -351,7 +353,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Bravery Defense value.
 	 */
-	public int getBravry() {
+	int getBravry() {
 		return bravery;
 	}
 
@@ -360,7 +362,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Earth Attack value.
 	 */
-	public int getEthAtk() {
+	int getEthAtk() {
 		return earthAttack;
 	}
 
@@ -369,7 +371,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Earth Defense value.
 	 */
-	public int getEthDef() {
+	int getEthDef() {
 		return earthDefense;
 	}
 
@@ -378,7 +380,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Wind Attack value.
 	 */
-	public int getWndAtk() {
+	int getWndAtk() {
 		return windAttack;
 	}
 
@@ -387,7 +389,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Wind Defense value.
 	 */
-	public int getWndDef() {
+	int getWndDef() {
 		return windDefense;
 	}
 
@@ -396,7 +398,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Fire Attack value.
 	 */
-	public int getFirAtk() {
+	int getFirAtk() {
 		return fireAttack;
 	}
 
@@ -405,7 +407,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Fire Defense value.
 	 */
-	public int getFirDef() {
+	int getFirDef() {
 		return fireDefense;
 	}
 
@@ -414,7 +416,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Water Attack value.
 	 */
-	public int getWtrAtk() {
+	int getWtrAtk() {
 		return waterAttack;
 	}
 
@@ -423,7 +425,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Water Defense value.
 	 */
-	public int getWtrDef() {
+	int getWtrDef() {
 		return waterDefense;
 	}
 
@@ -432,7 +434,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Death Blow Attack value.
 	 */
-	public int getDthBlw() {
+	int getDthBlw() {
 		return deathBlow;
 	}
 
@@ -441,7 +443,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Nullification Defense value.
 	 */
-	public int getNullif() {
+	int getNullif() {
 		return nullification;
 	}
 
@@ -450,7 +452,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Unarmed Attack value.
 	 */
-	public int getUnarmd() {
+	int getUnarmd() {
 		return unarmed;
 	}
 
@@ -459,7 +461,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Strength Defense value.
 	 */
-	public int getStrnth() {
+	int getStrnth() {
 		return strength;
 	}
 
@@ -468,7 +470,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Agility Attack value.
 	 */
-	public int getAglAtk() {
+	int getAglAtk() {
 		return agilityAttack;
 	}
 
@@ -477,7 +479,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Agility Defense value.
 	 */
-	public int getAglDef() {
+	int getAglDef() {
 		return agilityDefense;
 	}
 
@@ -486,7 +488,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Charge value.
 	 */
-	public int getCharge() {
+	int getCharge() {
 		return charge;
 	}
 
@@ -495,7 +497,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Stability.
 	 */
-	public int getStabil() {
+	int getStabil() {
 		return stability;
 	}
 
@@ -504,7 +506,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Blunt Attack value.
 	 */
-	public int getBlunts() {
+	int getBlunts() {
 		return bluntAttack;
 	}
 
@@ -513,7 +515,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Padding Defense value.
 	 */
-	public int getPaddin() {
+	int getPaddin() {
 		return paddingDefense;
 	}
 
@@ -522,7 +524,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Blade Attack value.
 	 */
-	public int getBlades() {
+	int getBlades() {
 		return bladeAttack;
 	}
 
@@ -531,7 +533,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Shell Defense value.
 	 */
-	public int getShells() {
+	int getShells() {
 		return shellDefense;
 	}
 
@@ -540,7 +542,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Pierce Attack value.
 	 */
-	public int getPierce() {
+	int getPierce() {
 		return pierceAttack;
 	}
 
@@ -549,7 +551,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Reinforcement Defense value.
 	 */
-	public int getRnfrcm() {
+	int getRnfrcm() {
 		return reinforcementDefense;
 	}
 
@@ -558,7 +560,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Melee Attack Damage.
 	 */
-	public int getDmgMel() {
+	int getDmgMel() {
 		return damageMelee;
 	}
 
@@ -567,7 +569,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Ranged Attack Damage.
 	 */
-	public int getDmgRng() {
+	int getDmgRng() {
 		return damageRanged;
 	}
 
@@ -576,7 +578,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Damage for Special Attack One.
 	 */
-	public int getDmgOne() {
+	int getDmgOne() {
 		return damageAbilityOne;
 	}
 
@@ -585,7 +587,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Damage for Special Attack Two.
 	 */
-	public int getDmgTwo() {
+	int getDmgTwo() {
 		return damageAbilityTwo;
 	}
 
@@ -594,7 +596,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Damage for Special Attack Three.
 	 */
-	public int getDmgThr() {
+	int getDmgThr() {
 		return damageAbilityThree;
 	}
 
@@ -603,7 +605,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Damage for Special Attack Four.
 	 */
-	public int getDmgFor() {
+	int getDmgFor() {
 		return damageAbilityFour;
 	}
 
@@ -612,7 +614,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Health Capacity.
 	 */
-	public int getHealth() {
+	int getHealth() {
 		return healthPoints;
 	}
 
@@ -621,7 +623,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Mana Capacity.
 	 */
-	public int getMagPnt() {
+	int getMagPnt() {
 		return magicPoints;
 	}
 
@@ -630,7 +632,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Mana Regeneration Rate.
 	 */
-	public int getMagRgn() {
+	int getMagRgn() {
 		return magicRegeneration;
 	}
 
@@ -639,7 +641,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Energy Capacity.
 	 */
-	public int getEngPnt() {
+	int getEngPnt() {
 		return energyPoints;
 	}
 
@@ -648,7 +650,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Energy Regeneration Rate.
 	 */
-	public int getEngRgn() {
+	int getEngRgn() {
 		return energyRegeneration;
 	}
 
@@ -657,7 +659,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Attack Speed.
 	 */
-	public int getAtkSpd() {
+	int getAtkSpd() {
 		return attackSpeed;
 	}
 
@@ -666,7 +668,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Attacks Per Turn.
 	 */
-	public int getNumAtk() {
+	int getNumAtk() {
 		return numberOfAttacks;
 	}
 
@@ -675,7 +677,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Sight Radius.
 	 */
-	public int getSihtRd() {
+	int getSihtRd() {
 		return sightRadius;
 	}
 
@@ -684,7 +686,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Movement Speed.
 	 */
-	public int getMovSpd() {
+	int getMovSpd() {
 		return moveSpeed;
 	}
 
@@ -693,7 +695,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Production Cost.
 	 */
-	public int getPrdCst() {
+	int getPrdCst() {
 		return productionCost;
 	}
 
@@ -702,7 +704,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Attack Range.
 	 */
-	public int getRanged() {
+	int getRanged() {
 		return range;
 	}
 
@@ -711,7 +713,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Size In Squares.
 	 */
-	public int getSqrOcu() {
+	int getSqrOcu() {
 		return squaresOccupied;
 	}
 
@@ -720,7 +722,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Levels.
 	 */
-	public int getLevels() {
+	int getLevels() {
 		return level;
 	}
 
@@ -729,7 +731,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Death Experience Reward.
 	 */
-	public int getDthEXP() {
+	int getDthEXP() {
 		return deathEXP;
 	}
 
@@ -738,7 +740,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Owner.
 	 */
-	public int getPlayer() {
+	Player getPlayer() {
 		return player;
 	}
 
@@ -747,7 +749,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's current row.
 	 */
-	public int getCurLocR() {
+	int getCurLocR() {
 		return curLocR;
 	}
 
@@ -756,7 +758,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's current column.
 	 */
-	public int getCurLocC() {
+	int getCurLocC() {
 		return curLocC;
 	}
 
@@ -765,7 +767,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the unit's Channel Time.
 	 */
-	public int getChnTim() {
+	int getChnTim() {
 		return channelTime;
 	}
 
@@ -774,7 +776,7 @@ public class AbstractUnit {
 	 * 
 	 * @return the number of turns the unit has been in the game.
 	 */
-	public int getTrnPld() {
+	int getTrnPld() {
 		return turnsPlayed;
 	}
 
@@ -783,7 +785,7 @@ public class AbstractUnit {
 	 * 
 	 * @return true if the unit is visible
 	 */
-	public boolean isVisible() {
+	boolean isVisible() {
 		return visible;
 	}
 
@@ -792,7 +794,7 @@ public class AbstractUnit {
 	 * 
 	 * @return true if the unit is active
 	 */
-	public boolean isActive() {
+	boolean isActive() {
 		return active;
 	}
 
@@ -801,7 +803,7 @@ public class AbstractUnit {
 	 * 
 	 * @return true if the unit is disabled
 	 */
-	public boolean isDisabled() {
+	boolean isDisabled() {
 		return disabled;
 	}
 
@@ -810,7 +812,7 @@ public class AbstractUnit {
 	 * 
 	 * @param b - if true, set visible
 	 */
-	public void setVisible(boolean b) {
+	void setVisible(boolean b) {
 		visible = b;
 	}
 
@@ -819,7 +821,7 @@ public class AbstractUnit {
 	 * 
 	 * @param b - if true, set active
 	 */
-	public void setActive(boolean b) {
+	void setActive(boolean b) {
 		active = b;
 	}
 
@@ -828,16 +830,16 @@ public class AbstractUnit {
 	 * 
 	 * @param b - if true, set disabled
 	 */
-	public void setDisabled(boolean b) {
+	void setDisabled(boolean b) {
 		disabled = b;
 	}
 
-	public String getDescriptor() {
+	String getDescriptor() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	public Locomotion getLocomotion() {
+	Locomotion getLocomotion() {
 		return locomotion;
 	}
 
@@ -848,16 +850,16 @@ public class AbstractUnit {
 	 * 
 	 * @param path - the path the unit will try to take
 	 */
-	public void generateMoveActivityWithPath(ArrayList<Point> path) {
-//		System.out.println("In the generateMoveActivityWithPath method now.");
+	void generateMoveActivityWithPath(ArrayList<Point> path) {
+		//		System.out.println("In the generateMoveActivityWithPath method now.");
 		// First, we find out how long we've got to travel.
 		double squaresTraveled = path.size();
-//		System.out.println("Squares Traveled: " + squaresTraveled);
+		//		System.out.println("Squares Traveled: " + squaresTraveled);
 		// Now we find out how fast we're going to get there.
 		// This is added to each step along the path.
 		double travelModifier = 1 - (squaresTraveled / moveSpeed); // TODO keep in mind rational numbers for future implementation since you may lose functionality to double prec
 		// Maybe Math.fractions
-//		System.out.println("Travel Modifier: " + travelModifier);
+		//		System.out.println("Travel Modifier: " + travelModifier);
 		// We'll keep another variable to track the stacks of the travel modifier.
 		// For a step in which this rolling number is over 1, the unit takes a double step.
 		double modSum = 0;
@@ -872,12 +874,12 @@ public class AbstractUnit {
 			modSum += travelModifier;
 			if (modSum < 1) {
 				// Since this is a normal step, we'll just move along to the next square.
-//				System.out.println("\n= Taking a Normal Step =");
+				//				System.out.println("\n= Taking a Normal Step =");
 				target.add(step);
 				squaresOccupied.add(step);
-//				System.out.println("This is a move TO: < " + target.get(0).getX() + " , " + target.get(0).getY() + " >");
-//				System.out.println("This move originates FROM: < " + origin.get(0).getX() + " , " + origin.get(0).getY() + " >");
-//				System.out.println("Squares occupied during this move: < " + squaresOccupied.get(0).getX() + " , " + squaresOccupied.get(0).getY() + " >");
+				//				System.out.println("This is a move TO: < " + target.get(0).getX() + " , " + target.get(0).getY() + " >");
+				//				System.out.println("This move originates FROM: < " + origin.get(0).getX() + " , " + origin.get(0).getY() + " >");
+				//				System.out.println("Squares occupied during this move: < " + squaresOccupied.get(0).getX() + " , " + squaresOccupied.get(0).getY() + " >");
 				this.addActivity(new Activity(0, commandCount++, 0, 0, origin, target, squaresOccupied));
 				origin.clear();
 				origin.add(step);
@@ -887,22 +889,22 @@ public class AbstractUnit {
 				// We're going to take a double step now and scale down the travelMultiplier
 				modSum -= 1;
 				if (i.hasNext()) {
-//					System.out.println("\n== Taking a Double Step ==");
+					//					System.out.println("\n== Taking a Double Step ==");
 					squaresOccupied.add(step); // Thinking. Want to test for a bit on the other cases.
 					step = i.next();
 					target.add(step);
 					squaresOccupied.add(step);
-//					System.out.println("This is a move TO: < " + target.get(0).getX() + " , " + target.get(0).getY() + " >");
-//					System.out.println("This move originates FROM: < " + origin.get(0).getX() + " , " + origin.get(0).getY() + " >");
-//					System.out.println("Squares occupied during this move: < " + squaresOccupied.get(0).getX() + " , " + squaresOccupied.get(0).getY() + " >,"
-//							+ " < " + squaresOccupied.get(1).getX() + " , " + squaresOccupied.get(1).getY()	+ " >");
+					//					System.out.println("This is a move TO: < " + target.get(0).getX() + " , " + target.get(0).getY() + " >");
+					//					System.out.println("This move originates FROM: < " + origin.get(0).getX() + " , " + origin.get(0).getY() + " >");
+					//					System.out.println("Squares occupied during this move: < " + squaresOccupied.get(0).getX() + " , " + squaresOccupied.get(0).getY() + " >,"
+					//							+ " < " + squaresOccupied.get(1).getX() + " , " + squaresOccupied.get(1).getY()	+ " >");
 					this.addActivity(new Activity(0, commandCount++, 0, 0, origin, target, squaresOccupied));
 					origin.clear();
 					origin.add(step);
 					target.clear();
 					squaresOccupied.clear();
 				} else { // Last step came before double step bonus
-//					System.out.println("\n=== Out of Squares ===");
+					//					System.out.println("\n=== Out of Squares ===");
 					target.add(step);
 					squaresOccupied.add(step);
 					this.addActivity(new Activity(0, commandCount++, 0, 0, origin, target, squaresOccupied));

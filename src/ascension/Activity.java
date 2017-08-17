@@ -8,11 +8,11 @@ import java.util.ArrayList;
  * @version 1.0
  */
 
-public class Activity {
+class Activity {
 
 	private int[] activityKeys = new int[8];
 	private ArrayList<Point> squaresOccupied, origin, target;
-	
+
 	/** TODO Fix this comment
 	 * Makes a new activity.
 	 * 
@@ -25,7 +25,7 @@ public class Activity {
 	 * @param colT - the column of the target
 	 * @param activityRiders - activity riders and effects
 	 */
-	public Activity (int tier, int relativePriority, int activityType, int activityRiders, ArrayList<Point> _origin, ArrayList<Point> _target, ArrayList<Point> _squaresOccupied) {
+	Activity (int tier, int relativePriority, int activityType, int activityRiders, ArrayList<Point> _origin, ArrayList<Point> _target, ArrayList<Point> _squaresOccupied) {
 		activityKeys[0] = tier;
 		activityKeys[1] = relativePriority;
 		activityKeys[2] = activityType;
@@ -59,11 +59,11 @@ public class Activity {
 	 * 
 	 * @return the activity keys
 	 */
-	public int[] provideActivityKeys() {
+	int[] provideActivityKeys() {
 		return activityKeys;
 	}
 
-	public boolean comparePriority(Activity otherAct) {
+	boolean comparePriority(Activity otherAct) {
 		// TODO Implement a reasonable comparison for two activities.
 		// Keep in mind key-frame divisions as well as order of entry
 		// into the queue. Perhaps add some keys for those ideas.
