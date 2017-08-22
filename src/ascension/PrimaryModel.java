@@ -10,6 +10,7 @@ import javax.swing.ImageIcon;
 import javax.swing.Timer;
 
 import ascension.AbstractUnit.Locomotion;
+import ascension.AbstractUnit.UnitType;
 import ascension.Terrain.TerrainSubType;
 import ascension.Terrain.TerrainType;
 
@@ -170,9 +171,81 @@ class PrimaryModel {
 			pathFinderP4 = new PathFinder(visualModelP4);
 		}
 
+		updateVision();
 		// TODO Think about moving the start of the turn to somewhere more practical.
 		// Maybe a "Start Game" screen or something. Probably something similar to the turn rotations.
 		turnTimer.start();
+	}
+
+	private void updateVision() {
+		// First we flush the vision for each player to offer a clean update slate.
+		for (int r = 0; r < gridSize; r++) {
+			for (int c = 0; c < gridSize; c++) {
+				visualModelP1[r][c].isInVisionRange = false;
+				visualModelP2[r][c].isInVisionRange = false;
+				visualModelP3[r][c].isInVisionRange = false;
+				visualModelP4[r][c].isInVisionRange = false;
+			}
+		}
+		
+		AbstractUnit temp;
+		int sightRadius = 0;
+		// Next, we iterate over the available units and structures and provide vision of squares in their range.
+		for (int r = 0; r < gridSize; r++) {
+			for (int c = 0; c < gridSize; c++) {
+				if (unitsP1[r][c] != null) {
+					temp = unitsP1[r][c];
+					sightRadius = temp.getSihtRd();
+					
+					for (int i = Math.max(0, r - sightRadius); i < Math.min(r + sightRadius, gridSize); i ++) {
+						for (int j = Math.max(0, c - sightRadius); j < Math.min(c + sightRadius, gridSize); j++) {
+							if (!visualModelP1[i][j].isInVisionRange) {
+								visualModelP1[i][j].isInVisionRange = true;
+							}
+						}
+					}
+				}
+				
+				if (unitsP2[r][c] != null) {
+					temp = unitsP2[r][c];
+					sightRadius = temp.getSihtRd();
+					
+					for (int i = Math.max(0, r - sightRadius); i < Math.min(r + sightRadius, gridSize); i ++) {
+						for (int j = Math.max(0, c - sightRadius); j < Math.min(c + sightRadius, gridSize); j++) {
+							if (!visualModelP2[i][j].isInVisionRange) {
+								visualModelP2[i][j].isInVisionRange = true;
+							}
+						}
+					}
+				}
+				
+				if (unitsP3[r][c] != null) {
+					temp = unitsP3[r][c];
+					sightRadius = temp.getSihtRd();
+					
+					for (int i = Math.max(0, r - sightRadius); i < Math.min(r + sightRadius, gridSize); i ++) {
+						for (int j = Math.max(0, c - sightRadius); j < Math.min(c + sightRadius, gridSize); j++) {
+							if (!visualModelP1[i][j].isInVisionRange) {
+								visualModelP1[i][j].isInVisionRange = true;
+							}
+						}
+					}
+				}
+				
+				if (unitsP4[r][c] != null) {
+					temp = unitsP4[r][c];
+					sightRadius = temp.getSihtRd();
+					
+					for (int i = Math.max(0, r - sightRadius); i < Math.min(r + sightRadius, gridSize); i ++) {
+						for (int j = Math.max(0, c - sightRadius); j < Math.min(c + sightRadius, gridSize); j++) {
+							if (!visualModelP1[i][j].isInVisionRange) {
+								visualModelP1[i][j].isInVisionRange = true;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -299,7 +372,7 @@ class PrimaryModel {
 	 * </ul>
 	 * </p>
 	 */
-	protected void rotateTurn() {
+	private void rotateTurn() {
 		if (activePlayer.ordinal() < playerCount - 1) {
 			activePlayer = Player.values()[activePlayer.ordinal() + 1]; // Select the next player in sequence.
 			PrimaryController.generateNotification("Switching to Player: " + activePlayer.toString(), 0);

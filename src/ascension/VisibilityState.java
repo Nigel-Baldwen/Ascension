@@ -1,17 +1,24 @@
 package ascension;
 
 import java.util.ArrayList;
-
+import java.util.HashSet;
 import ascension.AbstractUnit.UnitType;
+import ascension.PrimaryModel.Player;
 import ascension.Terrain.TerrainSubType;
 import ascension.Terrain.TerrainType;
+
+/*
+ * VisibilityState objects are designed such that they serve to
+ * represent the current visual information accessible to a given
+ * player about a given square.
+ */
 
 class VisibilityState {
 	UnitType occupyingUnitType, destinationUnit;
 	TerrainType terrainType;
 	TerrainSubType terrainSubType;
 	ArrayList<UnitType> halfTransparencyUnits;
-	
+	boolean isInVisionRange = false;
 	
 	VisibilityState () {
 		occupyingUnitType = UnitType.EMPTY;

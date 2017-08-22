@@ -311,7 +311,7 @@ class PrimaryView extends JPanel {
 				if (visState.halfTransparencyUnits.isEmpty()) {
 					continue;
 				}
-				
+
 				for (Iterator<UnitType> iterator = visState.halfTransparencyUnits.iterator(); iterator.hasNext();) {
 					UnitType mover = (UnitType) iterator.next();
 					do {
@@ -398,12 +398,14 @@ class PrimaryView extends JPanel {
 
 				VisibilityState visState = visibilityState[r][c];
 				int arrayIndex = visState.terrainType.ordinal() * 9 + visState.terrainSubType.ordinal();
-
+				if (!visState.isInVisionRange) {
+					arrayIndex += 45;
+				}
 				do {
 					int valCode = terrainImages[arrayIndex].validate(gC);
 
 					if (valCode == VolatileImage.IMAGE_RESTORED) {
-						restoreTerrainTile(visState.terrainType, visState.terrainSubType);
+						restoreTerrainTile(visState.terrainType, visState.terrainSubType, arrayIndex);
 					} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
 						terrainImages[arrayIndex] = gC.createCompatibleVolatileImage(unitLength, unitLength);
 					} else if (valCode == VolatileImage.IMAGE_OK) {
@@ -900,10 +902,8 @@ class PrimaryView extends JPanel {
 	 * </ul>
 	 * </p>
 	 */
-	private void restoreTerrainTile(TerrainType terrainType, TerrainSubType terrainSubType) {
+	private void restoreTerrainTile(TerrainType terrainType, TerrainSubType terrainSubType, int arrayIndex) {
 		Graphics2D g = null;
-
-		int arrayIndex = terrainType.ordinal() * 9 + terrainSubType.ordinal();
 
 		do {
 
@@ -914,9 +914,15 @@ class PrimaryView extends JPanel {
 			try {
 				g = terrainImages[arrayIndex].createGraphics();
 
-				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Terrain/" + resKey + "/Tile/" + terrainType.toString() + "_" + terrainSubType.toString() + ".jpg"))).getImage(), 0,
-						0, null);
+				if (arrayIndex > 44) {
+					g.drawImage((new ImageIcon(getClass().getClassLoader()
+							.getResource("images/Terrain/" + resKey + "/Tile/" + terrainType.toString() + "_" + terrainSubType.toString() + "_DARK.jpg"))).getImage(), 0,
+							0, null);
+				} else {
+					g.drawImage((new ImageIcon(getClass().getClassLoader()
+							.getResource("images/Terrain/" + resKey + "/Tile/" + terrainType.toString() + "_" + terrainSubType.toString() + ".jpg"))).getImage(), 0,
+							0, null);
+				}
 			} finally {
 				g.dispose();
 			}
