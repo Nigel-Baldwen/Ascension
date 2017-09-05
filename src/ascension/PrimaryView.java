@@ -139,11 +139,11 @@ class PrimaryView extends JPanel {
 			statsSeperatorX = 64;
 			statsSeperatorY = 33;
 			endTurnX = xOffset + 12;
-			endTurnY = screenHeight - yOffset - iPaneHeight + 196;
-			endTurnWidth = 174;
-			endTurnHeight = 80;
+			endTurnY = screenHeight - yOffset - iPaneHeight + 4;
+			endTurnWidth = 132;
+			endTurnHeight = 132;
 			resKey = 0;
-		} else if (screenWidth >= 1920 && screenHeight >= 1080) {
+		} else if (screenWidth >= 1920 && screenHeight >= 1080) { // TODO Almost all of the initialization values for alternate resolutions are wrong.
 			xOffset = (screenWidth - 1920) / 2;
 			yOffset = (screenHeight - 1080) / 2;
 			iPaneWidth = 1920;

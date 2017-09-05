@@ -101,7 +101,7 @@ class PrimaryController extends JFrame implements MouseListener, MouseMotionList
 	 * </p>
 	 */
 	void loadInitialGameState() {
-		gameModel = new PrimaryModel();
+		gameModel = new PrimaryModel(this);
 		gridSize = 500;
 		gameModel.loadInitialModelState(gridSize, 4);
 		gameView = new PrimaryView();
@@ -296,7 +296,7 @@ class PrimaryController extends JFrame implements MouseListener, MouseMotionList
 			if (!unitIsSelected && !terrainIsSelected) {
 				if (idTag == UnitType.EMPTY) {
 					terrainIsSelected = true;
-					gameView.setTerrainFocusTarget(row, column + gridSize, gameModel.getDescriptor(row, column + gridSize));
+					gameView.setTerrainFocusTarget(row, column, gameModel.getDescriptor(row, column));
 				} else {
 					unitIsSelected = true;
 					gameModel.setUnitFocusTarget(row, column);
@@ -304,7 +304,7 @@ class PrimaryController extends JFrame implements MouseListener, MouseMotionList
 				}
 			} else {
 				if (terrainIsSelected && idTag == UnitType.EMPTY) {
-					gameView.setTerrainFocusTarget(row, column + gridSize, gameModel.getDescriptor(row, column + gridSize));
+					gameView.setTerrainFocusTarget(row, column, gameModel.getDescriptor(row, column));
 				} else if (unitIsSelected && idTag == UnitType.EMPTY) {
 					if (awaitingMoveTarget) {
 						gameModel.requestMoveTo(row, column);
@@ -313,7 +313,7 @@ class PrimaryController extends JFrame implements MouseListener, MouseMotionList
 					terrainIsSelected = true;
 					gameView.clearFocusTarget();
 					unitIsSelected = false;
-					gameView.setTerrainFocusTarget(row, column + gridSize, gameModel.getDescriptor(row, column + gridSize));
+					gameView.setTerrainFocusTarget(row, column, gameModel.getDescriptor(row, column));
 				} else if (idTag != UnitType.EMPTY && terrainIsSelected) {
 					unitIsSelected = true;
 					gameView.clearFocusTarget();
@@ -324,7 +324,8 @@ class PrimaryController extends JFrame implements MouseListener, MouseMotionList
 		} else if (y > boundY - gameView.getIPaneHeight() - gameView.getYOffset() && x <= boundX - gameView.getXOffset() && x > gameView.getXOffset()) {
 			// The Information Panel
 			if (x >= gameView.getEndTurnX() && x < gameView.getEndTurnX() + gameView.getEndTurnWidth() && y >= gameView.getEndTurnY() && y < gameView.getEndTurnY() + gameView.getEndTurnHeight()) {
-				System.out.println("You pressed the end turn button.");
+				// End turn button clicked
+				gameModel.rotateTurn();
 			} else if (x >= gameView.getIPaneButtonX() && x < gameView.getIPaneButtonX() + gameView.getIPaneButtonSize() && y >= gameView.getIPaneButtonY() && y < gameView.getIPaneButtonY() + gameView.getIPaneButtonSize()) {
 				// Move button clicked.
 				awaitingMoveTarget = true;
@@ -380,9 +381,14 @@ class PrimaryController extends JFrame implements MouseListener, MouseMotionList
 	 * @param notification - a message describing the notification
 	 * @param type - the type of notification
 	 */
-	static void generateNotification(String notification, int type) {
+	void generateNotification(String notification, int type) {
 		switch (type) {
-		case 0:
+		case 0: // Rotating/Ending Turns
+			System.out.println(notification);
+			unitIsSelected = false;
+			terrainIsSelected = false;
+			awaitingMoveTarget = false;
+			gameView.clearFocusTarget();
 			actionDisabled = true;
 			break;
 		}

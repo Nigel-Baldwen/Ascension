@@ -880,7 +880,7 @@ class AbstractUnit {
 				//				System.out.println("This is a move TO: < " + target.get(0).getX() + " , " + target.get(0).getY() + " >");
 				//				System.out.println("This move originates FROM: < " + origin.get(0).getX() + " , " + origin.get(0).getY() + " >");
 				//				System.out.println("Squares occupied during this move: < " + squaresOccupied.get(0).getX() + " , " + squaresOccupied.get(0).getY() + " >");
-				this.addActivity(new Activity(0, commandCount++, 0, 0, origin, target, squaresOccupied));
+				this.addActivity(new Activity(player, this, commandCount++, 0, 0, origin, target, squaresOccupied));
 				origin.clear();
 				origin.add(step);
 				target.clear();
@@ -898,7 +898,7 @@ class AbstractUnit {
 					//					System.out.println("This move originates FROM: < " + origin.get(0).getX() + " , " + origin.get(0).getY() + " >");
 					//					System.out.println("Squares occupied during this move: < " + squaresOccupied.get(0).getX() + " , " + squaresOccupied.get(0).getY() + " >,"
 					//							+ " < " + squaresOccupied.get(1).getX() + " , " + squaresOccupied.get(1).getY()	+ " >");
-					this.addActivity(new Activity(0, commandCount++, 0, 0, origin, target, squaresOccupied));
+					this.addActivity(new Activity(player, this, commandCount++, 0, 0, origin, target, squaresOccupied));
 					origin.clear();
 					origin.add(step);
 					target.clear();
@@ -907,7 +907,7 @@ class AbstractUnit {
 					//					System.out.println("\n=== Out of Squares ===");
 					target.add(step);
 					squaresOccupied.add(step);
-					this.addActivity(new Activity(0, commandCount++, 0, 0, origin, target, squaresOccupied));
+					this.addActivity(new Activity(player, this, commandCount++, 0, 0, origin, target, squaresOccupied));
 				}
 			}
 		}

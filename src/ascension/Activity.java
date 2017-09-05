@@ -10,8 +10,10 @@ import java.util.ArrayList;
 
 class Activity {
 
+	private PrimaryModel.Player player;
 	private int[] activityKeys = new int[8];
 	private ArrayList<Point> squaresOccupied, origin, target;
+	private AbstractUnit activityRequestor;
 
 	/** TODO Fix this comment
 	 * Makes a new activity.
@@ -25,8 +27,9 @@ class Activity {
 	 * @param colT - the column of the target
 	 * @param activityRiders - activity riders and effects
 	 */
-	Activity (int tier, int relativePriority, int activityType, int activityRiders, ArrayList<Point> _origin, ArrayList<Point> _target, ArrayList<Point> _squaresOccupied) {
-		activityKeys[0] = tier;
+	Activity (PrimaryModel.Player _player, AbstractUnit _activityRequestor, int relativePriority, int activityType, int activityRiders, ArrayList<Point> _origin, ArrayList<Point> _target, ArrayList<Point> _squaresOccupied) {
+		player = _player;
+		activityRequestor = _activityRequestor;
 		activityKeys[1] = relativePriority;
 		activityKeys[2] = activityType;
 		activityKeys[7] = activityRiders;
@@ -46,11 +49,7 @@ class Activity {
 	 * 			0 : Movement
 	 * 			1 : Attack
 	 * 			3 : Use Ability
-	 * activityKeys[3] : row of source unit
-	 * activityKeys[4] : column of source unit
-	 * activityKeys[5] : row of target
-	 * activityKeys[6] : column of target
-	 * activityKeys[7] : special riders or effects to be applied
+	 * activityKeys[3] : special riders or effects to be applied
 	 * 		by an ability
 	 */
 
@@ -59,7 +58,7 @@ class Activity {
 	 * 
 	 * @return the activity keys
 	 */
-	int[] provideActivityKeys() {
+	int[] getActivityKeys() {
 		return activityKeys;
 	}
 
@@ -69,5 +68,25 @@ class Activity {
 		// into the queue. Perhaps add some keys for those ideas.
 		// If the otherAct should occur after thisAct, then return true.
 		return false;
+	}
+	
+	ArrayList<Point> getTarget() {
+		return target;
+	}
+	
+	ArrayList<Point> getOrigin() {
+		return origin;
+	}
+	
+	ArrayList<Point> getSquaresOccupied() {
+		return squaresOccupied;
+	}
+	
+	PrimaryModel.Player getPlayer() {
+		return player;
+	}
+
+	AbstractUnit getActivityRequestor() {
+		return activityRequestor;
 	}
 }
