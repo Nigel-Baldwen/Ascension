@@ -142,8 +142,8 @@ class PrimaryModel {
 				listOfUnitLists.add(unitList);
 			}
 		}
-		int row = 5; // (int) (Math.random() * size / 4);
-		int column = 5; // (int) (Math.random() * size / 4);
+		int row = 0; // (int) (Math.random() * size / 4);
+		int column = 0; // (int) (Math.random() * size / 4);
 		unitsP1.get(row).get(column).add(new PhysicalBuilder(Player.PLAYER_1, row, column));
 		unitsP1.get(row).get(column).get(0).setVisible(true);
 		unitsP1.get(row).get(column).get(0).setActive(true);
@@ -434,10 +434,9 @@ class PrimaryModel {
 			 */ 
 			for (int r = 0; r < unitsP1.size(); r++) {
 				for (int c = 0; c < unitsP1.size(); c++) {
-					addAllActivityListsAt(r, c, unitsP1);
-					addAllActivityListsAt(r, c, unitsP2);
-					addAllActivityListsAt(r, c, unitsP3);
-					addAllActivityListsAt(r, c, unitsP4);	
+					for (ArrayList<ArrayList<ArrayList<AbstractUnit>>> unitArray : listOfActiveUnitArrays) {
+						addAllActivityListsAt(r, c, unitArray);
+					}	
 				}
 			}
 
@@ -502,6 +501,7 @@ class PrimaryModel {
 					// with this one, it might be the case that an activity executed in the prior resolution
 					// stage left something in the square preventing this unit from moving in.
 					Activity toExecute = keyValuePair.getValue().get(0).remove(0); // Pulling the first activity out
+					System.out.println(toExecute);
 					ArrayList<Point> executionOrigin = toExecute.getOrigin(),
 							//executionSquaresOccupied = toExecute.getSquaresOccupied(),
 							executionTarget = toExecute.getTarget(); // Getting the location information needed.
@@ -509,7 +509,10 @@ class PrimaryModel {
 					Player controllingPlayer = toExecute.getPlayer();
 					switch (controllingPlayer) {
 					case PLAYER_1:
+						System.out.println("Executing Action for Player 1:\n"
+								+ "executionTarget.size(): " + executionTarget.size());
 						if (executionTarget.size() == 1) { // Small unit size, easy case.
+							System.out.println("Yup.");
 							int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y;
 							// Make sure the enemy has nothing in the square
 							if (unitsP2.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty() && unitsP4.get(targetRow).get(targetCol).isEmpty()) {
