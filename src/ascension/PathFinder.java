@@ -74,8 +74,9 @@ class PathFinder {
 		// enemies, and other relevant path finding concerns.
 		for (int r = 0; r < speed * 2 + 1; r++) {
 			for (int c = 0; c < speed * 2 + 1; c++) {
-				if (sRow - speed + r < 0 || sRow - speed + r >= navigableTerrain.length
-						|| sColumn - speed + c < 0 || sColumn - speed + c >= navigableTerrain.length) {
+				if (sRow - speed + r < 0 || sRow + speed - r >= navigableTerrain.length
+						|| sColumn - speed + c < 0 || sColumn + speed - c >= navigableTerrain.length) {
+					closedSet[r][c] = 1;
 					continue;
 				}
 				switch (navigableTerrain[sRow - speed + r][sColumn - speed + c].terrainSubType) { // TODO This will have to change as we go forward.

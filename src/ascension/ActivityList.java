@@ -2,6 +2,7 @@ package ascension;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * @author Nigel_Baldwen - nigelbaldwen@gmail.com
@@ -22,12 +23,6 @@ class ActivityList extends ArrayList<Activity> {
 		if(size() < 2)
 			return;
 
-		for(int i = 0; i < size() - 1; i++) {
-			for (int j = i + 1; j < size(); j++) {
-				if (!get(i).comparePriority(get(j))); {
-					Collections.swap(this, i, j);
-				}
-			}
-		}
+		Collections.sort((List) this);
 	}
 }

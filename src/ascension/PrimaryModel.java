@@ -4,8 +4,10 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -124,7 +126,7 @@ class PrimaryModel {
 		// This ought to help me reinvent some control structures to avoid switch statements.
 		listOfActiveUnitArrays = new ArrayList<ArrayList<ArrayList<ArrayList<AbstractUnit>>>>(4);
 		listOfActiveVisibilityArrays = new ArrayList<VisibilityState[][]>();
-		
+
 		// Creates 2d arrays for terrain, units, and model.
 		// Initializes them.
 		terrainP1 = new Terrain[size][size];
@@ -242,7 +244,7 @@ class PrimaryModel {
 				clearVisionInSquare(r, c);
 			}
 		}
-		
+
 		// Next, we iterate over the available units and structures and provide vision of squares in their range.
 		for (int r = 0; r < gridSize; r++) {
 			for (int c = 0; c < gridSize; c++) {
@@ -261,12 +263,12 @@ class PrimaryModel {
 						// TODO if (unitOfInterest.getTrueSightRadius() > trueSightRadius...
 					}
 				}
-				
+
 				for (int i = Math.max(0, r - sightRadius); i < Math.min(r + sightRadius + 1, gridSize); i ++) {
 					for (int j = Math.max(0, c - sightRadius); j < Math.min(c + sightRadius + 1, gridSize); j++) {
 						if (!listOfActiveVisibilityArrays.get(k)[i][j].isInVisionRange) { // TODO need to add an additional check for true sight
 							listOfActiveVisibilityArrays.get(k)[i][j].isInVisionRange = true;
-							
+
 							for (ArrayList<ArrayList<ArrayList<AbstractUnit>>> unitArray : listOfActiveUnitArrays) {
 								if (!unitArray.equals(listOfActiveUnitArrays.get(k))) {
 									if (!unitArray.get(i).get(j).isEmpty()) {
@@ -359,7 +361,7 @@ class PrimaryModel {
 		// Divide the map into 10-20% width and length seed zones.
 		int zonePercent = ((int) (11 * Math.random())) + 10, zoneLength = gridSize / zonePercent;
 		TerrainType seedType;
-		
+
 		for (int x = 0; x < zonePercent; x++) {
 			for (int y = 0; y < zonePercent; y++) {
 				int seedC = zoneLength * x + zoneLength / 2;
@@ -427,7 +429,7 @@ class PrimaryModel {
 			turnTimer.start();
 		}
 		else {
-			/* First, we'll ensure that all pending activity lists get popped into the processing queue.
+			/* Now, we'll ensure that all pending activity lists get popped into the processing queue.
 			 * The activityQueue is effectively an irregular 2d array where the left-most
 			 * activity in each list is prior to all right-hand activities. Thus, all activityList[n]
 			 * are prior to any activityList[n+1].
@@ -440,139 +442,152 @@ class PrimaryModel {
 				}
 			}
 
-			/* 
-			 * Next, we do a pass over the queue to determine if
-			 * there will be any conflicts to resolve.
-			 * Notable conflicts include:
-			 * Two or more units attempting to occupy the same square as a destination.
-			 * Enemy units encounter one another.
-			 * The target of an ability is leaving the square where the ability is aimed
-			 * TODO Probably need some more notable cases. They will occur to me as time
-			 * goes on and as I add more features.
-			 * 
-			 * In order to do this, I'll need some sort of map between targets and
-			 * the activities which spawn the targets. In other words, for all activities
-			 * that target <r, c>, I need to know which activities those are such that I can
-			 * determine whether or not they are in conflict. I think something like a map,
-			 * dictionary, or hash table may be what I need. I'll have to think about it
-			 * a while longer. Time to feed Sage lunch. 
+			/*
+			 * The magic starts here. We need a while loop to ensure that we can grind out all activities in
+			 * the processing queue. Basically, only once the queue is empty do we stop. Each activity list
+			 * loses at least one activity per turn (or so I believe before actually coding it all out) and
+			 * so it should reach the empty state reliably. We'll see. We'll see.
 			 */
 
-			// TODO As a proof of concept, I'm going to use a multimap to look for move targets
-			// The key is the target list of the 0th activity in the activity list
-			// The value is the activity list itself. Since I'm searching for overlaps,
-			// the activity lists are put into array lists. Any such list with more than
-			// two elements indicates an overlap.
-			Map<ArrayList<Point>, ArrayList<ActivityList>> movementDestinations = new HashMap<ArrayList<Point>, ArrayList<ActivityList>>();
-			for (ActivityList activityList : activityQueue) {
-				// First we handle the case of an already present key
-				// TODO A possible pitfall is that the targets may be getting compared at the
-				// object level rather than the value level. Thus, two target lists with all
-				// the same values MAY be treated as non-equivalent since they are technically
-				// distinct instances of the same list of points. May seek advisement on this
-				// point if trouble becomes apparent. Probably could provide a wrapper for
-				// Point that includes a comparator.
-				// TODO Delete above todo since Lennon and I talked and it seems not to be an issue atm.
-				if (movementDestinations.containsKey(activityList.get(0).getTarget())) {
-					movementDestinations.get(activityList.get(0).getTarget()).add(activityList);
-				} // Next, we address the case of a newly found key. Same potential issue as above.
-				else {
-					ArrayList<ActivityList> mapElement = new ArrayList<ActivityList>();
-					mapElement.add(activityList);
-					movementDestinations.put(activityList.get(0).getTarget(), mapElement);
-				}
-			}
+			while (!activityQueue.isEmpty()) {
+				/* 
+				 * Next, we do a pass over the queue to determine if
+				 * there will be any conflicts to resolve.
+				 * Notable conflicts include:
+				 * Two or more units attempting to occupy the same square as a destination.
+				 * Enemy units encounter one another.
+				 * The target of an ability is leaving the square where the ability is aimed
+				 * TODO Probably need some more notable cases. They will occur to me as time
+				 * goes on and as I add more features.
+				 * 
+				 * In order to do this, I'll need some sort of map between targets and
+				 * the activities which spawn the targets. In other words, for all activities
+				 * that target <r, c>, I need to know which activities those are such that I can
+				 * determine whether or not they are in conflict. I think something like a map,
+				 * dictionary, or hash table may be what I need. 
+				 */
 
-			// At this point, movementDestinations should account for all activity lists.
-			// For any key of movementDestinations with a corresponding array list,
-			// if that array list has:
-			// zero values - something probably went wrong. oops
-			// one value - this activity target is held by exactly one unit
-			// two or more values - this target is held by two or more units
-			// For the case of two or more values, I must seek to resolve the conflict.
-			for (Entry<ArrayList<Point>, ArrayList<ActivityList>> keyValuePair : movementDestinations.entrySet()) {
-				if (keyValuePair.getValue().size() <= 0) {
-					System.out.println("THIS IS UNFORTUNATE!!! Why is it so tough to get things right the first time?");
-				}
-				if (keyValuePair.getValue().size() == 1) {
-					// Exactly one activity list for one target indicates a lack of conflict at this resolution stage.
-					// The 0th activity can be removed and executed so long as the intended space is open.
-					// In other words, it is possible that although no other activity is currently in conflict
-					// with this one, it might be the case that an activity executed in the prior resolution
-					// stage left something in the square preventing this unit from moving in.
-					Activity toExecute = keyValuePair.getValue().get(0).remove(0); // Pulling the first activity out
-					System.out.println(toExecute);
-					ArrayList<Point> executionOrigin = toExecute.getOrigin(),
-							//executionSquaresOccupied = toExecute.getSquaresOccupied(),
-							executionTarget = toExecute.getTarget(); // Getting the location information needed.
-					AbstractUnit activityRequestor = toExecute.getActivityRequestor();
-					Player controllingPlayer = toExecute.getPlayer();
-					switch (controllingPlayer) {
-					case PLAYER_1:
-						System.out.println("Executing Action for Player 1:\n"
-								+ "executionTarget.size(): " + executionTarget.size());
-						if (executionTarget.size() == 1) { // Small unit size, easy case.
-							System.out.println("Yup.");
-							int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y;
-							// Make sure the enemy has nothing in the square
-							if (unitsP2.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty() && unitsP4.get(targetRow).get(targetCol).isEmpty()) {
-								// Make sure that the square is occupied by at most, in-motion, friendly units.
-								// TODO on the other hand, I'm really not sure what to make of two friendly units occupying the same space when they happen
-								// to encounter an enemy unexpectedly. I suppose I could just auto-link them, but it is problematic considering that the
-								// units in question could already be linked.
-								if (unitsP1.get(targetRow).get(targetCol).isEmpty()) {
-									System.out.println("Row of Interest: " + executionOrigin.get(0).x + " Column of Interest: " + executionOrigin.get(0).y);
-									int requestorIndex = unitsP1.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).indexOf(activityRequestor);
-									unitsP1.get(targetRow).get(targetCol).add(unitsP1.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).get(requestorIndex));
-									unitsP1.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).remove(requestorIndex);
-									}
-							}
-						}
-						break;
-					case PLAYER_2:
-						if (executionTarget.size() == 1) {
-							int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y;
-							if (unitsP1.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty() && unitsP4.get(targetRow).get(targetCol).isEmpty()) {
-								if (unitsP2.get(targetRow).get(targetCol).isEmpty()) {
-									int requestorIndex = unitsP2.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).indexOf(activityRequestor);
-									unitsP2.get(targetRow).get(targetCol).add(unitsP2.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).get(requestorIndex));
-									unitsP2.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).remove(requestorIndex);
-									}
-							}
-						}
-						break;
-					case PLAYER_3:
-						if (executionTarget.size() == 1) {
-							int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y;
-							if (unitsP1.get(targetRow).get(targetCol).isEmpty() && unitsP2.get(targetRow).get(targetCol).isEmpty() && unitsP4.get(targetRow).get(targetCol).isEmpty()) {
-								if (unitsP3.get(targetRow).get(targetCol).isEmpty()) {
-									int requestorIndex = unitsP3.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).indexOf(activityRequestor);
-									unitsP3.get(targetRow).get(targetCol).add(unitsP3.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).get(requestorIndex));
-									unitsP3.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).remove(requestorIndex);
-									}
-							}
-						}
-						break;
-					case PLAYER_4:
-						if (executionTarget.size() == 1) {
-							int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y;
-							if (unitsP1.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty()) {
-								if (unitsP4.get(targetRow).get(targetCol).isEmpty()) {
-									int requestorIndex = unitsP4.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).indexOf(activityRequestor);
-									unitsP4.get(targetRow).get(targetCol).add(unitsP4.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).get(requestorIndex));
-									unitsP4.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).remove(requestorIndex);
-									}
-							}
-						}
-						break;
+				// TODO As a proof of concept, I'm going to use a multimap to look for move targets
+				// The key is the target list of the 0th activity in the activity list
+				// The value is the activity list itself. Since I'm searching for overlaps,
+				// the activity lists are put into array lists. Any such list with more than
+				// two elements indicates an overlap.
+				Map<ArrayList<Point>, ArrayList<ActivityList>> movementDestinations = new HashMap<ArrayList<Point>, ArrayList<ActivityList>>();
+				for (ActivityList activityList : activityQueue) {
+					// First we handle the case of an already present key
+					// TODO A possible pitfall is that the targets may be getting compared at the
+					// object level rather than the value level. Thus, two target lists with all
+					// the same values MAY be treated as non-equivalent since they are technically
+					// distinct instances of the same list of points. May seek advisement on this
+					// point if trouble becomes apparent. Probably could provide a wrapper for
+					// Point that includes a comparator.
+					// TODO Delete above todo since Lennon and I talked and it seems not to be an issue atm.
+					if (movementDestinations.containsKey(activityList.get(0).getTarget())) {
+						movementDestinations.get(activityList.get(0).getTarget()).add(activityList);
+					} // Next, we address the case of a newly found key. Same potential issue as above.
+					else {
+						ArrayList<ActivityList> mapElement = new ArrayList<ActivityList>();
+						mapElement.add(activityList);
+						movementDestinations.put(activityList.get(0).getTarget(), mapElement);
 					}
+				}
 
+				// At this point, movementDestinations should account for all activity lists.
+				// For any key of movementDestinations with a corresponding array list,
+				// if that array list has:
+				// zero values - something probably went wrong. oops
+				// one value - this activity target is held by exactly one unit
+				// two or more values - this target is held by two or more units
+				// For the case of two or more values, I must seek to resolve the conflict.
+				for (Entry<ArrayList<Point>, ArrayList<ActivityList>> keyValuePair : movementDestinations.entrySet()) {
+					if (keyValuePair.getValue().size() <= 0) {
+						System.out.println("THIS IS UNFORTUNATE!!! Why is it so tough to get things right the first time?");
+					}
+					if (keyValuePair.getValue().size() == 1) {
+						// Exactly one activity list for one target indicates a lack of conflict at this resolution stage.
+						// The 0th activity can be removed and executed so long as the intended space is open.
+						// In other words, it is possible that although no other activity is currently in conflict
+						// with this one, it might be the case that an activity executed in the prior resolution
+						// stage left something in the square preventing this unit from moving in.
+						Activity toExecute = keyValuePair.getValue().get(0).remove(0); // Pulling the first activity out
+						if (keyValuePair.getValue().get(0).isEmpty()) {
+							System.out.println("Removing Activity List");
+							activityQueue.remove(keyValuePair.getValue().get(0));
+						}
+						System.out.println(toExecute);
+						ArrayList<Point> executionOrigin = toExecute.getOrigin(),
+								//executionSquaresOccupied = toExecute.getSquaresOccupied(),
+								executionTarget = toExecute.getTarget(); // Getting the location information needed.
+						AbstractUnit activityRequestor = toExecute.getActivityRequestor();
+						Player controllingPlayer = toExecute.getPlayer();
+						switch (controllingPlayer) {
+						case PLAYER_1:
+							System.out.println("Executing Action for Player 1:\n"
+									+ "executionTarget.size(): " + executionTarget.size());
+							if (executionTarget.size() == 1) { // Small unit size, easy case.
+								int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y,
+										originRow = executionOrigin.get(0).x, originCol = executionOrigin.get(0).y;
+								// Make sure the enemy has nothing in the square
+								if (unitsP2.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty() && unitsP4.get(targetRow).get(targetCol).isEmpty()) {
+									// Make sure that the square is occupied by at most, in-motion, friendly units.
+									// TODO on the other hand, I'm really not sure what to make of two friendly units occupying the same space when they happen
+									// to encounter an enemy unexpectedly. I suppose I could just auto-link them, but it is problematic considering that the
+									// units in question could already be linked.
+									if (unitsP1.get(targetRow).get(targetCol).isEmpty()) {
+										int requestorIndex = unitsP1.get(originRow).get(originCol).indexOf(activityRequestor);
+										unitsP1.get(targetRow).get(targetCol).add(unitsP1.get(originRow).get(originCol).get(requestorIndex));
+										unitsP1.get(originRow).get(originCol).remove(requestorIndex);
+										visualModelP1[targetRow][targetCol].setOccupyingUnit(activityRequestor.unitType);
+									}
+								}
+							}
+							break;
+						case PLAYER_2:
+							if (executionTarget.size() == 1) {
+								int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y;
+								if (unitsP1.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty() && unitsP4.get(targetRow).get(targetCol).isEmpty()) {
+									if (unitsP2.get(targetRow).get(targetCol).isEmpty()) {
+										int requestorIndex = unitsP2.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).indexOf(activityRequestor);
+										unitsP2.get(targetRow).get(targetCol).add(unitsP2.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).get(requestorIndex));
+										unitsP2.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).remove(requestorIndex);
+									}
+								}
+							}
+							break;
+						case PLAYER_3:
+							if (executionTarget.size() == 1) {
+								int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y;
+								if (unitsP1.get(targetRow).get(targetCol).isEmpty() && unitsP2.get(targetRow).get(targetCol).isEmpty() && unitsP4.get(targetRow).get(targetCol).isEmpty()) {
+									if (unitsP3.get(targetRow).get(targetCol).isEmpty()) {
+										int requestorIndex = unitsP3.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).indexOf(activityRequestor);
+										unitsP3.get(targetRow).get(targetCol).add(unitsP3.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).get(requestorIndex));
+										unitsP3.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).remove(requestorIndex);
+									}
+								}
+							}
+							break;
+						case PLAYER_4:
+							if (executionTarget.size() == 1) {
+								int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y;
+								if (unitsP1.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty()) {
+									if (unitsP4.get(targetRow).get(targetCol).isEmpty()) {
+										int requestorIndex = unitsP4.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).indexOf(activityRequestor);
+										unitsP4.get(targetRow).get(targetCol).add(unitsP4.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).get(requestorIndex));
+										unitsP4.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).remove(requestorIndex);
+									}
+								}
+							}
+							break;
+						}
+
+					}
 				}
 			}
-
+			System.out.println("While Completed");
 			activePlayer = Player.PLAYER_1;
 		}
 		waitingState = 1;
+		updateVision();
 	}
 
 	private void addAllActivityListsAt(int row, int column, ArrayList<ArrayList<ArrayList<AbstractUnit>>> unitArray) {

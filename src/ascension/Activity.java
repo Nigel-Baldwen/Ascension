@@ -8,7 +8,7 @@ import java.util.ArrayList;
  * @version 1.0
  */
 
-class Activity {
+class Activity implements Comparable<Activity> {
 
 	private PrimaryModel.Player player;
 	private int[] activityKeys = new int[2];
@@ -65,10 +65,8 @@ class Activity {
 	}
 
 	boolean comparePriority(Activity otherAct) {
-		// TODO Implement a reasonable comparison for two activities.
-		// Keep in mind key-frame divisions as well as order of entry
-		// into the queue. Perhaps add some keys for those ideas.
-		// If the otherAct should occur after thisAct, then return true.
+		System.out.println("This activity priority: " + activityKeys[0]);
+		System.out.println("The other activity priority: " + otherAct.activityKeys[0]);
 		return (this.activityKeys[0] < otherAct.activityKeys[0] ? true : false);
 	}
 	
@@ -110,5 +108,10 @@ class Activity {
 			activityPrint.append("< " + target.get(i).x + " , " + target.get(i).y + " >\n");
 		}
 		return activityPrint.toString();
+	}
+
+	@Override
+	public int compareTo(Activity otherActivity) {
+		return this.activityKeys[0] - otherActivity.activityKeys[0];
 	}
 }
