@@ -4,12 +4,14 @@ import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
@@ -504,97 +506,73 @@ class PrimaryModel {
 						System.out.println("THIS IS UNFORTUNATE!!! Why is it so tough to get things right the first time?");
 					}
 					if (keyValuePair.getValue().size() == 1) {
-						// Exactly one activity list for one target indicates a lack of conflict at this resolution stage.
-						// The 0th activity can be removed and executed so long as the intended space is open.
-						// In other words, it is possible that although no other activity is currently in conflict
-						// with this one, it might be the case that an activity executed in the prior resolution
-						// stage left something in the square preventing this unit from moving in.
-						Activity toExecute = keyValuePair.getValue().get(0).remove(0); // Pulling the first activity out
-						if (keyValuePair.getValue().get(0).isEmpty()) {
-							System.out.println("Removing Activity List");
-							activityQueue.remove(keyValuePair.getValue().get(0));
-						}
-						System.out.println(toExecute);
-						ArrayList<Point> executionOrigin = toExecute.getOrigin(),
-								//executionSquaresOccupied = toExecute.getSquaresOccupied(),
-								executionTarget = toExecute.getTarget(); // Getting the location information needed.
-						AbstractUnit activityRequestor = toExecute.getActivityRequestor();
-						Player controllingPlayer = toExecute.getPlayer();
-						switch (controllingPlayer) {
-						case PLAYER_1:
-							System.out.println("Executing Action for Player 1:\n"
-									+ "executionTarget.size(): " + executionTarget.size());
-							if (executionTarget.size() == 1) { // Small unit size, easy case.
-								int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y,
-										originRow = executionOrigin.get(0).x, originCol = executionOrigin.get(0).y;
-								// Make sure the enemy has nothing in the square
-								if (unitsP2.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty() && unitsP4.get(targetRow).get(targetCol).isEmpty()) {
-									// Make sure that the square is occupied by at most, in-motion, friendly units.
-									// TODO on the other hand, I'm really not sure what to make of two friendly units occupying the same space when they happen
-									// to encounter an enemy unexpectedly. I suppose I could just auto-link them, but it is problematic considering that the
-									// units in question could already be linked.
-									if (unitsP1.get(targetRow).get(targetCol).isEmpty()) {
-										int requestorIndex = unitsP1.get(originRow).get(originCol).indexOf(activityRequestor);
-										unitsP1.get(targetRow).get(targetCol).add(unitsP1.get(originRow).get(originCol).get(requestorIndex));
-										unitsP1.get(originRow).get(originCol).remove(requestorIndex);
-										visualModelP1[targetRow][targetCol].setOccupyingUnit(activityRequestor.unitType);
-									}
-								}
-							}
-							break;
-						case PLAYER_2:
-							if (executionTarget.size() == 1) {
-								int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y;
-								if (unitsP1.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty() && unitsP4.get(targetRow).get(targetCol).isEmpty()) {
-									if (unitsP2.get(targetRow).get(targetCol).isEmpty()) {
-										int requestorIndex = unitsP2.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).indexOf(activityRequestor);
-										unitsP2.get(targetRow).get(targetCol).add(unitsP2.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).get(requestorIndex));
-										unitsP2.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).remove(requestorIndex);
-									}
-								}
-							}
-							break;
-						case PLAYER_3:
-							if (executionTarget.size() == 1) {
-								int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y;
-								if (unitsP1.get(targetRow).get(targetCol).isEmpty() && unitsP2.get(targetRow).get(targetCol).isEmpty() && unitsP4.get(targetRow).get(targetCol).isEmpty()) {
-									if (unitsP3.get(targetRow).get(targetCol).isEmpty()) {
-										int requestorIndex = unitsP3.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).indexOf(activityRequestor);
-										unitsP3.get(targetRow).get(targetCol).add(unitsP3.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).get(requestorIndex));
-										unitsP3.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).remove(requestorIndex);
-									}
-								}
-							}
-							break;
-						case PLAYER_4:
-							if (executionTarget.size() == 1) {
-								int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y;
-								if (unitsP1.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty() && unitsP3.get(targetRow).get(targetCol).isEmpty()) {
-									if (unitsP4.get(targetRow).get(targetCol).isEmpty()) {
-										int requestorIndex = unitsP4.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).indexOf(activityRequestor);
-										unitsP4.get(targetRow).get(targetCol).add(unitsP4.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).get(requestorIndex));
-										unitsP4.get(executionOrigin.get(0).x).get(executionOrigin.get(0).y).remove(requestorIndex);
-									}
-								}
-							}
-							break;
-						}
-
+						processPassiveConflictFreeMovementRequest(keyValuePair.getValue().get(0));
 					}
 				}
 			}
-			System.out.println("While Completed");
 			activePlayer = Player.PLAYER_1;
 		}
 		waitingState = 1;
 		updateVision();
 	}
 
+	private void processPassiveConflictFreeMovementRequest(ActivityList activityList) {
+		// Exactly one activity list for one target indicates a lack of conflict at this resolution stage.
+		// The 0th activity can be removed and executed so long as the intended space is open.
+		// In other words, it is possible that although no other activity is currently in conflict
+		// with this one, it might be the case that an activity executed in the prior resolution
+		// stage left something in the square preventing this unit from moving in.
+		Activity toExecute = activityList.remove(0); // Pulling the first activity out
+		if (activityList.isEmpty()) {
+//			System.out.println("Removing Activity List");
+			activityQueue.remove(activityList);
+		}
+//		System.out.println(toExecute);
+		ArrayList<Point> executionOrigin = toExecute.getOrigin(),
+				executionSquaresOccupied = toExecute.getSquaresOccupied(),
+				executionTarget = toExecute.getTarget(); // Getting the location information needed.
+		AbstractUnit activityRequestor = toExecute.getActivityRequestor();
+		Player controllingPlayer = toExecute.getPlayer();
+		int playerOrdinal = controllingPlayer.ordinal();
+		if (executionTarget.size() == 1) { // Small unit size, easy case.
+			int targetRow = executionTarget.get(0).x, targetCol = executionTarget.get(0).y,
+					originRow = executionOrigin.get(0).x, originCol = executionOrigin.get(0).y;
+			// Make sure the enemy has nothing in the square
+			boolean noEnemyUnitPresent = true;
+			for (int i = 0; i < listOfActiveUnitArrays.size(); i++) {
+				if (i != playerOrdinal) {
+					noEnemyUnitPresent = listOfActiveUnitArrays.get(i).get(targetRow).get(targetCol).isEmpty();
+				}
+			}
+			
+			if (noEnemyUnitPresent) {
+				// Make sure that the square is occupied by at most, in-motion, friendly units.
+				// TODO on the other hand, I'm really not sure what to make of two friendly units occupying the same space when they happen
+				// to encounter an enemy unexpectedly. I suppose I could just auto-link them, but it is problematic considering that the
+				// units in question could already be linked.
+				if (listOfActiveUnitArrays.get(playerOrdinal).get(targetRow).get(targetCol).isEmpty()) {
+					int requestorIndex = listOfActiveUnitArrays.get(playerOrdinal).get(originRow).get(originCol).indexOf(activityRequestor);
+					listOfActiveUnitArrays.get(playerOrdinal).get(targetRow).get(targetCol).
+						add(listOfActiveUnitArrays.get(playerOrdinal).get(originRow).get(originCol).get(requestorIndex));
+					listOfActiveUnitArrays.get(playerOrdinal).get(originRow).get(originCol).remove(requestorIndex);
+					listOfActiveVisibilityArrays.get(playerOrdinal)[targetRow][targetCol].setOccupyingUnit(activityRequestor.unitType);
+					activityRequestor.curLoc = executionTarget.get(0);
+					do {
+						Point temp = executionSquaresOccupied.remove(0);
+						listOfActiveVisibilityArrays.get(playerOrdinal)[temp.x][temp.y].halfTransparencyUnits.remove(activityRequestor.unitType);
+					} while (executionSquaresOccupied.size() > 0);
+				}
+			}
+		}
+	}
+
 	private void addAllActivityListsAt(int row, int column, ArrayList<ArrayList<ArrayList<AbstractUnit>>> unitArray) {
 		if (!unitArray.get(row).get(column).isEmpty()) {
-			for (AbstractUnit unitOfInterest : unitsP1.get(row).get(column)) {
-				unitOfInterest.activityList.organize();
-				activityQueue.add(unitOfInterest.activityList);
+			for (AbstractUnit unitOfInterest : unitArray.get(row).get(column)) {
+				if (unitOfInterest.activityList.size() > 0) {
+					unitOfInterest.activityList.organize();
+					activityQueue.add(unitOfInterest.activityList);
+				}
 			}
 		}
 	}
@@ -696,7 +674,7 @@ class PrimaryModel {
 				System.out.println("This is an invalid move target. Try again.");
 				break;
 			}
-			path = pathFinderP1.getPassivePath(focusTarget.getCurLocR(), focusTarget.getCurLocC(),
+			path = pathFinderP1.getPassivePath(focusTarget.curLoc.x, focusTarget.curLoc.y,
 					row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion());
 
 			for (int i = 0; i < path.size() - 1; i++) { // Adding Half Transparency steps to the visual model
@@ -714,7 +692,7 @@ class PrimaryModel {
 				System.out.println("This is an invalid move target. Try again.");
 				break;
 			}
-			path = pathFinderP2.getPassivePath(focusTarget.getCurLocR(), focusTarget.getCurLocC(),
+			path = pathFinderP2.getPassivePath(focusTarget.curLoc.x, focusTarget.curLoc.y,
 					row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion());
 
 			for (int i = 0; i < path.size() - 1; i++) { // Adding Half Transparency steps to the visual model
@@ -732,7 +710,7 @@ class PrimaryModel {
 				System.out.println("This is an invalid move target. Try again.");
 				break;
 			}
-			path = pathFinderP3.getPassivePath(focusTarget.getCurLocR(), focusTarget.getCurLocC(),
+			path = pathFinderP3.getPassivePath(focusTarget.curLoc.x, focusTarget.curLoc.y,
 					row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion());
 
 			for (int i = 0; i < path.size() - 1; i++) { // Adding Half Transparency steps to the visual model
@@ -750,7 +728,7 @@ class PrimaryModel {
 				System.out.println("This is an invalid move target. Try again.");
 				break;
 			}
-			path = pathFinderP4.getPassivePath(focusTarget.getCurLocR(), focusTarget.getCurLocC(),
+			path = pathFinderP4.getPassivePath(focusTarget.curLoc.x, focusTarget.curLoc.y,
 					row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion());
 
 			for (int i = 0; i < path.size() - 1; i++) { // Adding Half Transparency steps to the visual model
