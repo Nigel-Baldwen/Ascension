@@ -14,6 +14,7 @@ import ascension.Terrain.TerrainType;
  */
 
 class VisibilityState {
+	Player controllingPlayer;
 	UnitType occupyingUnitType, destinationUnit;
 	TerrainType terrainType;
 	TerrainSubType terrainSubType;
@@ -40,5 +41,9 @@ class VisibilityState {
 	
 	void setDestinationUnit(UnitType unitType) {
 		destinationUnit = unitType;
+	}
+	
+	void setControllingPlayer(Player controller) {
+		controllingPlayer = controller;
 	}
 }

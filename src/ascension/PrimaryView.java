@@ -19,6 +19,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 
 import ascension.AbstractUnit.UnitType;
+import ascension.PrimaryModel.Player;
 import ascension.Terrain.TerrainSubType;
 import ascension.Terrain.TerrainType;
 
@@ -99,6 +100,7 @@ class PrimaryView extends JPanel {
 	private String terDescriptor;
 	private String[] unitDescriptor;
 	private Font basicText;
+	Player activePlayer;
 
 	/**
 	 * Establishes window boundaries and creates <code>VolatileImage</code>s
@@ -314,18 +316,19 @@ class PrimaryView extends JPanel {
 
 				for (Iterator<UnitType> iterator = visState.halfTransparencyUnits.iterator(); iterator.hasNext();) {
 					UnitType mover = (UnitType) iterator.next();
+					int arrayIndex = mover.ordinal() + activePlayer.ordinal() /* x #ofUnitTypes */; // TODO This is very clumsy math. I need more units.
 					do {
-						int valCode = unitHalfTransparencyImages[mover.ordinal()].validate(gC);
+						int valCode = unitHalfTransparencyImages[arrayIndex].validate(gC);
 
 						if (valCode == VolatileImage.IMAGE_RESTORED) {
-							restoreHalfTransparencyUnitTile(mover);
+							restoreHalfTransparencyUnitTile(mover, arrayIndex);
 						} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-							unitHalfTransparencyImages[mover.ordinal()] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+							unitHalfTransparencyImages[arrayIndex] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
 						} else if (valCode == VolatileImage.IMAGE_OK) {
-							g.drawImage(unitHalfTransparencyImages[mover.ordinal()], (c * unitLength) - visX + xOffset,
+							g.drawImage(unitHalfTransparencyImages[arrayIndex], (c * unitLength) - visX + xOffset,
 									(r * unitLength) - visY + yOffset, null);
 						}
-					} while (unitHalfTransparencyImages[mover.ordinal()].contentsLost());
+					} while (unitHalfTransparencyImages[arrayIndex].contentsLost());
 				}
 			}
 		}
@@ -359,18 +362,19 @@ class PrimaryView extends JPanel {
 					continue;
 				}
 
+				int arrayIndex = visState.destinationUnit.ordinal() + activePlayer.ordinal() /* x #ofUnitTypes */; // TODO This is very clumsy math. I need more units.
 				do {
-					int valCode = unitSeventyFiveTransparencyImages[visState.destinationUnit.ordinal()].validate(gC);
+					int valCode = unitSeventyFiveTransparencyImages[arrayIndex].validate(gC);
 
 					if (valCode == VolatileImage.IMAGE_RESTORED) {
-						restoreSeventyFiveTransparencyUnitTile(visState.destinationUnit);
+						restoreSeventyFiveTransparencyUnitTile(visState.destinationUnit, arrayIndex);
 					} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-						unitSeventyFiveTransparencyImages[visState.destinationUnit.ordinal()] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+						unitSeventyFiveTransparencyImages[arrayIndex] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
 					} else if (valCode == VolatileImage.IMAGE_OK) {
-						g.drawImage(unitSeventyFiveTransparencyImages[visState.destinationUnit.ordinal()], (c * unitLength) - visX + xOffset,
+						g.drawImage(unitSeventyFiveTransparencyImages[arrayIndex], (c * unitLength) - visX + xOffset,
 								(r * unitLength) - visY + yOffset, null);
 					}
-				} while (unitSeventyFiveTransparencyImages[visState.destinationUnit.ordinal()].contentsLost());
+				} while (unitSeventyFiveTransparencyImages[arrayIndex].contentsLost());
 			}
 		}
 	}
@@ -439,22 +443,25 @@ class PrimaryView extends JPanel {
 			for (int c = cStart; c < cEnd && c < visibilityState.length; c++) {
 
 				VisibilityState visState = visibilityState[r][c];
-				int arrayIndex = visState.occupyingUnitType.ordinal();
-
-				if (arrayIndex != 0) { // Zero would signify an unoccupied square.
-					do {
-						int valCode = unitImages[arrayIndex].validate(gC);
-
-						if (valCode == VolatileImage.IMAGE_RESTORED) {
-							restoreUnitTile(visState.occupyingUnitType);
-						} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
-							unitImages[arrayIndex] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
-						} else if (valCode == VolatileImage.IMAGE_OK) {
-							g.drawImage(unitImages[arrayIndex], (c * unitLength) - visX + xOffset,
-									(r * unitLength) - visY + yOffset, null);
-						}
-					} while (unitImages[arrayIndex].contentsLost());
+				if (visState.occupyingUnitType == UnitType.EMPTY) {
+					continue;
 				}
+				
+				Player controllingPlayer = visState.controllingPlayer;
+				int arrayIndex = visState.occupyingUnitType.ordinal() + /* #ofUnitTypes >= 1 x */ controllingPlayer.ordinal();
+				
+				do {
+					int valCode = unitImages[arrayIndex].validate(gC);
+
+					if (valCode == VolatileImage.IMAGE_RESTORED) {
+						restoreUnitTile(arrayIndex, visState.occupyingUnitType, controllingPlayer);
+					} else if (valCode == VolatileImage.IMAGE_INCOMPATIBLE) {
+						unitImages[arrayIndex] = gC.createCompatibleVolatileImage(unitLength, unitLength, VolatileImage.TRANSLUCENT);
+					} else if (valCode == VolatileImage.IMAGE_OK) {
+						g.drawImage(unitImages[arrayIndex], (c * unitLength) - visX + xOffset,
+								(r * unitLength) - visY + yOffset, null);
+					}
+				} while (unitImages[arrayIndex].contentsLost());
 			}
 		}
 	}
@@ -727,11 +734,11 @@ class PrimaryView extends JPanel {
 	 * <li> {@link PrimaryView#render(Graphics, int[][]) render(Graphics, int[][])}
 	 * </ul>
 	 * </p>
+	 * @param arrayIndex 
+	 * @param controllingPlayer 
 	 */
-	private void restoreUnitTile(UnitType unitType) {
+	private void restoreUnitTile(int arrayIndex, UnitType unitType, Player controllingPlayer) {
 		Graphics2D g = null;
-
-		int arrayIndex = unitType.ordinal();
 
 		do {
 
@@ -742,8 +749,9 @@ class PrimaryView extends JPanel {
 			try {
 				g = unitImages[arrayIndex].createGraphics();
 				g.setComposite(AlphaComposite.Src);
+				// System.out.println("images/Units/" + resKey + "/Tile/" + controllingPlayer.toString() + "/" + unitType.toString() + ".png");
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Units/" + resKey + "/Tile/" + 0 /* TODO Active Player */ + "/" + unitType.toString() + ".png"))).getImage(), 0,
+						.getResource("images/Units/" + resKey + "/Tile/" + controllingPlayer.toString() + "/" + unitType.toString() + ".png"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
@@ -751,10 +759,8 @@ class PrimaryView extends JPanel {
 		} while (unitImages[arrayIndex].contentsLost());
 	}
 
-	private void restoreHalfTransparencyUnitTile(UnitType unitType) {
+	private void restoreHalfTransparencyUnitTile(UnitType unitType, int arrayIndex) {
 		Graphics2D g = null;
-
-		int arrayIndex = unitType.ordinal();
 
 		do {
 
@@ -766,7 +772,7 @@ class PrimaryView extends JPanel {
 				g = unitHalfTransparencyImages[arrayIndex].createGraphics();
 				g.setComposite(AlphaComposite.Src);
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Units/" + resKey + "/Tile/" + 0 /* TODO Active Player */ + "/" + unitType.toString() + "50.png"))).getImage(), 0,
+						.getResource("images/Units/" + resKey + "/Tile/" + activePlayer.toString() + "/" + unitType.toString() + "_50.png"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
@@ -774,10 +780,8 @@ class PrimaryView extends JPanel {
 		} while (unitHalfTransparencyImages[arrayIndex].contentsLost());
 	}
 
-	private void restoreSeventyFiveTransparencyUnitTile(UnitType unitType) {
+	private void restoreSeventyFiveTransparencyUnitTile(UnitType unitType, int arrayIndex) {
 		Graphics2D g = null;
-
-		int arrayIndex = unitType.ordinal();
 
 		do {
 
@@ -789,7 +793,7 @@ class PrimaryView extends JPanel {
 				g = unitSeventyFiveTransparencyImages[arrayIndex].createGraphics();
 				g.setComposite(AlphaComposite.Src);
 				g.drawImage((new ImageIcon(getClass().getClassLoader()
-						.getResource("images/Units/" + resKey + "/Tile/" + 0 /* TODO Active Player */ + "/" + unitType.toString() + "75.png"))).getImage(), 0,
+						.getResource("images/Units/" + resKey + "/Tile/" + activePlayer.toString() + "/" + unitType.toString() + "_75.png"))).getImage(), 0,
 						0, null);
 			} finally {
 				g.dispose();
@@ -1403,5 +1407,9 @@ class PrimaryView extends JPanel {
 	 */
 	Point getFocusBoxCoords() {
 		return new Point(focusBoxX, focusBoxY);
+	}
+	
+	void setActivePlayer(Player _activePlayer) {
+		activePlayer = _activePlayer;
 	}
 }

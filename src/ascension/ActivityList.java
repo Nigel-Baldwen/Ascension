@@ -9,7 +9,7 @@ import java.util.List;
  * @version 1.0
  */
 
-class ActivityList extends ArrayList<Activity> {
+class ActivityList extends ArrayList<Activity> implements Comparable<ActivityList> {
 
 	/**
 	 * Organizes this <code>ActivityList</code>.
@@ -24,5 +24,17 @@ class ActivityList extends ArrayList<Activity> {
 			return;
 
 		Collections.sort((List) this);
+	}
+
+	@Override
+	public int compareTo(ActivityList o) {
+		// This activity serves to help sort out which activity ought to go first in case of conflicts
+		// Currently, an activity list is considered prior to another iff its zeroth activity has
+		// a lower coinFlipValue than the other activity's coinFlipValue
+		if (this.get(0).getCoinFlipValue() < o.get(0).getCoinFlipValue())
+			return -1;
+		if (this.get(0).getCoinFlipValue() > o.get(0).getCoinFlipValue())
+			return 1;
+		return 0;
 	}
 }

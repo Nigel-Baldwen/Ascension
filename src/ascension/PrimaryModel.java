@@ -6,6 +6,7 @@ import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -15,6 +16,8 @@ import java.util.Set;
 
 import javax.swing.ImageIcon;
 import javax.swing.Timer;
+
+import com.sun.javafx.print.Units;
 
 import ascension.AbstractUnit.Locomotion;
 import ascension.AbstractUnit.UnitType;
@@ -57,19 +60,22 @@ class PrimaryModel {
 	 * </ul>
 	 * </p>
 	 */
-	private Timer turnTimer;
-	private ArrayList<ArrayList<ArrayList<ArrayList<AbstractUnit>>>> listOfActiveUnitArrays;
-	private ArrayList<VisibilityState[][]> listOfActiveVisibilityArrays;
-	private ArrayList<ArrayList<ArrayList<AbstractUnit>>> unitsP1, unitsP2, unitsP3, unitsP4;
-	private AbstractUnit focusTarget = null;
-	private Terrain[][] terrainP1, terrainP2, terrainP3, terrainP4;
-	private VisibilityState[][] visualModelP1, visualModelP2, visualModelP3, visualModelP4;
-	private int turnLength, percent, playerCount, waitingState, gridSize;
-	private PathFinder pathFinderP1, pathFinderP2, pathFinderP3, pathFinderP4;
-	private ArrayList<ActivityList> activityQueue;
-	enum Player { PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4 };
-	private Player activePlayer;
-	private PrimaryController controller;
+	Timer turnTimer;
+	ArrayList<ArrayList<ArrayList<ArrayList<AbstractUnit>>>> listOfActiveUnitArrays;
+	ArrayList<VisibilityState[][]> listOfActiveVisibilityArrays;
+	ArrayList<Terrain[][]> listOfActiveTerrainArrays;
+	ArrayList<PathFinder> listOfActivePathFinders;
+	ArrayList<ArrayList<ArrayList<AbstractUnit>>> unitsP1, unitsP2, unitsP3, unitsP4;
+	AbstractUnit focusTarget = null;
+	Terrain[][] terrainP1, terrainP2, terrainP3, terrainP4;
+	VisibilityState[][] visualModelP1, visualModelP2, visualModelP3, visualModelP4;
+	int turnLength, percent, playerCount, waitingState, gridSize;
+	PathFinder pathFinderP1, pathFinderP2, pathFinderP3, pathFinderP4;
+	ArrayList<ActivityList> activityQueue;
+	enum Player { PLAYER_1, PLAYER_2, PLAYER_3, PLAYER_4;
+		public static final Player playerOrdinals[] = values(); };
+	Player activePlayer;
+	PrimaryController controller;
 
 	public PrimaryModel(PrimaryController primaryController) {
 		controller = primaryController;
@@ -107,7 +113,7 @@ class PrimaryModel {
 
 		// Clock instantiation
 		percent = -1;
-		turnLength = 10 * 1000 * 10; // Multiply to lengthen the turns
+		turnLength = 10 * 1000 * 10; // Multiply to lengthen the turns; Millisecond units by default
 		turnTimer = new Timer(0, new ActionListener() {
 
 			@Override
@@ -128,11 +134,25 @@ class PrimaryModel {
 		// This ought to help me reinvent some control structures to avoid switch statements.
 		listOfActiveUnitArrays = new ArrayList<ArrayList<ArrayList<ArrayList<AbstractUnit>>>>(4);
 		listOfActiveVisibilityArrays = new ArrayList<VisibilityState[][]>();
+		listOfActiveTerrainArrays = new ArrayList<Terrain[][]>();
+		listOfActivePathFinders = new ArrayList<PathFinder>();
 
 		// Creates 2d arrays for terrain, units, and model.
 		// Initializes them.
 		terrainP1 = new Terrain[size][size];
+		listOfActiveTerrainArrays.add(terrainP1);
 		generateMap(terrainP1);
+		
+		// TODO Remove this method
+		// It is intended to enable some manual map instantiation
+		// Eventually, I will probably replace this with something like
+		// loadMapFromFile(String pathToFile);
+		
+		doManualMapInstantiation();
+		
+		// We are done initializing the map.
+		// TODO End removal directive
+		
 		// Initialization is essential here since there is no default creation for ArrayList<T> like there is for T[]
 		unitsP1  = new ArrayList<ArrayList<ArrayList<AbstractUnit>>>(size);
 		listOfActiveUnitArrays.add(unitsP1);
@@ -146,15 +166,17 @@ class PrimaryModel {
 				listOfUnitLists.add(unitList);
 			}
 		}
-		int row = 0; // (int) (Math.random() * size / 4);
-		int column = 0; // (int) (Math.random() * size / 4);
+		int row = 1; // (int) (Math.random() * size / 4);
+		int column = 1; // (int) (Math.random() * size / 4);
 		unitsP1.get(row).get(column).add(new PhysicalBuilder(Player.PLAYER_1, row, column));
 		unitsP1.get(row).get(column).get(0).setVisible(true);
 		unitsP1.get(row).get(column).get(0).setActive(true);
+		unitsP1.get(row).get(column).get(0).setMovable(true);
 		visualModelP1 = new VisibilityState[size][size];
 		listOfActiveVisibilityArrays.add(visualModelP1);
 		generateVisualModel(visualModelP1, unitsP1, terrainP1);
 		pathFinderP1 = new PathFinder(visualModelP1); // This is a fairly rudimentary solution TODO
+		listOfActivePathFinders.add(pathFinderP1);
 		/*
 		 * Each player uses their own path finder because each player
 		 * has a particular view of terrain, enemy units, and other information on any
@@ -163,6 +185,7 @@ class PrimaryModel {
 		 */
 
 		terrainP2 = new Terrain[size][size];
+		listOfActiveTerrainArrays.add(terrainP2);
 		copyMap(terrainP1, terrainP2);
 		unitsP2  = new ArrayList<ArrayList<ArrayList<AbstractUnit>>>(size);
 		listOfActiveUnitArrays.add(unitsP2);
@@ -174,18 +197,21 @@ class PrimaryModel {
 				listOfUnitLists.add(unitList);
 			}
 		}
-		row = 10; // (int) (Math.random() * size / 4 + size * 3 / 4);
-		column = 10; // (int) (Math.random() * size / 4 + size * 3 / 4);
+		row = 1; // (int) (Math.random() * size / 4 + size * 3 / 4);
+		column = 3; // (int) (Math.random() * size / 4 + size * 3 / 4);
 		unitsP2.get(row).get(column).add(new PhysicalBuilder(Player.PLAYER_2, row, column));
 		unitsP2.get(row).get(column).get(0).setVisible(true);
 		unitsP2.get(row).get(column).get(0).setActive(true);
+		unitsP2.get(row).get(column).get(0).setMovable(true);
 		visualModelP2 = new VisibilityState[size][size];
 		listOfActiveVisibilityArrays.add(visualModelP2);
 		generateVisualModel(visualModelP2, unitsP2, terrainP2);
 		pathFinderP2 = new PathFinder(visualModelP2);
+		listOfActivePathFinders.add(pathFinderP2);
 
 		if (playerCount > 2) {
 			terrainP3 = new Terrain[size][size];
+			listOfActiveTerrainArrays.add(terrainP3);
 			copyMap(terrainP1, terrainP3);
 			unitsP3  = new ArrayList<ArrayList<ArrayList<AbstractUnit>>>(size);
 			listOfActiveUnitArrays.add(unitsP3);
@@ -197,19 +223,22 @@ class PrimaryModel {
 					listOfUnitLists.add(unitList);
 				}
 			}
-			row = 5; // (int) (Math.random() * size / 4);
-			column = 10; // (int) (Math.random() * size / 4 + size * 3 / 4);
+			row = 7; // (int) (Math.random() * size / 4);
+			column = 7; // (int) (Math.random() * size / 4 + size * 3 / 4);
 			unitsP3.get(row).get(column).add(new PhysicalBuilder(Player.PLAYER_3, row, column));
 			unitsP3.get(row).get(column).get(0).setVisible(true);
 			unitsP3.get(row).get(column).get(0).setActive(true);
+			unitsP3.get(row).get(column).get(0).setMovable(true);
 			visualModelP3 = new VisibilityState[size][size];
 			listOfActiveVisibilityArrays.add(visualModelP3);
 			generateVisualModel(visualModelP3, unitsP3, terrainP3);
 			pathFinderP3 = new PathFinder(visualModelP3);
+			listOfActivePathFinders.add(pathFinderP3);
 		}
 
 		if (playerCount > 3) {
 			terrainP4 = new Terrain[size][size];
+			listOfActiveTerrainArrays.add(terrainP4);
 			copyMap(terrainP1, terrainP4);
 			unitsP4  = new ArrayList<ArrayList<ArrayList<AbstractUnit>>>(size);
 			listOfActiveUnitArrays.add(unitsP4);
@@ -221,15 +250,17 @@ class PrimaryModel {
 					listOfUnitLists.add(unitList);
 				}
 			}
-			row = 10; // (int) (Math.random() * size / 4 + size * 3 / 4);
+			row = 7; // (int) (Math.random() * size / 4 + size * 3 / 4);
 			column = 5; // (int) (Math.random() * size / 4);
 			unitsP4.get(row).get(column).add(new PhysicalBuilder(Player.PLAYER_4, row, column));
 			unitsP4.get(row).get(column).get(0).setVisible(true);
 			unitsP4.get(row).get(column).get(0).setActive(true);
+			unitsP4.get(row).get(column).get(0).setMovable(true);
 			visualModelP4 = new VisibilityState[size][size];
 			listOfActiveVisibilityArrays.add(visualModelP4);
 			generateVisualModel(visualModelP4, unitsP4, terrainP4);
 			pathFinderP4 = new PathFinder(visualModelP4);
+			listOfActivePathFinders.add(pathFinderP4);
 		}
 
 		activityQueue = new ArrayList<ActivityList>();
@@ -243,7 +274,7 @@ class PrimaryModel {
 		// First we flush the vision for each player to offer a clean update slate.
 		for (int r = 0; r < gridSize; r++) {
 			for (int c = 0; c < gridSize; c++) {
-				clearVisionInSquare(r, c);
+				clearVisionInSquare(r, c); // This also adds back in any units known to the unit arrays
 			}
 		}
 
@@ -253,13 +284,61 @@ class PrimaryModel {
 				grantVisionInRangeOfSquare(r, c);
 			}
 		}
+		
+		// TODO Probably could stand to just iterate over the grid once, but maybe not. Bears thinking though.
+		for (int r = 0; r < gridSize; r++) {
+			for (int c = 0; c < gridSize; c++) {
+				visualizeAllUnitPaths(r, c);
+			}
+		}
+	}
+
+	private void visualizeAllUnitPaths(int r, int c) {
+		// Herein, we update the visibility state arrays with intended movements and destinations
+		for (int k = 0; k < listOfActiveUnitArrays.size(); k++) { // For each Unit Array...
+			if (!listOfActiveUnitArrays.get(k).get(r).get(c).isEmpty()) { // If there is at least one unit in this square...
+				for (AbstractUnit unitOfInterest : listOfActiveUnitArrays.get(k).get(r).get(c)) { // Cycle through the units in the square...
+					// And update the corresponding visibility state array with their intended paths.
+					visualizeIndividualUnitPath(unitOfInterest, k);
+				}
+			}
+		}
+	}
+
+	private void visualizeIndividualUnitPath(AbstractUnit unitOfInterest, int playerOrdinal) {
+		// We're going to look through this unit's activity list and figure out
+		// with what exactly the visibility state array needs to be updated.
+		ActivityList activitiesOfInterest = unitOfInterest.getActivityList();
+		
+		// No need to process empty lists
+		if (activitiesOfInterest.size() <= 0) {
+			return;
+		}
+		
+		// TODO This method considers only non-conflicted movement as an option
+		// Eventually, I will need to add in relevant code for ability and attack
+		// displays. (Most likely. Maybe a different method will end up better for it.)
+		
+		// In motion indicators with 50% transparency
+		for (int i = 0; i < activitiesOfInterest.size() - 1; i ++) {
+			Activity activityOfInterest = activitiesOfInterest.get(i);
+			for (Point pointOfInterest : activityOfInterest.getTarget()) {
+				listOfActiveVisibilityArrays.get(playerOrdinal)[pointOfInterest.x][pointOfInterest.y].addInMotionUnit(unitOfInterest.unitType);
+			}
+		}
+		
+		// Destination indicator with 75% transparency
+		Activity activityOfInterest = activitiesOfInterest.get(activitiesOfInterest.size() - 1);
+		for (Point pointOfInterest : activityOfInterest.getTarget()) {
+			listOfActiveVisibilityArrays.get(playerOrdinal)[pointOfInterest.x][pointOfInterest.y].setDestinationUnit(unitOfInterest.unitType);
+		}
 	}
 
 	private void grantVisionInRangeOfSquare(int r, int c) {
 		int sightRadius = 0, trueSightRadius = 0; // TODO Eventually, units will sometimes possess true sight
-		for (int k = 0; k < listOfActiveUnitArrays.size(); k++) {
-			if (!listOfActiveUnitArrays.get(k).get(r).get(c).isEmpty()) {
-				for (AbstractUnit unitOfInterest : listOfActiveUnitArrays.get(k).get(r).get(c)) {
+		for (int k = 0; k < listOfActiveUnitArrays.size(); k++) { // For each active square of each Unit Array...
+			if (!listOfActiveUnitArrays.get(k).get(r).get(c).isEmpty()) { 
+				for (AbstractUnit unitOfInterest : listOfActiveUnitArrays.get(k).get(r).get(c)) { // Find the greatest sight radius originating from that square
 					if (unitOfInterest.getSihtRd() > sightRadius) {
 						sightRadius = unitOfInterest.getSihtRd();
 						// TODO if (unitOfInterest.getTrueSightRadius() > trueSightRadius...
@@ -269,13 +348,14 @@ class PrimaryModel {
 				for (int i = Math.max(0, r - sightRadius); i < Math.min(r + sightRadius + 1, gridSize); i ++) {
 					for (int j = Math.max(0, c - sightRadius); j < Math.min(c + sightRadius + 1, gridSize); j++) {
 						if (!listOfActiveVisibilityArrays.get(k)[i][j].isInVisionRange) { // TODO need to add an additional check for true sight
-							listOfActiveVisibilityArrays.get(k)[i][j].isInVisionRange = true;
+							listOfActiveVisibilityArrays.get(k)[i][j].isInVisionRange = true; // Let the square know it is in vision range
 
-							for (ArrayList<ArrayList<ArrayList<AbstractUnit>>> unitArray : listOfActiveUnitArrays) {
+							for (ArrayList<ArrayList<ArrayList<AbstractUnit>>> unitArray : listOfActiveUnitArrays) { // Detect enemy presence in the square
 								if (!unitArray.equals(listOfActiveUnitArrays.get(k))) {
-									if (!unitArray.get(i).get(j).isEmpty()) {
-										// TODO We use only the 0th unit type, but this may need to change (leaning towards probably not.
-										listOfActiveVisibilityArrays.get(k)[i][j].setDestinationUnit(unitArray.get(i).get(j).get(0).unitType);
+									if (!unitArray.get(i).get(j).isEmpty()) { // Enemy detected
+										// TODO We use only the 0th unit type, but this may need to change (leaning towards probably not).
+										listOfActiveVisibilityArrays.get(k)[i][j].setOccupyingUnit(unitArray.get(i).get(j).get(0).unitType); // Now the enemy is noted.
+										listOfActiveVisibilityArrays.get(k)[i][j].setControllingPlayer(unitArray.get(i).get(j).get(0).player); // And his controller is noted.
 									}
 								}
 							}
@@ -288,9 +368,14 @@ class PrimaryModel {
 
 	private void clearVisionInSquare(int row, int column) {
 		for (int i = 0; i < listOfActiveVisibilityArrays.size(); i++) {
+			listOfActiveVisibilityArrays.get(i)[row][column].controllingPlayer = null;
 			listOfActiveVisibilityArrays.get(i)[row][column].isInVisionRange = false;
-			if (listOfActiveVisibilityArrays.get(i)[row][column].occupyingUnitType != UnitType.EMPTY && listOfActiveUnitArrays.get(i).get(row).get(column).isEmpty()) {
-				listOfActiveVisibilityArrays.get(i)[row][column].setOccupyingUnit(UnitType.EMPTY);
+			listOfActiveVisibilityArrays.get(i)[row][column].setOccupyingUnit(UnitType.EMPTY);
+			listOfActiveVisibilityArrays.get(i)[row][column].halfTransparencyUnits.clear();
+			listOfActiveVisibilityArrays.get(i)[row][column].destinationUnit = null;
+			if (!listOfActiveUnitArrays.get(i).get(row).get(column).isEmpty()) { // Ensure that units owned by the player are accounted for in the respective visibility state
+				listOfActiveVisibilityArrays.get(i)[row][column].setOccupyingUnit(listOfActiveUnitArrays.get(i).get(row).get(column).get(0).unitType);
+				listOfActiveVisibilityArrays.get(i)[row][column].setControllingPlayer(Player.playerOrdinals[i]);
 			}
 		}
 	}
@@ -320,6 +405,7 @@ class PrimaryModel {
 				if (!sourceUnits.get(r).get(c).isEmpty()) {
 					// Should only need to account for the 0th since the map was just initialized
 					visM[r][c].setOccupyingUnit(sourceUnits.get(r).get(c).get(0).unitType);
+					visM[r][c].setControllingPlayer(sourceUnits.get(r).get(c).get(0).getPlayer());
 				}
 				visM[r][c].setTerrainType(terrain[r][c].terrainType, terrain[r][c].terrainSubType);
 			}
@@ -413,7 +499,7 @@ class PrimaryModel {
 	 * </ul>
 	 * <b>Calls</b> -
 	 * <ul>
-	 * <li> {@link PrimaryController#generateNotification(String, int) generateNotification(String, int)}
+	 * <li> {@link PrimaryController#rotateTurn(String, int) generateNotification(String, int)}
 	 * <li> {@link AbstractUnit#getActivityList() getActivityList()}
 	 * <li> {@link ActivityQueue#process() process()}
 	 * </ul>
@@ -425,10 +511,6 @@ class PrimaryModel {
 		focusTarget = null;
 		if (activePlayer.ordinal() < playerCount - 1) {
 			activePlayer = Player.values()[activePlayer.ordinal() + 1]; // Select the next player in sequence.
-			controller.generateNotification("Switching to Player: " + activePlayer.toString(), 0);
-			turnTimer.setRepeats(true);
-			percent = 0;
-			turnTimer.start();
 		}
 		else {
 			/* Now, we'll ensure that all pending activity lists get popped into the processing queue.
@@ -461,12 +543,6 @@ class PrimaryModel {
 				 * The target of an ability is leaving the square where the ability is aimed
 				 * TODO Probably need some more notable cases. They will occur to me as time
 				 * goes on and as I add more features.
-				 * 
-				 * In order to do this, I'll need some sort of map between targets and
-				 * the activities which spawn the targets. In other words, for all activities
-				 * that target <r, c>, I need to know which activities those are such that I can
-				 * determine whether or not they are in conflict. I think something like a map,
-				 * dictionary, or hash table may be what I need. 
 				 */
 
 				// TODO As a proof of concept, I'm going to use a multimap to look for move targets
@@ -477,16 +553,9 @@ class PrimaryModel {
 				Map<ArrayList<Point>, ArrayList<ActivityList>> movementDestinations = new HashMap<ArrayList<Point>, ArrayList<ActivityList>>();
 				for (ActivityList activityList : activityQueue) {
 					// First we handle the case of an already present key
-					// TODO A possible pitfall is that the targets may be getting compared at the
-					// object level rather than the value level. Thus, two target lists with all
-					// the same values MAY be treated as non-equivalent since they are technically
-					// distinct instances of the same list of points. May seek advisement on this
-					// point if trouble becomes apparent. Probably could provide a wrapper for
-					// Point that includes a comparator.
-					// TODO Delete above todo since Lennon and I talked and it seems not to be an issue atm.
 					if (movementDestinations.containsKey(activityList.get(0).getTarget())) {
 						movementDestinations.get(activityList.get(0).getTarget()).add(activityList);
-					} // Next, we address the case of a newly found key. Same potential issue as above.
+					} // Next, we address the case of a newly found key.
 					else {
 						ArrayList<ActivityList> mapElement = new ArrayList<ActivityList>();
 						mapElement.add(activityList);
@@ -502,18 +571,42 @@ class PrimaryModel {
 				// two or more values - this target is held by two or more units
 				// For the case of two or more values, I must seek to resolve the conflict.
 				for (Entry<ArrayList<Point>, ArrayList<ActivityList>> keyValuePair : movementDestinations.entrySet()) {
+					// TODO The below if statements are expressive, but probably not optimal. Consider a switch.
 					if (keyValuePair.getValue().size() <= 0) {
 						System.out.println("THIS IS UNFORTUNATE!!! Why is it so tough to get things right the first time?");
 					}
 					if (keyValuePair.getValue().size() == 1) {
 						processPassiveConflictFreeMovementRequest(keyValuePair.getValue().get(0));
 					}
+					if (keyValuePair.getValue().size() > 1) {
+						System.out.println("It's a Conflict Rick!");
+						resolvePassiveMovementConflict(keyValuePair.getValue());
+					}
 				}
 			}
 			activePlayer = Player.PLAYER_1;
 		}
+		controller.rotateTurn("Switching to Player: " + activePlayer.toString(), activePlayer);
+		turnTimer.setRepeats(true);
+		percent = 0;
+		turnTimer.start();
 		waitingState = 1;
 		updateVision();
+	}
+
+	private void resolvePassiveMovementConflict(ArrayList<ActivityList> conflictedActivities) {
+		// TODO for now, to get things moving (heh) I'm going to just let these be coin flips
+		for (ActivityList activityList : conflictedActivities) {
+			activityList.get(0).setCoinFlipValue(Math.random());
+		}
+		// Sort according to who has the best roll - low roll wins
+		Collections.sort(conflictedActivities);
+		
+		// The winner gets to occupy the square according to the processPassiveConflictFreeMovementRequest rules
+		processPassiveConflictFreeMovementRequest(conflictedActivities.remove(0));
+		
+		// The remaining units need to figure out whether or not to keep trying to move
+		
 	}
 
 	private void processPassiveConflictFreeMovementRequest(ActivityList activityList) {
@@ -524,10 +617,10 @@ class PrimaryModel {
 		// stage left something in the square preventing this unit from moving in.
 		Activity toExecute = activityList.remove(0); // Pulling the first activity out
 		if (activityList.isEmpty()) {
-//			System.out.println("Removing Activity List");
+			//			System.out.println("Removing Activity List");
 			activityQueue.remove(activityList);
 		}
-//		System.out.println(toExecute);
+		//		System.out.println(toExecute);
 		ArrayList<Point> executionOrigin = toExecute.getOrigin(),
 				executionSquaresOccupied = toExecute.getSquaresOccupied(),
 				executionTarget = toExecute.getTarget(); // Getting the location information needed.
@@ -544,7 +637,7 @@ class PrimaryModel {
 					noEnemyUnitPresent = listOfActiveUnitArrays.get(i).get(targetRow).get(targetCol).isEmpty();
 				}
 			}
-			
+
 			if (noEnemyUnitPresent) {
 				// Make sure that the square is occupied by at most, in-motion, friendly units.
 				// TODO on the other hand, I'm really not sure what to make of two friendly units occupying the same space when they happen
@@ -553,7 +646,7 @@ class PrimaryModel {
 				if (listOfActiveUnitArrays.get(playerOrdinal).get(targetRow).get(targetCol).isEmpty()) {
 					int requestorIndex = listOfActiveUnitArrays.get(playerOrdinal).get(originRow).get(originCol).indexOf(activityRequestor);
 					listOfActiveUnitArrays.get(playerOrdinal).get(targetRow).get(targetCol).
-						add(listOfActiveUnitArrays.get(playerOrdinal).get(originRow).get(originCol).get(requestorIndex));
+					add(listOfActiveUnitArrays.get(playerOrdinal).get(originRow).get(originCol).get(requestorIndex));
 					listOfActiveUnitArrays.get(playerOrdinal).get(originRow).get(originCol).remove(requestorIndex);
 					listOfActiveVisibilityArrays.get(playerOrdinal)[targetRow][targetCol].setOccupyingUnit(activityRequestor.unitType);
 					activityRequestor.curLoc = executionTarget.get(0);
@@ -561,6 +654,9 @@ class PrimaryModel {
 						Point temp = executionSquaresOccupied.remove(0);
 						listOfActiveVisibilityArrays.get(playerOrdinal)[temp.x][temp.y].halfTransparencyUnits.remove(activityRequestor.unitType);
 					} while (executionSquaresOccupied.size() > 0);
+					if (activityList.isEmpty()) { // We've reached our destination
+						listOfActiveVisibilityArrays.get(playerOrdinal)[targetRow][targetCol].destinationUnit = null;
+					}
 				}
 			}
 		}
@@ -592,19 +688,7 @@ class PrimaryModel {
 	 * @return the current visual model
 	 */
 	VisibilityState[][] getVisualModel() {
-		switch (activePlayer) {
-		case PLAYER_1:
-			return visualModelP1;
-
-		case PLAYER_2:
-			return visualModelP2;
-
-		case PLAYER_3:
-			return visualModelP3;
-
-		default:
-			return visualModelP4;
-		}
+		return listOfActiveVisibilityArrays.get(activePlayer.ordinal());
 	}
 
 	/**
@@ -624,123 +708,83 @@ class PrimaryModel {
 	}
 
 	String getDescriptor(int r, int c) {
-		switch (activePlayer) {
-		case PLAYER_1:
-			if (!unitsP1.get(r).get(c).isEmpty())
-				return unitsP1.get(r).get(c).get(0).getDescriptor();
-			else
-				return terrainP1[r][c].getDescriptor();
-		case PLAYER_2:
-			if (!unitsP2.get(r).get(c).isEmpty())
-				return unitsP2.get(r).get(c).get(0).getDescriptor();
-			else
-				return terrainP2[r][c].getDescriptor();
-		case PLAYER_3:
-			if (!unitsP3.get(r).get(c).isEmpty())
-				return unitsP3.get(r).get(c).get(0).getDescriptor();
-			else
-				return terrainP3[r][c].getDescriptor();
-		default:
-			if (!unitsP4.get(r).get(c).isEmpty())
-				return unitsP4.get(r).get(c).get(0).getDescriptor();
-			else
-				return terrainP4[r][c].getDescriptor();
+		for (int i = 0; i < playerCount; i++) {
+			if (!listOfActiveUnitArrays.get(i).get(r).get(c).isEmpty())
+				return listOfActiveUnitArrays.get(i).get(r).get(c).get(0).getDescriptor();
 		}
+		return listOfActiveTerrainArrays.get(activePlayer.ordinal())[r][c].getDescriptor();
 	}
 
-	void setUnitFocusTarget(int r, int c) {
-		switch (activePlayer) {
-		case PLAYER_1:
-			focusTarget = unitsP1.get(r).get(c).get(0);
-			break;
-		case PLAYER_2:
-			focusTarget = unitsP2.get(r).get(c).get(0);
-			break;
-		case PLAYER_3:
-			focusTarget = unitsP3.get(r).get(c).get(0);
-			break;
-		default:
-			focusTarget = unitsP4.get(r).get(c).get(0);
-			break;
+	boolean setUnitFocusTarget(int r, int c) {
+		if (!listOfActiveUnitArrays.get(activePlayer.ordinal()).get(r).get(c).isEmpty()) {
+			focusTarget = listOfActiveUnitArrays.get(activePlayer.ordinal()).get(r).get(c).get(0);
+			return true;
 		}
+		for (int i = 0; i < playerCount; i++) { // TODO may not actually need to set a focus target at all if I won't be issuing commands to it.
+			if (i != activePlayer.ordinal()) {
+				if (!listOfActiveUnitArrays.get(i).get(r).get(c).isEmpty()) {
+					focusTarget = listOfActiveUnitArrays.get(i).get(r).get(c).get(0);
+				}
+			}
+		}
+		return false;
 	}
 
 	void requestMoveTo(int row, int column) {
 		ArrayList<Point> path;
-		switch (activePlayer) {
-		case PLAYER_1:
-			if ( terrainP1[row][column].terrainSubType == TerrainSubType.EIGHT ||
-			(terrainP1[row][column].terrainSubType == TerrainSubType.SEVEN && focusTarget.locomotion != Locomotion.AIR)) {
-				System.out.println("This is an invalid move target. Try again.");
-				break;
-			}
-			path = pathFinderP1.getPassivePath(focusTarget.curLoc.x, focusTarget.curLoc.y,
-					row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion());
-
-			for (int i = 0; i < path.size() - 1; i++) { // Adding Half Transparency steps to the visual model
-				Point step = path.get(i);
-				visualModelP1[step.x][step.y].addInMotionUnit(focusTarget.unitType);
-			}
-
-			visualModelP1[path.get(path.size() -1).x][path.get(path.size() -1).y].setDestinationUnit(focusTarget.unitType);;
-
-			focusTarget.generateMoveActivityWithPath(path);
-			break;
-		case PLAYER_2:
-			if ( terrainP2[row][column].terrainSubType == TerrainSubType.EIGHT ||
-			(terrainP2[row][column].terrainSubType == TerrainSubType.SEVEN && focusTarget.locomotion != Locomotion.AIR)) {
-				System.out.println("This is an invalid move target. Try again.");
-				break;
-			}
-			path = pathFinderP2.getPassivePath(focusTarget.curLoc.x, focusTarget.curLoc.y,
-					row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion());
-
-			for (int i = 0; i < path.size() - 1; i++) { // Adding Half Transparency steps to the visual model
-				Point step = path.get(i);
-				visualModelP2[step.x][step.y].addInMotionUnit(focusTarget.unitType);
-			}
-
-			visualModelP2[path.get(path.size() -1).x][path.get(path.size() -1).y].setDestinationUnit(focusTarget.unitType);;
-
-			focusTarget.generateMoveActivityWithPath(path);
-			break;
-		case PLAYER_3:
-			if ( terrainP3[row][column].terrainSubType == TerrainSubType.EIGHT ||
-			(terrainP3[row][column].terrainSubType == TerrainSubType.SEVEN && focusTarget.locomotion != Locomotion.AIR)) {
-				System.out.println("This is an invalid move target. Try again.");
-				break;
-			}
-			path = pathFinderP3.getPassivePath(focusTarget.curLoc.x, focusTarget.curLoc.y,
-					row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion());
-
-			for (int i = 0; i < path.size() - 1; i++) { // Adding Half Transparency steps to the visual model
-				Point step = path.get(i);
-				visualModelP3[step.x][step.y].addInMotionUnit(focusTarget.unitType);
-			}
-
-			visualModelP3[path.get(path.size() -1).x][path.get(path.size() -1).y].setDestinationUnit(focusTarget.unitType);;
-
-			focusTarget.generateMoveActivityWithPath(path);
-			break;
-		default:
-			if ( terrainP4[row][column].terrainSubType == TerrainSubType.EIGHT ||
-			(terrainP4[row][column].terrainSubType == TerrainSubType.SEVEN && focusTarget.locomotion != Locomotion.AIR)) {
-				System.out.println("This is an invalid move target. Try again.");
-				break;
-			}
-			path = pathFinderP4.getPassivePath(focusTarget.curLoc.x, focusTarget.curLoc.y,
-					row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion());
-
-			for (int i = 0; i < path.size() - 1; i++) { // Adding Half Transparency steps to the visual model
-				Point step = path.get(i);
-				visualModelP4[step.x][step.y].addInMotionUnit(focusTarget.unitType);
-			}
-
-			visualModelP4[path.get(path.size() -1).x][path.get(path.size() -1).y].setDestinationUnit(focusTarget.unitType);;
-
-			focusTarget.generateMoveActivityWithPath(path);
-			break;
+		if ( listOfActiveTerrainArrays.get(activePlayer.ordinal())[row][column].terrainSubType == TerrainSubType.EIGHT ||
+				(listOfActiveTerrainArrays.get(activePlayer.ordinal())[row][column].terrainSubType == TerrainSubType.SEVEN && focusTarget.locomotion != Locomotion.AIR)) {
+			System.out.println("This is an invalid move target. Try again.");
+			return;
+		}
+		path = listOfActivePathFinders.get(activePlayer.ordinal()).getPassivePath(focusTarget.curLoc.x, focusTarget.curLoc.y,
+				row, column, focusTarget.getMovSpd(), focusTarget.getLocomotion());
+		
+		if (path == null) {
+			System.out.println("I can't reach that spot! Try again.");
+			return;
 		}
 
+		for (int i = 0; i < path.size() - 1; i++) { // Adding Half Transparency steps to the visual model
+			Point step = path.get(i);
+			listOfActiveVisibilityArrays.get(activePlayer.ordinal())[step.x][step.y].addInMotionUnit(focusTarget.unitType);
+		}
+
+		listOfActiveVisibilityArrays.get(activePlayer.ordinal())[path.get(path.size() -1).x][path.get(path.size() -1).y].setDestinationUnit(focusTarget.unitType);;
+
+		focusTarget.generateMoveActivityWithPath(path);
+		focusTarget.setMovable(false);
+	}
+
+	public boolean focusTargetCanMove() {
+		return focusTarget.canMove();
+	}
+	
+	// TODO Remove or change this method closer to release
+	void doManualMapInstantiation() {
+		/*
+		// Unknown Purpose
+		terrainP1[0][1].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[1][1].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[1][0].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[0][0].terrainSubType = TerrainSubType.ZERO;
+		*/
+		
+		// 5 x 3 impassable terrain box for movement conflict testing
+		terrainP1[0][0].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[0][1].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[0][2].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[0][3].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[0][4].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[1][0].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[1][1].terrainSubType = TerrainSubType.ZERO;
+		terrainP1[1][2].terrainSubType = TerrainSubType.ZERO;
+		terrainP1[1][3].terrainSubType = TerrainSubType.ZERO;
+		terrainP1[1][4].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[2][0].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[2][1].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[2][2].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[2][3].terrainSubType = TerrainSubType.EIGHT;
+		terrainP1[2][4].terrainSubType = TerrainSubType.EIGHT;
 	}
 }

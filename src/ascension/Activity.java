@@ -17,6 +17,15 @@ class Activity implements Comparable<Activity> {
 	enum ActivityType { MOVEMENT, ATTACK, ABILITY };
 	ActivityType activityType;
 
+	// This little coinflip section serves as a placeholder for actual conflict resolution code
+	private double coinFlipValue = 0;
+	void setCoinFlipValue(double flipValue) {
+		coinFlipValue = flipValue;
+	}
+	double getCoinFlipValue() {
+		return coinFlipValue;
+	}
+	
 	/** TODO Fix this comment
 	 * Makes a new activity.
 	 * 

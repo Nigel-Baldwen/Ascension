@@ -21,6 +21,7 @@ import javax.swing.JOptionPane;
 import javax.swing.Timer;
 
 import ascension.AbstractUnit.UnitType;
+import ascension.PrimaryModel.Player;
 
 /**
  * <p>
@@ -64,7 +65,8 @@ class PrimaryController extends JFrame implements MouseListener, MouseMotionList
 	private int boundX, boundY, gridSize;
 	private boolean unitIsSelected = false, unitMoving = false, unitAttacking = false, 
 			unitAbilityOne = false, unitAbilityTwo = false, unitAbilityThree = false, 
-			unitAbilityFour = false, terrainIsSelected = false, awaitingMoveTarget = false;
+			unitAbilityFour = false, terrainIsSelected = false, awaitingMoveTarget = false,
+			commandsIssuable = false;
 
 	/**
 	 * Creates a new, disabled <code>PrimaryController</code> object.
@@ -106,6 +108,7 @@ class PrimaryController extends JFrame implements MouseListener, MouseMotionList
 		gameModel.loadInitialModelState(gridSize, 4);
 		gameView = new PrimaryView();
 		gameView.loadInitialViewState(getGraphicsConfiguration(), gridSize);
+		gameView.setActivePlayer(Player.PLAYER_1);
 		boundX = getGraphicsConfiguration().getBounds().width;
 		boundY = getGraphicsConfiguration().getBounds().height;
 
@@ -291,21 +294,21 @@ class PrimaryController extends JFrame implements MouseListener, MouseMotionList
 			// Identify the target of the click.
 			int c = gameView.getVisX(), r = gameView.getVisY(),
 					row = (r + y - gameView.getYOffset()) / gameView.getUnitLength(), column = (c + x - gameView.getXOffset()) / gameView.getUnitLength();
-			UnitType idTag = gameModel.getVisualModel()[row][column].occupyingUnitType;
+			UnitType occupyingUnitType = gameModel.getVisualModel()[row][column].occupyingUnitType;
 
-			if (!unitIsSelected && !terrainIsSelected) {
-				if (idTag == UnitType.EMPTY) {
+			if (!unitIsSelected && !terrainIsSelected) { // If nothing is currently selected
+				if (occupyingUnitType == UnitType.EMPTY) {
 					terrainIsSelected = true;
 					gameView.setTerrainFocusTarget(row, column, gameModel.getDescriptor(row, column));
 				} else {
 					unitIsSelected = true;
-					gameModel.setUnitFocusTarget(row, column);
+					commandsIssuable = gameModel.setUnitFocusTarget(row, column); // True IFF the active player has a unit in this square
 					gameView.setUnitFocusTarget(row, column, gameModel.getDescriptor(row, column));
 				}
 			} else {
-				if (terrainIsSelected && idTag == UnitType.EMPTY) {
+				if (terrainIsSelected && occupyingUnitType == UnitType.EMPTY) { // If a terrain tile is selected elsewhere and this tile is also a terrain tile
 					gameView.setTerrainFocusTarget(row, column, gameModel.getDescriptor(row, column));
-				} else if (unitIsSelected && idTag == UnitType.EMPTY) {
+				} else if (unitIsSelected && occupyingUnitType == UnitType.EMPTY) { // If a unit is selected elsewhere and this tile is a terrain tile
 					if (awaitingMoveTarget) {
 						gameModel.requestMoveTo(row, column);
 						awaitingMoveTarget = false;
@@ -314,10 +317,15 @@ class PrimaryController extends JFrame implements MouseListener, MouseMotionList
 					gameView.clearFocusTarget();
 					unitIsSelected = false;
 					gameView.setTerrainFocusTarget(row, column, gameModel.getDescriptor(row, column));
-				} else if (idTag != UnitType.EMPTY && terrainIsSelected) {
+				} else if (occupyingUnitType != UnitType.EMPTY && terrainIsSelected) { // If a terrain tile is selected elsewhere and there is a unit in this square
 					unitIsSelected = true;
+					commandsIssuable = gameModel.setUnitFocusTarget(row, column);
 					gameView.clearFocusTarget();
 					terrainIsSelected = false;
+					gameView.setUnitFocusTarget(row, column, gameModel.getDescriptor(row, column));
+				} else if (unitIsSelected && occupyingUnitType != UnitType.EMPTY) { // If a unit is selected elsewhere and there is a unit in this square
+					System.out.println("This behavior is currently a bit underdefined. Basically, I'm not sure if you're trying to aggressively move or to attack.");
+					commandsIssuable = gameModel.setUnitFocusTarget(row, column);
 					gameView.setUnitFocusTarget(row, column, gameModel.getDescriptor(row, column));
 				}
 			}
@@ -327,8 +335,15 @@ class PrimaryController extends JFrame implements MouseListener, MouseMotionList
 				// End turn button clicked
 				gameModel.rotateTurn();
 			} else if (x >= gameView.getIPaneButtonX() && x < gameView.getIPaneButtonX() + gameView.getIPaneButtonSize() && y >= gameView.getIPaneButtonY() && y < gameView.getIPaneButtonY() + gameView.getIPaneButtonSize()) {
-				// Move button clicked.
-				awaitingMoveTarget = true;
+				if (commandsIssuable) { // The selected unit can accept commands
+					// Move button clicked.
+					awaitingMoveTarget = gameModel.focusTargetCanMove();
+					if (awaitingMoveTarget) {
+						System.out.println("READY FOR ACTION!!!");
+					} else {
+						System.out.println("I'm beat. Ask someone else.");
+					}
+				}
 			}
 		}
 	}
@@ -381,17 +396,14 @@ class PrimaryController extends JFrame implements MouseListener, MouseMotionList
 	 * @param notification - a message describing the notification
 	 * @param type - the type of notification
 	 */
-	void generateNotification(String notification, int type) {
-		switch (type) {
-		case 0: // Rotating/Ending Turns
-			System.out.println(notification);
-			unitIsSelected = false;
-			terrainIsSelected = false;
-			awaitingMoveTarget = false;
-			gameView.clearFocusTarget();
-			actionDisabled = true;
-			break;
-		}
+	void rotateTurn(String notification, Player playerGainingControl) {
+		System.out.println(notification);
+		unitIsSelected = false;
+		terrainIsSelected = false;
+		awaitingMoveTarget = false;
+		gameView.setActivePlayer(playerGainingControl);
+		gameView.clearFocusTarget();
+		actionDisabled = true;
 	}
 
 	@Override
