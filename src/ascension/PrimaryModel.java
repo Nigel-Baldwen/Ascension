@@ -131,7 +131,7 @@ class PrimaryModel {
 		turnTimer.setDelay(turnLength / 10);
 		turnTimer.setRepeats(true);
 
-		// This ought to help me reinvent some control structures to avoid switch statements.
+		// This ought to help me reinvent some control structures to avoid clunky switch statements.
 		listOfActiveUnitArrays = new ArrayList<ArrayList<ArrayList<ArrayList<AbstractUnit>>>>(4);
 		listOfActiveVisibilityArrays = new ArrayList<VisibilityState[][]>();
 		listOfActiveTerrainArrays = new ArrayList<Terrain[][]>();
@@ -606,6 +606,23 @@ class PrimaryModel {
 		processPassiveConflictFreeMovementRequest(conflictedActivities.remove(0));
 		
 		// The remaining units need to figure out whether or not to keep trying to move
+		for (ActivityList activityList : conflictedActivities) {
+			// We'll shove this off to a different method, but the gist of it is that the units should
+			// now attempt to see if they can still do what they set out to do at the start of the phase,
+			// and if so, to keep on trying. Since they are just trying to passively move, it is simply
+			// a matter of seeing whether or not a clear path is available for them to continue towards
+			// their destination. If so, the unit should set a new path to try to get there and get as close
+			// as possible. If not, the unit should just stop for now, and possibly produce a command prompt
+			// for the player. Something like, < retreat, fight, do nothing >.
+			
+			reattemptPassivePathFindingFor(activityList);			
+		}
+	}
+
+	private void reattemptPassivePathFindingFor(ActivityList activityList) {
+		// TODO This method is designed to re-structure a given passive movement path to account for
+		// passive movement conflicts. I'm really not sure where to begin here, but it will minimally
+		// call for invoking the pathfinding code.
 		
 	}
 
